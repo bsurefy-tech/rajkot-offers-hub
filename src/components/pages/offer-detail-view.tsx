@@ -280,12 +280,12 @@ async function OfferContent({ slug }: { slug: string }) {
       <StickyActionBar
         lead={
           <>
-            <SaveBarButton slug={offer.slug} variant="outline" />
-            <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
-            <ButtonLink href={shopPath(business.slug)} variant="outline" size="sm" className="min-w-0 flex-1 border-primary px-2 text-primary hover:bg-primary-soft">
+            <ButtonLink href={shopPath(business.slug)} variant="outline" size="sm" className="min-w-0 flex-1 px-2">
               <Store size={18} aria-hidden />
               {t("Shop")}
             </ButtonLink>
+            <SaveBarButton slug={offer.slug} variant="outline" />
+            <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
           </>
         }
       >

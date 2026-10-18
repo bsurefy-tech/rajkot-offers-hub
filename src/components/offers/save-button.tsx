@@ -108,7 +108,7 @@ export function SaveBarButton({ slug, kind = "offer", variant = "outline" }: { s
       size="sm"
       aria-pressed={saved}
       onClick={onToggle}
-      className={cn("min-w-0 flex-1", outline && "border-primary px-2 text-primary hover:bg-primary-soft")}
+      className={cn("min-w-0 flex-1", outline && "px-2")}
     >
       <Bookmark size={18} aria-hidden className={cn(saved && (outline ? "fill-primary" : "fill-white"))} />
       {saved ? t("Saved") : t("Save")}
