@@ -2,6 +2,7 @@
 
 import { Link } from "@/components/i18n/link";
 import { ringSeenKey, useSeenStatuses } from "@/hooks/use-zalak-memory";
+import { track } from "@/lib/analytics/client";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import type { ZalakStory } from "@/lib/zalak/types";
@@ -22,7 +23,7 @@ export function StatusRow({ stories }: { stories: ZalakStory[] }) {
         const watched = story.live ? !story.unseen || seen.has(ringSeenKey(story)) : seen.has(story.id);
         return (
           <li key={story.id} className="w-[68px] shrink-0 lg:w-20">
-            <Link href={story.shop.platform ? "/status?platform=1" : `/status?shop=${encodeURIComponent(story.shop.slug)}`} className="flex flex-col items-center gap-1.5">
+            <Link href={story.shop.platform ? "/status?platform=1" : `/status?shop=${encodeURIComponent(story.shop.slug)}`} onClick={() => track("status_ring_open", { platform: Boolean(story.shop.platform), unseen: !watched })} className="flex flex-col items-center gap-1.5">
               <span
                 className={cn(
                   "block size-[68px] rounded-full p-[3px] lg:size-20",

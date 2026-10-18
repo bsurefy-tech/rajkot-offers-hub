@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Flag, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useLogin } from "@/components/auth/login-dialog";
@@ -35,7 +36,7 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
 
   function start() {
     if (login.signedIn()) setOpen(true);
-    else login.prompt(() => setOpen(true));
+    else login.prompt("zalak_report", () => setOpen(true));
   }
 
   async function send(retry = true) {
@@ -43,7 +44,8 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
     setBusy(true);
     const result = await reportContentAction(story.kind, id, reason, note);
     setBusy(false);
-    if (result === "signed-out" && retry) return login.prompt(() => void send(false));
+    track("zalak_report", { kind: story.kind, result: result === "signed-out" ? "login" : result });
+    if (result === "signed-out" && retry) return login.prompt("zalak_report", () => void send(false));
     if (result === "ok") {
       setOpen(false);
       setReason(null);

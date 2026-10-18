@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { TrackClick } from "@/components/analytics/track-click";
 import { Link } from "@/components/i18n/link";
 import { ArrowRight } from "lucide-react";
 import type { Area, CategoryWithCount } from "@/types";
@@ -22,12 +23,14 @@ export function CategoryIconRow({ categories }: { categories: CategoryWithCount[
     <ul className="grid grid-cols-4 gap-x-3 gap-y-5 lg:grid-cols-8 lg:gap-6">
       {categories.slice(0, HOME_DESKTOP_COUNT).map((c, i) => (
         <li key={c.slug} className={i >= HOME_PHONE_COUNT ? "hidden lg:block" : undefined}>
-          <Link href={categoryHref(c.slug)} className="group flex flex-col items-center gap-2 text-center">
-            <span className="flex size-[60px] items-center justify-center rounded-full bg-surface transition-colors group-hover:bg-canvas lg:size-[76px]">
-              <CategoryIcon name={c.icon} className="size-6 lg:size-[30px]" />
-            </span>
-            <span className="text-caption leading-tight">{c.shortName}</span>
-          </Link>
+          <TrackClick event="category_open" properties={{ category: c.slug }}>
+            <Link href={categoryHref(c.slug)} className="group flex flex-col items-center gap-2 text-center">
+              <span className="flex size-[60px] items-center justify-center rounded-full bg-surface transition-colors group-hover:bg-canvas lg:size-[76px]">
+                <CategoryIcon name={c.icon} className="size-6 lg:size-[30px]" />
+              </span>
+              <span className="text-caption leading-tight">{c.shortName}</span>
+            </Link>
+          </TrackClick>
         </li>
       ))}
     </ul>
@@ -41,21 +44,23 @@ export async function CategoryImageGrid({ categories }: { categories: CategoryWi
     <ul className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-8">
       {categories.map((c) => (
         <li key={c.slug}>
-          <Link href={categoryHref(c.slug)} className="group flex flex-col gap-2.5">
-            <span className="relative aspect-square overflow-hidden rounded-2xl bg-surface">
-              <Image
-                src={c.image}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 285px, 50vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-              />
-            </span>
-            <span>
-              <span className="block text-title leading-snug font-semibold">{c.name}</span>
-              <span className="mt-0.5 block text-body-sm text-muted">{formatOfferCount(c.offerCount, t)}</span>
-            </span>
-          </Link>
+          <TrackClick event="category_open" properties={{ category: c.slug }}>
+            <Link href={categoryHref(c.slug)} className="group flex flex-col gap-2.5">
+              <span className="relative aspect-square overflow-hidden rounded-2xl bg-surface">
+                <Image
+                  src={c.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 285px, 50vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                />
+              </span>
+              <span>
+                <span className="block text-title leading-snug font-semibold">{c.name}</span>
+                <span className="mt-0.5 block text-body-sm text-muted">{formatOfferCount(c.offerCount, t)}</span>
+              </span>
+            </Link>
+          </TrackClick>
         </li>
       ))}
     </ul>

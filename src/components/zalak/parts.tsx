@@ -10,6 +10,7 @@ import { useToggleSave } from "@/components/offers/save-button";
 import { buttonClass } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { reportReelEvent, useLikedStories } from "@/hooks/use-zalak-memory";
+import { track } from "@/lib/analytics/client";
 import { setReactionAction } from "@/lib/actions/zalak";
 import { formatDistance } from "@/lib/format";
 import { localizePath } from "@/lib/i18n/config";
@@ -353,9 +354,9 @@ function useReaction(story: ZalakStory, clip: ZalakClip, reaction: "like" | "sav
     const before = mine[key] ?? start;
     setMine((all) => ({ ...all, [key]: { on: want, count: Math.max(0, before.count + (want === before.on || reaction === "save" ? 0 : want ? 1 : -1)) } }));
     const result = await setReactionAction(story.kind, id!, reaction, want);
-    if (result === "ok") return;
+    if (result === "ok") return track("zalak_react", { kind: story.kind, reaction, on: want });
     setMine((all) => ({ ...all, [key]: before }));
-    if (result === "signed-out" && retry) login.prompt(() => void send(want, false));
+    if (result === "signed-out" && retry) login.prompt("zalak_like", () => void send(want, false));
     else toast(t("Could not save. Please try again."));
   }
 

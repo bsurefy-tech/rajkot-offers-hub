@@ -9,6 +9,7 @@ import { getT } from "@/lib/i18n/server";
 import { img } from "@/lib/mock/images";
 import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
+import { TrackClick } from "@/components/analytics/track-click";
 import { whatsappHref } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -75,26 +76,32 @@ async function GetTheApp() {
       <p className="text-body-sm text-muted">{t("It is free. Add your shop once, then post new offers whenever you like and see how many people view, call and visit.")}</p>
       <div className="flex flex-col gap-3 sm:flex-row">
         {android && (
-          <ButtonAnchor href={android} target="_blank" rel="noreferrer">
-            <Download size={18} aria-hidden />
-            {t("Get it on Google Play")}
-          </ButtonAnchor>
+          <TrackClick event="submit_offer_cta" properties={{ kind: "android" }}>
+            <ButtonAnchor href={android} target="_blank" rel="noreferrer">
+              <Download size={18} aria-hidden />
+              {t("Get it on Google Play")}
+            </ButtonAnchor>
+          </TrackClick>
         )}
         {ios && (
-          <ButtonAnchor href={ios} target="_blank" rel="noreferrer" variant={android ? "outline" : "primary"}>
-            <Download size={18} aria-hidden />
-            {t("Download on the App Store")}
-          </ButtonAnchor>
+          <TrackClick event="submit_offer_cta" properties={{ kind: "ios" }}>
+            <ButtonAnchor href={ios} target="_blank" rel="noreferrer" variant={android ? "outline" : "primary"}>
+              <Download size={18} aria-hidden />
+              {t("Download on the App Store")}
+            </ButtonAnchor>
+          </TrackClick>
         )}
-        <ButtonAnchor
-          href={whatsappHref(site.whatsapp, t("Hi, I want to list my shop's offer on Rajkot Offers Hub."))}
-          target="_blank"
-          rel="noreferrer"
-          variant="whatsappSolid"
-        >
-          <WhatsAppIcon size={18} />
-          {t("Message us on WhatsApp")}
-        </ButtonAnchor>
+        <TrackClick event="submit_offer_cta" properties={{ kind: "whatsapp" }}>
+          <ButtonAnchor
+            href={whatsappHref(site.whatsapp, t("Hi, I want to list my shop's offer on Rajkot Offers Hub."))}
+            target="_blank"
+            rel="noreferrer"
+            variant="whatsappSolid"
+          >
+            <WhatsAppIcon size={18} />
+            {t("Message us on WhatsApp")}
+          </ButtonAnchor>
+        </TrackClick>
       </div>
     </div>
   );

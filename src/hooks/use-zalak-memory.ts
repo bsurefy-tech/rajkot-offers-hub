@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { reelEventAction, reportSeenAction } from "@/lib/actions/zalak";
+import { track } from "@/lib/analytics/client";
 
 /**
  * What this browser remembers about Zalak: which statuses it has watched (the ring on the home page turns
@@ -66,6 +67,7 @@ const reported = new Set<string>();
 export function reportSeen(type: "status" | "reel", id: string | undefined) {
   if (!id || reported.has(id)) return;
   reported.add(id);
+  if (type === "status") track("status_view", {});
   void reportSeenAction(type, [id]);
 }
 
@@ -79,6 +81,7 @@ export function reportReelEvent(id: string | undefined, type: "view" | "complete
     if (counted.has(key)) return;
     counted.add(key);
   }
+  track(`reel_${type}`, {});
   void reelEventAction(id, type);
 }
 
@@ -101,4 +104,5 @@ export function useTourPending(kind: "reel" | "status") {
 
 export function markTourDone(kind: "reel" | "status") {
   write(`${TOUR_KEY}-${kind}`, "done");
+  track("zalak_tour_done", { kind });
 }

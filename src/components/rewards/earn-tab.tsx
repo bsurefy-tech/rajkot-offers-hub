@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Check, Clock, Copy, Gift, Link2, QrCode, Share2, Store, Users } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -112,6 +113,7 @@ function TaskSheet({ task, onClose, onDone }: { task: LoyaltyTask | null; onClos
         if (!saved.ok) return setError(saved.detail ?? t(saved.error === "login" ? "Log in again to continue." : saved.error));
       }
       const done = await submitTaskAction(task.id, form);
+      track("task_submit", { type: task.type, provider: task.provider ?? "", result: done.ok ? "ok" : "error" });
       if (!done.ok) return setError(done.detail ?? t(done.error === "login" ? "Log in again to continue." : done.error));
       toast(t("Sent. We'll check it and add your points."));
       onDone();
@@ -170,6 +172,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
     if (navigator.share) {
       try {
         await navigator.share({ text, url: referral.invite_url ?? undefined });
+        track("referral_share", { method: "share_sheet" });
         return;
       } catch (e) {
         if ((e as DOMException).name === "AbortError") return;
@@ -177,6 +180,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
     }
     try {
       await navigator.clipboard.writeText(`${text} ${referral.invite_url ?? ""}`.trim());
+      track("referral_share", { method: "copy" });
       toast(referral.invite_url ? t("Link copied") : t("Code copied"));
     } catch {
       toast(url);
@@ -187,6 +191,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
     setError(null);
     start(async () => {
       const done = await applyReferralAction(String(form.get("code") ?? ""));
+      track("referral_apply", { result: done.ok ? "ok" : "error" });
       if (!done.ok) return setError(done.detail ?? t(done.error === "login" ? "Log in again to continue." : done.error));
       toast(t("Invite code added"));
       onChanged();

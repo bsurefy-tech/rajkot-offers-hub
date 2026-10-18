@@ -2,6 +2,7 @@
 
 import { List, Map } from "lucide-react";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { track } from "@/lib/analytics/client";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +30,10 @@ export function ViewToggle({ className }: { className?: string }) {
     <button
       type="button"
       aria-pressed={view === value}
-      onClick={() => setView(value)}
+      onClick={() => {
+        if (view !== value) track("view_toggle", { view: value });
+        setView(value);
+      }}
       className={cn(
         "inline-flex h-full cursor-pointer items-center justify-center gap-1.5 px-4 text-body font-medium",
         view === value ? "bg-ink text-white" : "bg-white text-ink hover:bg-surface",

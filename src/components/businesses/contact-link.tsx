@@ -4,6 +4,7 @@ import { useState, useTransition, type ReactNode } from "react";
 import { useLogin } from "@/components/auth/login-dialog";
 import { useToast } from "@/components/ui/toast";
 import { revealContactAction } from "@/lib/actions/auth";
+import { track } from "@/lib/analytics/client";
 import { trackOffer } from "@/components/offers/track";
 import { useT } from "@/lib/i18n/client";
 import { telHref, whatsappHref } from "@/lib/utils";
@@ -52,12 +53,13 @@ export function ContactLink({
   const reveal = () =>
     start(async () => {
       const result = await revealContactAction(business);
+      track("contact_reveal", { shop: business, kind, result: result.ok ? "ok" : result.error === "login" ? "login" : "error" });
       if (result.ok) {
         revealed.set(business, result.data);
         setNumbers(result.data);
         open(result.data);
       } else if (result.error === "login") {
-        login.prompt(reveal);
+        login.prompt("shop_contact", reveal);
       } else {
         toast(t(result.error));
       }
@@ -85,7 +87,7 @@ export function ContactLink({
       aria-label={numbers ? undefined : t("Log in to see the number")}
       onClick={() => {
         if (numbers) return open(numbers);
-        if (!login.signedIn()) return login.prompt(reveal);
+        if (!login.signedIn()) return login.prompt("shop_contact", reveal);
         reveal();
       }}
     >

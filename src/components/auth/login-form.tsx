@@ -4,6 +4,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { PhoneInput } from "@/components/ui/input";
+import { identifyFromCookie, track } from "@/lib/analytics/client";
 import { setMpinAction, startLoginAction, verifyLoginAction, type AuthResult } from "@/lib/actions/auth";
 import { useT } from "@/lib/i18n/client";
 import { PinInput } from "./pin-input";
@@ -22,17 +23,28 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
   const [devCode, setDevCode] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
 
-  function run<T>(action: () => Promise<AuthResult<T>>, onOk: (data: T) => void) {
+  function run<T>(step: Step, action: () => Promise<AuthResult<T>>, onOk: (data: T) => void) {
     setError(null);
     startTransition(async () => {
       const result = await action();
       if (result.ok) onOk(result.data);
-      else setError(t(result.error, result.vars));
+      else {
+        track("login_failed", { step, reason: result.error });
+        setError(t(result.error, result.vars));
+      }
     });
   }
 
+  /** Signed in: tell analytics who this is, then carry on (the page, or the popup's action). */
+  function loggedIn(newUser: boolean) {
+    track("login_done", { new_user: newUser, popup: Boolean(onDone) });
+    identifyFromCookie();
+    onDone?.();
+  }
+
   function requestCode(force: boolean) {
-    run(() => startLoginAction(mobile, force), (r) => {
+    run("mobile", () => startLoginAction(mobile, force), (r) => {
+      track("login_start", { method: r.method, forced: force });
       setDevCode(r.devCode);
       setStep(r.method === "mpin" && !force ? "mpin" : "code");
     });
@@ -45,14 +57,23 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
     if (step === "mobile") {
       const number = value("mobile");
       setMobile(number);
-      run(() => startLoginAction(number), (r) => {
+      run("mobile", () => startLoginAction(number), (r) => {
+        track("login_start", { method: r.method, forced: false });
         setDevCode(r.devCode);
         setStep(r.method === "mpin" ? "mpin" : "code");
       });
     } else if (step === "mpin" || step === "code") {
-      run(() => verifyLoginAction(mobile, value(step), next, Boolean(onDone)), (r) => (r.setMpin ? setStep("set") : onDone?.()));
+      const method = step === "mpin" ? "mpin" : "otp";
+      run(step, () => verifyLoginAction(mobile, value(step), next, Boolean(onDone)), (r) => {
+        track("login_verified", { method });
+        if (r.setMpin) setStep("set");
+        else loggedIn(false);
+      });
     } else {
-      run(() => setMpinAction(value("mpin"), value("confirm"), next, Boolean(onDone)), () => onDone?.());
+      run("set", () => setMpinAction(value("mpin"), value("confirm"), next, Boolean(onDone)), () => {
+        track("mpin_set", {});
+        loggedIn(true);
+      });
     }
   }
 

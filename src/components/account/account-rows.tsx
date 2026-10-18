@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Bell, BellRing, Bookmark, Gift, Heart, KeyRound, Ticket, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ChangeMpinForm, DeleteAccountForm, NameForm } from "@/components/auth/account-forms";
@@ -101,6 +102,7 @@ function FollowingPushRow() {
 
   async function toggle() {
     const want = !on;
+    track("push_toggle", { on: want });
     setOn(want);
     if (!(await setFollowingPushAction(want))) {
       setOn(!want);

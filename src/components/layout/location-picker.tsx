@@ -5,6 +5,7 @@ import NextLink from "next/link";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Sheet } from "@/components/ui/sheet";
+import { track } from "@/lib/analytics/client";
 import { isAreaScoped, stripArea } from "@/lib/areas";
 import { localizePath, splitLocale } from "@/lib/i18n/config";
 import { useLocale, useT } from "@/lib/i18n/client";
@@ -139,7 +140,10 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
             selected={!narrowed}
             name={t("All Rajkot")}
             count={formatOfferCount(total, t)}
-            onPick={() => setOpen(false)}
+            onPick={() => {
+              track("area_select", { area: "all" });
+              setOpen(false);
+            }}
           />
           <li aria-hidden className="mx-3 my-1 h-px bg-line" />
           {areas.map((area) => (
@@ -149,7 +153,10 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
               selected={area.slug === currentSlug}
               name={area.name}
               count={formatOfferCount(area.offerCount, t)}
-              onPick={() => setOpen(false)}
+              onPick={() => {
+                track("area_select", { area: area.slug });
+                setOpen(false);
+              }}
             />
           ))}
         </ul>

@@ -11,6 +11,8 @@
  * httpOnly cookies and guest reads go through Next's cache.
  */
 
+import { trackServer } from "@/lib/analytics/server";
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -80,6 +82,7 @@ export async function api<T>(path: string, { query, method = "GET", body, token,
     headers["X-Frontend-Key"] = process.env.API_FRONTEND_KEY;
   }
 
+  const endpoint = `${method} /${path.split("/")[1] ?? ""}`;
   const response = await fetch(`${apiBaseUrl()}${path}${search(query)}`, {
     method,
     headers,
@@ -87,11 +90,15 @@ export async function api<T>(path: string, { query, method = "GET", body, token,
     // Guest reads are shared by every visitor, so they are cached for a minute (the API caches too).
     // Anything personal, or that changes data, is never cached.
     ...(method === "GET" && !token && !client && !fresh ? { next: { revalidate: GUEST_REVALIDATE_SECONDS } } : { cache: "no-store" as const }),
+  }).catch((error: unknown) => {
+    trackServer("api_error", { endpoint, status: 0 });
+    throw error;
   });
   if (response.status === 204) return undefined as T;
 
   const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
+    if (response.status >= 500) trackServer("api_error", { endpoint, status: response.status });
     const retry = Number(response.headers.get("retry-after"));
     throw new ApiError(
       response.status,

@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/display";
 import { RatingInline } from "@/components/ui/rating";
 import { formatDistance, formatRupees, formatUntil } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n/client";
+import { track } from "@/lib/analytics/client";
 import { cn } from "@/lib/utils";
 import { SaveButton } from "./save-button";
 import { offerPath } from "@/lib/paths";
@@ -61,7 +62,7 @@ export function OfferCard({
       </div>
       <div className={cn("flex flex-col gap-1 px-3.5 pt-3 pb-3.5 lg:gap-1.5 lg:px-4 lg:pt-4 lg:pb-[18px]", expired && "opacity-65")}>
         <h3 className="line-clamp-2 text-title leading-[1.4] font-semibold lg:leading-[1.45]">
-          <Link href={offerPath(offer)} className="after:absolute after:inset-0 after:content-['']">
+          <Link href={offerPath(offer)} onClick={() => track("offer_card_click", { offer_id: offer.id })} className="after:absolute after:inset-0 after:content-['']">
             {offer.title}
           </Link>
         </h3>

@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Anek_Gujarati, IBM_Plex_Sans } from "next/font/google";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { Analytics } from "@/components/analytics/analytics";
 import { LoginProvider } from "@/components/auth/login-dialog";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { ToastProvider } from "@/components/ui/toast";
+import { ENABLED_ATTRIBUTE } from "@/lib/analytics/client";
+import { analyticsConfig } from "@/lib/analytics/config";
+import { ANALYTICS_USER_COOKIE, SIGNED_IN_HINT_COOKIE } from "@/lib/auth/cookies";
 import { hasLocale } from "@/lib/i18n/config";
 import { LocaleProvider } from "@/lib/i18n/client";
 import { getLocale, getT } from "@/lib/i18n/server";
@@ -70,10 +75,15 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
+  const analytics = analyticsConfig();
+  const jar = analytics ? await cookies() : undefined;
+  const signedIn = Boolean(jar?.has(SIGNED_IN_HINT_COOKIE));
+  const profileId = signedIn ? jar?.get(ANALYTICS_USER_COOKIE)?.value : undefined;
 
   return (
     <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(plex.variable, lang === "gu" && anek.variable)}>
-      <body className="flex min-h-dvh flex-col">
+      <body className="flex min-h-dvh flex-col" {...(analytics && { [ENABLED_ATTRIBUTE]: "" })}>
+        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} profileId={profileId} />}
         <LocaleProvider locale={lang}>
           <ToastProvider>
             <LoginProvider>{children}</LoginProvider>

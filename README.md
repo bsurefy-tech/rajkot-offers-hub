@@ -81,6 +81,19 @@ Builds, which starts clean). `pnpm preview` runs the built worker locally (copy 
 - `proxy.ts` runs as Node.js middleware, which OpenNext marks experimental on Cloudflare; it works
   here (language routing, 404s and session renewal were tested in workerd).
 
+## Analytics (OpenPanel)
+
+Self-hosted OpenPanel at `OPENPANEL_API_URL`, off unless `OPENPANEL_ENABLED=true` (set in `.env.production`; leave it
+unset locally so development sends nothing). The browser never talks to OpenPanel directly: it loads the script and
+sends events through this site's `/api/op` proxy (`src/app/api/op/[...op]/route.ts`), which forwards to the API with the
+visitor's IP. Visitors with Do Not Track or Global Privacy Control, and crawlers, are left out
+(`src/components/analytics/analytics.tsx`).
+
+Send an event with the typed wrapper, never the SDK directly: add it to `src/lib/analytics/events.ts`, then
+`track("event_name", { ... })` from `src/lib/analytics/client.ts`. Every event also carries `lang`, `page_type` and
+`signed_in`. To try it locally, point `OPENPANEL_API_URL` / `OPENPANEL_CLIENT_ID` at a staging project, not production.
+The plan and event catalogue are in `docs/plans/openpanel-analytics.md`.
+
 ## Launch check
 
 A read-only check of the API and the deployed site (it never logs in, claims or reveals anything):
