@@ -278,7 +278,7 @@ async function OfferContent({ slug }: { slug: string }) {
       <StickyActionBar
         lead={
           <>
-            <ButtonLink href={shopPath(business.slug)} variant="outline" size="sm" className="min-w-0 flex-1 px-2">
+            <ButtonLink href={shopPath(business.slug)} size="sm" className="min-w-0 flex-1 px-2">
               <Store size={18} aria-hidden />
               {t("Shop")}
             </ButtonLink>
