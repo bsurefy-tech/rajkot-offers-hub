@@ -9,8 +9,8 @@ export const site = {
   instagram: "@rajkotoffershub",
   email: "hello@rajkotoffershub.com",
   /** The one number for calls and WhatsApp (contact page, submit an offer, report an offer). */
-  phone: "+91 99399 83083",
-  whatsapp: "+91 99399 83083",
+  phone: "+91 94294 74941",
+  whatsapp: "+91 94294 74941",
   location: "Rajkot, Gujarat",
   /** For structured data: the city the site serves. */
   region: "Gujarat",
