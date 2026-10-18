@@ -397,6 +397,7 @@ export const gu = {
   "{km} km": "{km} કિ.મી.",
   "Show code": "કોડ જુઓ",
   "Claim my code": "મારો કોડ મેળવો",
+  "Swipe to claim your code": "તમારો કોડ મેળવવા સ્વાઇપ કરો",
   "This offer has a code to show at the store.": "આ ઓફરમાં દુકાને બતાવવાનો કોડ છે.",
   "This offer needs a personal code. Log in to claim yours.": "આ ઓફર માટે તમારો પોતાનો કોડ જોઈએ. તે મેળવવા લોગ ઇન કરો.",
   "Show this code at the store.": "આ કોડ દુકાને બતાવો.",

@@ -12,6 +12,7 @@ import { useLocale, useT } from "@/lib/i18n/client";
 import { formatShortDate } from "@/lib/format";
 import type { MessageKey } from "@/lib/i18n/translate";
 import { cn } from "@/lib/utils";
+import { SwipeToClaim } from "./swipe-to-claim";
 import type { RedemptionMode } from "@/types";
 
 type Shown = Extract<CodeResult, { ok: true }>;
@@ -93,9 +94,13 @@ export function OfferCode({
               {claim ? t("This offer needs a personal code. Log in to claim yours.") : t("This offer has a code to show at the store.")}
             </p>
           )}
-          <Button type="button" onClick={get} disabled={pending} block>
-            {t("Claim my code")}
-          </Button>
+          {compact ? (
+            <SwipeToClaim onClaim={get} busy={pending} />
+          ) : (
+            <Button type="button" onClick={get} disabled={pending} block>
+              {t("Claim my code")}
+            </Button>
+          )}
         </div>
       )}
       {error && (
@@ -111,7 +116,7 @@ function CodeBox({ code }: { code: string }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3">
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-white px-4 py-3 motion-safe:animate-code-cut">
       <span className="font-mono text-2xl font-semibold tracking-[0.2em]">{code}</span>
       <button
         type="button"
