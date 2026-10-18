@@ -88,7 +88,7 @@ export const gu = {
   "No offers in this category right now": "આ કેટેગરીમાં હાલ કોઈ ઓફર નથી",
   "No saved offers yet": "હજુ કોઈ ઓફર સેવ નથી કરી",
   "Offer": "ઓફર",
-  "Offer details may change. Please confirm before you buy.": "ઓફરની વિગતો બદલાઈ શકે છે. ખરીદી પહેલાં ખાતરી કરી લો.",
+  "Every offer is checked by our team before it goes live.": "દરેક ઓફર લાઈવ થાય તે પહેલાં અમારી ટીમ દ્વારા ચકાસવામાં આવે છે.",
   "Offer expired": "ઓફર પૂરી થઈ",
   "Offer removed": "ઓફર દૂર કરી",
   "Offer saved": "ઓફર સેવ થઈ ગઈ",
