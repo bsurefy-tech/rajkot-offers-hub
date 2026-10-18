@@ -201,7 +201,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
           <PhotoMosaic images={images} alt={business.name}>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
             <div className="flex min-w-0 items-center gap-3">
               <ShopStatusAvatar logo={business.logo} slug={business.slug} status={status} className="size-[60px] lg:size-20" />
               <div className="min-w-0">

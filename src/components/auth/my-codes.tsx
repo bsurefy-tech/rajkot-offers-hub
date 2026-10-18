@@ -23,7 +23,7 @@ export async function MyCodes({ token }: { token: string }) {
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   const { data: claims } = await api<Page<PromotionClaim>>("/promotion-claims", { token, query: { per_page: 30 } });
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 lg:p-6">
+    <section className="rounded-2xl border border-line bg-white p-4 lg:p-6">
       {claims.length === 0 ? (
         <EmptyState
           icon={Ticket}

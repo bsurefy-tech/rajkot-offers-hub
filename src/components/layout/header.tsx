@@ -43,7 +43,7 @@ export async function DesktopHeader({ className }: { className?: string }) {
 export function MobileHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/95 backdrop-blur lg:hidden">
-      <div className="flex h-14 items-center justify-between px-5">
+      <div className="flex h-14 items-center justify-between px-4">
         <Logo priority />
         <div className="flex items-center gap-2">
           <LanguageToggle />

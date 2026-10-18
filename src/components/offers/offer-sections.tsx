@@ -46,7 +46,7 @@ export async function BusinessRow({
 export async function HowToGetSteps({ steps }: { steps: OfferStep[] }) {
   const t = await getT();
   return (
-    <section className="rounded-2xl bg-surface p-5 lg:p-6">
+    <section className="rounded-2xl bg-surface p-4 lg:p-6">
       <h2 className="mb-4 text-heading font-semibold">{t("How to get this offer")}</h2>
       <ol className="flex flex-col gap-3 lg:gap-4">
         {steps.map((step, i) => (

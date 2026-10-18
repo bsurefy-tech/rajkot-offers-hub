@@ -32,7 +32,7 @@ export function StickyChips({ children }: { children: ReactNode }) {
     <div
       ref={bar}
       className={cn(
-        "sticky top-14 z-20 -mx-5 flex flex-col gap-3 px-5 py-3 transition-[background-color,box-shadow] lg:static lg:mx-0 lg:p-0",
+        "sticky top-14 z-20 -mx-4 flex flex-col gap-3 px-4 py-3 transition-[background-color,box-shadow] lg:static lg:mx-0 lg:p-0",
         stuck ? "bg-white/95 shadow-header backdrop-blur lg:bg-transparent lg:shadow-none lg:backdrop-blur-none" : "bg-transparent",
       )}
     >

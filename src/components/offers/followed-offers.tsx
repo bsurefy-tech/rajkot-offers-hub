@@ -40,7 +40,7 @@ export function FollowedOffers({ framed, className }: { framed?: boolean; classN
   // Not `Section`/`Container`: that module is server-only, and this is a client component.
   return framed ? (
     <section className="bg-white py-8 lg:py-12">
-      <div className="mx-auto w-full max-w-[1240px] px-5">{content}</div>
+      <div className="mx-auto w-full max-w-[1240px] px-4 lg:px-5">{content}</div>
     </section>
   ) : (
     content

@@ -145,7 +145,7 @@ async function OfferContent({ slug }: { slug: string }) {
       {!expired && <TrackOfferView offerId={offer.id} />}
       <JsonLd data={crumbs} />
       {expired && (
-        <div role="status" className="bg-surface px-5 py-3 text-center text-body-sm font-medium text-muted lg:mb-6 lg:rounded-2xl">
+        <div role="status" className="bg-surface px-4 py-3 text-center text-body-sm font-medium text-muted lg:mb-6 lg:rounded-2xl">
           {t("This offer has ended")}
         </div>
       )}
@@ -165,7 +165,7 @@ async function OfferContent({ slug }: { slug: string }) {
             <div className={cn("absolute bottom-4 left-4 hidden lg:block", expired && "opacity-80")}>{badge}</div>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
             <div className="flex min-w-0 items-start gap-4 lg:items-center">
                             <ShopAvatar logo={business.logo} className="hidden size-20 shrink-0 lg:flex" />
               <div className="min-w-0">

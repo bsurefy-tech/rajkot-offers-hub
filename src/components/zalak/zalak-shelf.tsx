@@ -6,7 +6,7 @@ import { ShopAvatar } from "./avatar";
 /** The Zalak shelf on the home page: tall reel cards that open the viewer on that reel. */
 export function ZalakShelf({ stories }: { stories: ZalakStory[] }) {
   return (
-    <ul className="no-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-5 lg:overflow-visible lg:px-0">
+    <ul className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-5 lg:overflow-visible lg:px-0">
       {stories.map((story) => (
         <li key={story.id} className="w-[calc((100vw-2.75rem)/2.08)] shrink-0 lg:w-auto">
           <Link

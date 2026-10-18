@@ -136,7 +136,7 @@ export function AreaPills({ areas, className }: { areas: Area[]; className?: str
   return (
     <ul
       className={cn(
-        "no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 lg:mx-0 lg:flex-wrap lg:gap-3 lg:overflow-visible lg:px-0",
+        "no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:gap-3 lg:overflow-visible lg:px-0",
         className,
       )}
     >

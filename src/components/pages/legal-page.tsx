@@ -12,7 +12,7 @@ export async function LegalPage({ title, updated, intro, sections }: { title: st
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   return (
     <Container className="max-w-3xl py-6 lg:py-14">
-      <div className="rounded-2xl border border-line bg-white p-5 lg:p-10">
+      <div className="rounded-2xl border border-line bg-white p-4 lg:p-10">
         <h1 className="text-page font-semibold">{title}</h1>
         <p className="mt-2 text-body-sm text-muted">{t("Last updated: {date}", { date: updated })}</p>
         {locale !== "en" && <p className="mt-3 rounded-xl bg-surface px-4 py-3 text-body-sm text-muted">{t("This page is available in English only.")}</p>}

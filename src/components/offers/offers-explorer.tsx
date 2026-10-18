@@ -79,7 +79,7 @@ export async function OffersExplorer({
   );
 
   const chipRow = (
-    <div className={cn("no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5", "lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0")}>
+    <div className={cn("no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4", "lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0")}>
       {scope.options.length > 1 && (
         <ChipMenu label={scope.label} options={scopeOptions} value={scopeValue > 0 ? scope.options[scopeValue].label : undefined} />
       )}

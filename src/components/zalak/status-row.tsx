@@ -16,7 +16,7 @@ export function StatusRow({ stories }: { stories: ZalakStory[] }) {
   const seen = useSeenStatuses();
   if (stories.length === 0) return null;
   return (
-    <ul aria-label={t("Status")} className="no-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 lg:mx-0 lg:gap-6 lg:px-0">
+    <ul aria-label={t("Status")} className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 lg:mx-0 lg:gap-6 lg:px-0">
       {stories.map((story) => {
         // The API says what the viewer has not watched; this browser's memory covers what was watched since the page loaded.
         const watched = story.live ? !story.unseen || seen.has(ringSeenKey(story)) : seen.has(story.id);

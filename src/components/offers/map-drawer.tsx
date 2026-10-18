@@ -52,7 +52,7 @@ export function MapDrawer({ onClose, header, children }: MapDrawerProps) {
     >
       <SheetClose onClose={onClose} />
       <div className="flex h-[calc(100dvh-4.5rem)] flex-col rounded-t-3xl bg-white">
-        <div className="flex flex-col gap-3 px-5 pt-5 pb-3">{header}</div>
+        <div className="flex flex-col gap-3 px-4 pt-5 pb-3">{header}</div>
         <div className="flex min-h-0 flex-1 flex-col pb-5">{children}</div>
       </div>
     </dialog>

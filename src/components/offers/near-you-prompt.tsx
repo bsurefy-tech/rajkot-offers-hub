@@ -61,7 +61,7 @@ export function NearYouPrompt() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-5 lg:p-7">
+    <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-4 lg:p-7">
       {/* Radar rings: a quiet hint of "around you" behind the content. */}
       <span aria-hidden className="pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full border border-primary/10 lg:-right-10 lg:-bottom-32 lg:size-96" />
       <span aria-hidden className="pointer-events-none absolute -right-6 -bottom-14 size-48 rounded-full border border-primary/10 lg:right-4 lg:-bottom-20 lg:size-64" />

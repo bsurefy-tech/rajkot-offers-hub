@@ -84,7 +84,7 @@ export default async function ContactPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-line bg-white p-5 lg:p-8">
+          <div className="rounded-2xl border border-line bg-white p-4 lg:p-8">
             <h2 className="text-heading font-semibold">{t("The quickest way to reach us")}</h2>
             <p className="mt-2 text-body-sm text-muted">{t("Message us on WhatsApp with your question or the offer you want to tell us about. We reply on working days.")}</p>
             <ButtonAnchor href={whatsappHref(site.whatsapp)} target="_blank" rel="noreferrer" variant="whatsappSolid" className="mt-4">

@@ -4,9 +4,9 @@ import type { ComponentProps, ReactNode } from "react";
 import { getT } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
-/** 1200px content column with 20px gutters. */
+/** 1200px content column with 16px gutters on a phone, 20px on desktop. */
 export function Container({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("mx-auto w-full max-w-[1240px] px-5", className)} {...props} />;
+  return <div className={cn("mx-auto w-full max-w-[1240px] px-4 lg:px-5", className)} {...props} />;
 }
 
 interface SectionProps extends ComponentProps<"section"> {

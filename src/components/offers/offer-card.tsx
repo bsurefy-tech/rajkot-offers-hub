@@ -179,7 +179,7 @@ export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSum
   return (
     <div
       className={cn(
-        "no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1",
+        "no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1",
         "lg:mx-0 lg:grid lg:gap-6 lg:overflow-visible lg:px-0",
         desktopColumns === 4
           ? "lg:grid-cols-4 lg:[&>*:nth-child(n+5)]:hidden"
@@ -203,7 +203,7 @@ export function OfferCarouselSkeleton({ desktopColumns = 4 }: { desktopColumns?:
   return (
     <div
       className={cn(
-        "no-scrollbar -mx-5 flex gap-3 overflow-hidden px-5 pb-1",
+        "no-scrollbar -mx-4 flex gap-3 overflow-hidden px-4 pb-1",
         "lg:mx-0 lg:grid lg:gap-6 lg:overflow-visible lg:px-0",
         desktopColumns === 4
           ? "lg:grid-cols-4 lg:[&>*:nth-child(n+5)]:hidden"

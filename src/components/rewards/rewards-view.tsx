@@ -139,7 +139,7 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
             <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
             <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>
           </div>
-          <ul className="no-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+          <ul className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
             {data.cards.map((card) => (
               <li key={card.id} className="shrink-0">
                 <button

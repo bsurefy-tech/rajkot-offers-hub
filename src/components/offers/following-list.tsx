@@ -83,7 +83,7 @@ export function FollowingList() {
         <p className="mb-3 text-body-sm text-muted">
           {liveTotal > 0 ? t("{offers} live from {shops} of your shops", { offers: liveTotal, shops: withOffers.length }) : t("None of your shops has a live offer right now.")}
         </p>
-        <ul className="no-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
+        <ul className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
           {[...withOffers, ...list.filter((shop) => shop.offers.length === 0)].map((shop) => (
             <li key={shop.slug} className="w-[68px] shrink-0">
               <Link href={shopPath(shop.slug)} className="flex flex-col items-center gap-1.5">

@@ -75,18 +75,18 @@ export function Sheet({ open, onClose, title, children, footer, className }: She
     >
       <SheetClose onClose={onClose} />
       <div className="flex max-h-[85dvh] min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl">
-        <div className="flex items-center justify-between border-b border-line px-5 py-4 lg:px-6 lg:pt-5">
+        <div className="flex items-center justify-between border-b border-line px-4 py-4 lg:px-6 lg:pt-5">
           <h2 className="text-heading font-semibold">{title}</h2>
           <IconButton variant="soft" size="sm" aria-label={t("Close")} onClick={onClose} className="hidden lg:inline-flex">
             <X size={18} />
           </IconButton>
         </div>
         <FooterContext value={footerEl}>
-          <div className="flex-1 overflow-y-auto px-5 py-4 lg:px-6 lg:pb-5">{children}</div>
+          <div className="flex-1 overflow-y-auto px-4 py-4 lg:px-6 lg:pb-5">{children}</div>
         </FooterContext>
         <div
           ref={setFooterEl}
-          className="shrink-0 border-t border-line px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] empty:hidden lg:px-6"
+          className="shrink-0 border-t border-line px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] empty:hidden lg:px-6"
         >
           {footer}
         </div>
