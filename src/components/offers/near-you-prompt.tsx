@@ -44,18 +44,24 @@ export function NearYouPrompt() {
   }
 
   return (
-    <div className="flex flex-col items-start gap-3 rounded-2xl bg-surface p-4 lg:flex-row lg:items-center lg:justify-between lg:p-6">
-      <div className="flex items-start gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-primary">
-          <LocateFixed size={20} aria-hidden />
-        </span>
-        <p className="text-sm lg:text-[15px] leading-snug">{t("See the offers closest to you, nearest first.")}</p>
+    <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-5 lg:p-7">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        <div className="flex items-center gap-4 lg:gap-5">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-card ring-4 ring-primary/10 lg:size-16">
+            <LocateFixed size={26} aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <p className="text-base leading-snug font-bold lg:text-xl">{t("Find offers around you")}</p>
+            <p className="mt-1 text-sm leading-snug text-muted lg:text-[15px]">{t("See the offers closest to you, nearest first.")}</p>
+          </div>
+        </div>
+        <Button onClick={locate} disabled={busy} size="lg" className="w-full lg:w-auto">
+          <LocateFixed size={18} aria-hidden />
+          {locating ? t("Finding you…") : t("Offers near me")}
+        </Button>
       </div>
-      <Button onClick={locate} disabled={busy} className="w-full lg:w-auto">
-        {locating ? t("Finding you…") : t("Offers near me")}
-      </Button>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="mt-3 text-sm text-danger">
           {t(error)}
         </p>
       )}

@@ -596,6 +596,7 @@ export const gu = {
   "No offer codes yet": "હજી કોઈ ઓફર કોડ નથી",
   "Zalak": "ઝલક",
   "Near you": "તમારી નજીક",
+  "Find offers around you": "તમારી આસપાસની ઓફર્સ શોધો",
   "See the offers closest to you, nearest first.": "તમારી સૌથી નજીકની ઓફર્સ જુઓ, નજીકથી શરૂ કરીને.",
   "Status": "સ્ટેટસ",
   "Profile": "પ્રોફાઇલ",
