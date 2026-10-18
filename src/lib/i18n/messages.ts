@@ -356,6 +356,7 @@ export const gu = {
   "Could not send the code on WhatsApp. Please try again.": "WhatsApp પર કોડ મોકલી શકાયો નહીં. ફરી પ્રયાસ કરો.",
   "This step has expired. Verify your number again.": "આ પગલાની મુદત પૂરી થઈ. નંબર ફરી ચકાસો.",
   "My account": "મારું એકાઉન્ટ",
+  "My account ({count} new)": "મારું એકાઉન્ટ ({count} નવા)",
   "Account": "એકાઉન્ટ",
   "Back to top": "ઉપર જાઓ",
   "Roles": "ભૂમિકાઓ",

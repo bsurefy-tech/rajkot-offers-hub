@@ -1,13 +1,11 @@
 import { LanguageToggle } from "@/components/i18n/language-toggle";
-import { Bookmark, CircleUserRound, Gift } from "lucide-react";
 import type { ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/button";
-import { IconLink } from "@/components/ui/icon-button";
 import { getAreasWithCounts, getCategorySlugs } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
-import { loyaltyEnabled } from "@/lib/rewards/enabled";
 import { cn } from "@/lib/utils";
 import { BackLink } from "./back-link";
+import { AccountLink } from "./account-link";
 import { Container } from "./container";
 import { Logo } from "./logo";
 import { LocationPicker } from "./location-picker";
@@ -31,18 +29,7 @@ export async function DesktopHeader({ className }: { className?: string }) {
         <div className="flex items-center justify-end gap-2 xl:gap-3">
           <LocationPill />
           <LanguageToggle />
-          <NotificationBell />
-          {loyaltyEnabled() && (
-            <IconLink href="/rewards" variant="plain" size="lg" aria-label={t("Rewards")}>
-              <Gift size={20} aria-hidden />
-            </IconLink>
-          )}
-          <IconLink href="/saved" variant="plain" size="lg" aria-label={t("Saved offers")}>
-            <Bookmark size={20} aria-hidden />
-          </IconLink>
-          <IconLink href="/account" variant="plain" size="lg" aria-label={t("My account")}>
-            <CircleUserRound size={20} aria-hidden />
-          </IconLink>
+          <AccountLink />
           <ButtonLink href="/submit-offer" size="sm">
             {t("Submit an offer")}
           </ButtonLink>
