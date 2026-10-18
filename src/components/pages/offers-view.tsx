@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { PageMarker } from "@/components/analytics/page-marker";
+import { TrackSearch } from "@/components/analytics/track-search";
 import { Container, PageTitle } from "@/components/layout/container";
 import { SearchBar } from "@/components/marketing/search-bar";
 import { AreaLinks } from "@/components/offers/area-links";
@@ -144,6 +146,8 @@ async function OffersContent({
 
   return (
     <>
+      <PageMarker type="offers" category={category?.slug} area={area?.slug} />
+      {filters.q && <TrackSearch q={filters.q} results={result.total} />}
       <JsonLd data={await breadcrumbLd(crumbs)} />
       {/* The clean list only: a search or sorted variant names it as its canonical page. */}
       {clean && result.items.length > 0 && (

@@ -30,29 +30,25 @@ const FILTER = `function(e){
  * (`page_type`, `signed_in`, `lang`) current. Page views and outgoing link clicks are tracked by the script itself.
  */
 export function Analytics({ clientId, lang, signedIn }: { clientId: string; lang: string; signedIn: boolean }) {
-  const pageType = pageTypeOf(usePathname());
+  const pathname = usePathname();
+  const pageType = pageTypeOf(pathname);
   const first = useRef(true);
 
   // The first page's properties go in with the script; later pages update them before the script reports the view.
+  // The previous page's shop, category and area are dropped; the page's own `PageMarker` sets its own after this.
   useLayoutEffect(() => {
     if (first.current) {
       first.current = false;
       return;
     }
-    setGlobalProperties({ page_type: pageType, signed_in: signedInHint() });
-  }, [pageType]);
+    setGlobalProperties({ page_type: pageType, signed_in: signedInHint(), shop: undefined, category: undefined, area: undefined });
+    // `pageType` follows `pathname`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
-  // An installed app (home-screen icon) against a browser tab; waits for the script, which loads after the page.
+  // An installed app (home-screen icon) against a browser tab.
   useEffect(() => {
-    if (!window.matchMedia("(display-mode: standalone)").matches) return;
-    let tries = 0;
-    const timer = setInterval(() => {
-      if ("op" in window || ++tries > 25) {
-        clearInterval(timer);
-        setGlobalProperties({ standalone: true });
-      }
-    }, 200);
-    return () => clearInterval(timer);
+    if (window.matchMedia("(display-mode: standalone)").matches) setGlobalProperties({ standalone: true });
   }, []);
 
   return (

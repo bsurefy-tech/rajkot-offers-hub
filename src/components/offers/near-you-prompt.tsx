@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Check, LocateFixed, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -43,6 +44,7 @@ export function NearYouPrompt() {
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        track("location_request", { source: "prompt", result: "granted" });
         setLocating(false);
         startTransition(async () => {
           const result = await setGpsLocationAction(position.coords.latitude, position.coords.longitude);
@@ -52,6 +54,7 @@ export function NearYouPrompt() {
         });
       },
       (failure) => {
+        track("location_request", { source: "prompt", result: failure.code === failure.PERMISSION_DENIED ? "denied" : "error" });
         setLocating(false);
         if (failure.code === failure.PERMISSION_DENIED) setBlocked(true);
         else setError("We could not get your location.");

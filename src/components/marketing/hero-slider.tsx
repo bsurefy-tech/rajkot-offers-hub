@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/components/i18n/link";
+import { track as trackEvent } from "@/lib/analytics/client";
 import type { HeroSlide } from "@/lib/data/banners";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
@@ -64,7 +65,7 @@ export function HeroSlider({ slides, autoplayMs, loop, className }: HeroSliderPr
       >
         {slides.map((slide, i) => (
           <li key={slide.id} aria-roledescription="slide" className="aspect-[16/9] w-full shrink-0 snap-center sm:aspect-[2/1] lg:aspect-[3/1]">
-            <Link href={slide.href} className="block size-full" draggable={false}>
+            <Link href={slide.href} onClick={() => trackEvent("hero_click", { slide: slide.id })} className="block size-full" draggable={false}>
               <picture>
                 <source media="(min-width: 1024px)" srcSet={slide.images.desktop} />
                 <source media="(min-width: 640px)" srcSet={slide.images.tablet} />

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { useToast } from "@/components/ui/toast";
 import { loadSaves, useSaved } from "@/hooks/use-saved";
+import { track } from "@/lib/analytics/client";
 import type { SaveKind } from "@/lib/actions/saves";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,8 @@ export function useToggleSave(slug: string, kind: SaveKind) {
   const apply = (want?: boolean) => {
     const change = toggle(slug, want);
     if (!change) return false;
+    if (kind === "follow") track("follow_toggle", { shop: slug, on: change.saved });
+    else track("save_toggle", { kind, on: change.saved });
     if (kind === "follow") toast(change.saved ? t("Following. We'll tell you about this shop's new offers.") : t("Unfollowed"));
     else toast(change.saved ? t(kind === "shop" ? "Shop saved" : "Offer saved") : t("Removed from saved"));
     // The change goes to the API and can fail.

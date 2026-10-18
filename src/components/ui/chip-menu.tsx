@@ -5,6 +5,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { chipClass } from "@/components/ui/chip";
 import { Sheet } from "@/components/ui/sheet";
+import { track } from "@/lib/analytics/client";
 import { PICK_LOCATION_EVENT } from "@/lib/location";
 import { cn } from "@/lib/utils";
 
@@ -80,7 +81,15 @@ export function ChipMenu({ label, options, value, className }: ChipMenuProps) {
         return (
           <li key={option.key} role="option" aria-selected={option.selected} className="border-b border-line last:border-0 lg:border-0">
             {option.href ? (
-              <Link href={option.href} scroll={false} onClick={() => setOpen(null)} className={row}>
+              <Link
+                href={option.href}
+                scroll={false}
+                onClick={() => {
+                  setOpen(null);
+                  if (!option.selected) track("filter_apply", { filter: label, value: option.label });
+                }}
+                className={row}
+              >
                 {mark}
               </Link>
             ) : (
@@ -88,6 +97,7 @@ export function ChipMenu({ label, options, value, className }: ChipMenuProps) {
                 type="button"
                 onClick={() => {
                   setOpen(null);
+                  track("filter_apply", { filter: label, value: option.label });
                   if (option.pickLocation) window.dispatchEvent(new CustomEvent(PICK_LOCATION_EVENT));
                 }}
                 className={row}

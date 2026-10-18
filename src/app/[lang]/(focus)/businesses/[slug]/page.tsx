@@ -11,6 +11,7 @@ import { ContactLink } from "@/components/businesses/contact-link";
 import { OutletSideCards } from "@/components/businesses/outlets";
 import { OutletMap, type MapOutlet } from "@/components/businesses/outlet-map";
 import { PhotoMosaic } from "@/components/businesses/photo-mosaic";
+import { PageMarker } from "@/components/analytics/page-marker";
 import { Container } from "@/components/layout/container";
 import { FollowBarButton, FollowButton } from "@/components/offers/follow-button";
 import { OfferCard } from "@/components/offers/offer-card";
@@ -194,6 +195,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
 
   return (
     <div className="lg:bg-surface lg:pt-6 lg:pb-16">
+      <PageMarker type="shop" shop={business.slug} category={business.categorySlug} area={business.areaSlug} />
       <JsonLd data={await localBusinessLd(business, active, rating, reviews.items)} />
       <JsonLd data={crumbs} />
       <Container className="px-0 lg:px-5">

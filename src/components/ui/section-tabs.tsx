@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode, Fragment } from "react";
+import { track } from "@/lib/analytics/client";
 import { cn } from "@/lib/utils";
 
 export interface SectionTab {
@@ -86,6 +87,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
     const section = document.getElementById(value);
     if (!section) return;
     event.preventDefault();
+    track("tab_change", { tab: value });
     scrolling.current = true;
     window.setTimeout(() => {
       scrolling.current = false;

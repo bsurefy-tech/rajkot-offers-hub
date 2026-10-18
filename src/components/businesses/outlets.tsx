@@ -36,28 +36,32 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
       {outlets.map((outlet, i) => {
         const geo = outlet.geo ?? contact.geo;
         const hours = outlet.hours.length ? outlet.hours : contact.hours;
+        const rating = outlet.rating && <RatingInline rating={outlet.rating} className="shrink-0 text-body-sm text-muted" />;
         return (
           <section key={outlet.id} className="overflow-hidden rounded-2xl border border-line bg-white">
             <div className="flex flex-col gap-3 p-4 lg:gap-4 lg:p-6">
               <div className="flex items-center gap-3">
                 <ShopAvatar logo={contact.logo} className="size-11 border-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-body font-semibold">{contact.name}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="min-w-0 text-body font-semibold">{contact.name}</p>
+                    {!many && rating}
+                  </div>
                   {many && (
-                    <p className="mt-0.5 flex items-center gap-2 text-body-sm font-medium">
+                    <p className="mt-0.5 flex items-center justify-between gap-2 text-body-sm font-medium">
                       <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-full bg-ink text-micro font-semibold text-white">
                         {i + 1}
                       </span>
-                      <span className="min-w-0">
+                      <span className="min-w-0 flex-1">
                         {outlet.name}
                         {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-caption font-medium text-muted">{t("Main outlet")}</span>}
                       </span>
+                      {rating}
                     </p>
                   )}
                   <p className="mt-0.5 text-body-sm leading-relaxed text-muted">{outlet.address}</p>
                 </div>
               </div>
-              {outlet.rating && <RatingInline rating={outlet.rating} className="text-body-sm text-muted" />}
               <div className="grid grid-cols-4 gap-2">
                 <ContactLink business={contact.slug} kind="call" number={contact.phone} masked={contact.contactMasked} className={iconClass("primary")}>
                   <Phone size={18} aria-hidden />

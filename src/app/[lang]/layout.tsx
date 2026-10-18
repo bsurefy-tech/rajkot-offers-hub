@@ -80,13 +80,13 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   return (
     <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(plex.variable, lang === "gu" && anek.variable)}>
       <body className="flex min-h-dvh flex-col">
+        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} />}
         <LocaleProvider locale={lang}>
           <ToastProvider>
             <LoginProvider>{children}</LoginProvider>
             <ScrollToTop />
           </ToastProvider>
         </LocaleProvider>
-        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} />}
       </body>
     </html>
   );

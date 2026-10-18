@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link } from "@/components/i18n/link";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
+import { track } from "@/lib/analytics/client";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -13,18 +14,20 @@ interface StoreButtonProps {
   href: string;
   name: string;
   outlets: { id: string; name: string; address: string; isMain: boolean }[];
+  /** The shop's slug, for analytics. */
+  shop: string;
   className?: string;
 }
 
 /** "Store" button for the offer page's bottom bar: one outlet goes straight to the shop; several open a sheet listing them. */
-export function StoreButton({ href, name, outlets, className }: StoreButtonProps) {
+export function StoreButton({ href, name, outlets, shop, className }: StoreButtonProps) {
   const [open, setOpen] = useState(false);
   const t = useT();
   const style = cn("min-w-0 flex-1 px-2", className);
 
   if (outlets.length <= 1) {
     return (
-      <ButtonLink href={href} size="sm" className={style}>
+      <ButtonLink href={href} size="sm" onClick={() => track("store_open", { shop, outlets: outlets.length })} className={style}>
         <Store size={18} aria-hidden />
         {t("Store")}
       </ButtonLink>
@@ -33,7 +36,13 @@ export function StoreButton({ href, name, outlets, className }: StoreButtonProps
 
   return (
     <>
-      <Button size="sm" aria-haspopup="dialog" onClick={() => setOpen(true)} className={style}>
+      <Button size="sm" aria-haspopup="dialog"
+        onClick={() => {
+          track("store_open", { shop, outlets: outlets.length });
+          setOpen(true);
+        }}
+        className={style}
+      >
         <Store size={18} aria-hidden />
         {t("Store")}
       </Button>

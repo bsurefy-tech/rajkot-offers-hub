@@ -3,6 +3,7 @@
 import { LocateFixed, X } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { track } from "@/lib/analytics/client";
 import { clearLocationAction, setGpsLocationAction, type LocationResult } from "@/lib/actions/location";
 import { useT } from "@/lib/i18n/client";
 import type { MessageKey } from "@/lib/i18n/translate";
@@ -32,10 +33,12 @@ export function NearMe({ near, onLocated, onCleared }: { near?: Near; onLocated:
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        track("location_request", { source: "picker", result: "granted" });
         setLocating(false);
         startTransition(async () => finish(await setGpsLocationAction(position.coords.latitude, position.coords.longitude)));
       },
       (failure) => {
+        track("location_request", { source: "picker", result: failure.code === failure.PERMISSION_DENIED ? "denied" : "error" });
         setLocating(false);
         setError(
           failure.code === failure.PERMISSION_DENIED

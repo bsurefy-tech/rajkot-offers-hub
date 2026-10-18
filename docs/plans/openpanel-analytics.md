@@ -1,6 +1,6 @@
 # Plan: OpenPanel analytics (self-hosted)
 
-Status: Stage A built and checked on `feature/openpanel` (see section 8); the rest is not started. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
+Status: Stages A and B built and checked on `feature/openpanel` (see section 8); C to E are not started. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
 
 Goal: every kind of analytics for the site in one self-hosted OpenPanel project: traffic (page views, sources,
 devices, places), product events (search, filters, offers, shops, Zalak, rewards), funnels (login, claim code,
@@ -281,3 +281,18 @@ privacy page, `.env.example`, `.env.production`, `.dev.vars.example`, `README.md
     explicit page markers.
 - One event named `probe_dry` was posted to the production project while checking the endpoint; delete it in OpenPanel
   if it shows.
+
+### Stage B (done, checked against the local stand-in)
+
+- Wired: `offer_card_click`, `save_toggle` / `follow_toggle` (from `useToggleSave`), `search` (length and result count only),
+  `filter_apply` (chip menus), `category_open` (home and categories tiles), `area_select`, `location_request`
+  (picker and Near you prompt), `view_toggle`, `hero_click`, `store_open`, `tab_change` (offer and shop pages).
+- `PageMarker` on the shop page, the offer page and the offers lists sets `page_type`, `shop`, `category`, `area` for every
+  later event; `Analytics` clears them on each address change. Checked: `offer_view` carries
+  `shop`, `category`, `area`. Those properties stand in for shop groups (`upsertGroup`/`setGroup`), which are not sent yet.
+- Events fired before the script has loaded (full page load) used to be dropped: `track()` now queues them until
+  `window.op` exists (10 s limit), and does nothing when analytics is off.
+- Known limits: the first `screen_view` of a shop or offer page still says `area_or_shop` or lacks `shop` (the marker mounts
+  after the page view is sent); changing a filter counts as a new page view (the script counts the query string);
+  `follow_toggle` / `save_toggle` were not exercised (they need a login); `banner`/promo clicks other than the home slider
+  are not wired.

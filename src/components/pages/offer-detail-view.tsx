@@ -17,6 +17,7 @@ import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
 import { ShareButton } from "@/components/offers/share-button";
 import { StoreButton } from "@/components/offers/store-button";
+import { PageMarker } from "@/components/analytics/page-marker";
 import { TrackOfferView } from "@/components/offers/track";
 import { Badge } from "@/components/ui/badge";
 import { DetailRow } from "@/components/ui/display";
@@ -142,6 +143,7 @@ async function OfferContent({ slug }: { slug: string }) {
   return (
     <div className="lg:bg-surface lg:pt-6 lg:pb-16">
       <JsonLd data={await offerLd(offer, business, offerSummary(t, locale, offer))} />
+      <PageMarker type="offer" shop={business.slug} category={offer.categorySlug} area={business.areaSlug} />
       {!expired && <TrackOfferView offerId={offer.id} />}
       <JsonLd data={crumbs} />
       {expired && (
@@ -169,17 +171,17 @@ async function OfferContent({ slug }: { slug: string }) {
             <div className="flex min-w-0 items-start gap-4 lg:items-center">
                             <ShopAvatar logo={business.logo} className="hidden size-20 shrink-0 lg:flex" />
               <div className="min-w-0">
-                <h1 className={cn("text-heading leading-snug font-semibold lg:text-page lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
-                {/* On a phone only the rating shows here; the bottom bar's Shop button leads to the shop. */}
-                <p className={cn("mt-1 flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-muted lg:flex", offer.rating ? "flex" : "hidden")}>
-                  <Link href={shopPath(business.slug)} className="hidden font-medium text-ink hover:underline lg:inline">
+                <div className="flex items-baseline gap-x-3">
+                  <h1 className={cn("min-w-0 text-heading leading-snug font-semibold lg:text-page lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
+                  {offer.rating && <RatingInline rating={offer.rating} className="shrink-0 self-center text-body-sm text-muted" />}
+                </div>
+                {/* On a phone the bottom bar's Store button leads to the shop, so only desktop names it here. */}
+                <p className="mt-1 hidden flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-muted lg:flex">
+                  <Link href={shopPath(business.slug)} className="font-medium text-ink hover:underline">
                     {business.name}
                   </Link>
-                  <span aria-hidden className="hidden lg:inline">
-                    •
-                  </span>
-                  <span className="hidden lg:inline">{t("{area}, Rajkot", { area: offer.areaName })}</span>
-                  {offer.rating && <RatingInline rating={offer.rating} className="text-body-sm text-muted" />}
+                  <span aria-hidden>•</span>
+                  <span>{t("{area}, Rajkot", { area: offer.areaName })}</span>
                 </p>
                 <p className="mt-2 text-caption leading-relaxed text-primary">
                   {t("Every offer is checked by our team before it goes live. Please verify the details before you buy.")}
@@ -198,8 +200,13 @@ async function OfferContent({ slug }: { slug: string }) {
               <div className="flex h-full items-center justify-between gap-1 border-b border-line px-2">
                 <BackLink fallbackHref="/offers" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-title leading-tight font-semibold">{offer.title}</p>
-                  <p className="truncate text-caption leading-tight text-muted">{business.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-title leading-tight font-semibold">{offer.title}</p>
+                    {offer.rating && <RatingInline rating={offer.rating} className="shrink-0 text-caption text-muted" />}
+                  </div>
+                  <p className="truncate text-caption leading-tight text-muted">
+                    {[business.name, business.categoryName, offer.areaName].filter(Boolean).join(" • ")}
+                  </p>
                 </div>
               </div>
             }
@@ -278,7 +285,7 @@ async function OfferContent({ slug }: { slug: string }) {
       <StickyActionBar
         lead={
           <>
-            <StoreButton href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
+            <StoreButton shop={business.slug} href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
             <SaveBarButton slug={offer.slug} variant="outline" />
             <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
           </>
