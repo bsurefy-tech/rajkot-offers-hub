@@ -12,7 +12,7 @@ const variants = {
 
 const sizes = {
   sm: "px-2.5 py-[7px] text-caption",
-  md: "px-3 py-2 text-body-sm",
+  md: "px-2.5 py-1.5 text-caption",
   xs: "px-2.5 py-1.5 text-caption",
 } as const;
 

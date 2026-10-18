@@ -181,7 +181,7 @@ async function OfferContent({ slug }: { slug: string }) {
                   <span className="hidden lg:inline">{t("{area}, Rajkot", { area: offer.areaName })}</span>
                   {offer.rating && <RatingInline rating={offer.rating} className="text-body-sm text-muted" />}
                 </p>
-                <p className="mt-2 text-caption leading-relaxed text-faint">
+                <p className="mt-2 text-caption leading-relaxed text-primary">
                   {t("Offer details are provided by the business. Please confirm with the store before you buy.")}
                 </p>
               </div>
