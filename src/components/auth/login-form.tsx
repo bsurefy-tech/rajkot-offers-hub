@@ -68,7 +68,7 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
 
       {step === "mpin" && (
         <>
-          <p className="text-sm text-muted">{shownMobile}</p>
+          <p className="text-body-sm text-muted">{shownMobile}</p>
           <Field id="mpin" label={t("Enter your MPIN")}>
             <PinInput id="mpin" name="mpin" secret required autoFocus aria-label={t("MPIN")} />
           </Field>
@@ -77,7 +77,7 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
 
       {step === "code" && (
         <>
-          <p className="text-sm text-muted">{t("We sent a 6-digit code on WhatsApp to {mobile}.", { mobile: shownMobile })}</p>
+          <p className="text-body-sm text-muted">{t("We sent a 6-digit code on WhatsApp to {mobile}.", { mobile: shownMobile })}</p>
           {devCode && <p className="rounded-lg bg-surface px-3 py-2 font-mono text-xs text-muted">Local API code: {devCode}</p>}
           <Field id="code" label={t("WhatsApp code")}>
             <PinInput id="code" name="code" required autoFocus />
@@ -88,8 +88,8 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
       {step === "set" && (
         <>
           <div>
-            <h2 className="text-base lg:text-lg font-semibold">{t("Set your MPIN")}</h2>
-            <p className="mt-1 text-sm text-muted">{t("Create a 6-digit MPIN. You will use it to log in from now on.")}</p>
+            <h2 className="text-heading font-semibold">{t("Set your MPIN")}</h2>
+            <p className="mt-1 text-body-sm text-muted">{t("Create a 6-digit MPIN. You will use it to log in from now on.")}</p>
           </div>
           <Field id="mpin" label={t("New MPIN")}>
             <PinInput id="mpin" name="mpin" secret required autoFocus autoComplete="new-password" />
@@ -101,7 +101,7 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
       )}
 
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {error}
         </p>
       )}
@@ -111,7 +111,7 @@ export function LoginForm({ next, onDone }: { next: string | null; /** In a popu
       </Button>
 
       {step !== "mobile" && step !== "set" && (
-        <div className="flex flex-wrap justify-between gap-2 text-sm">
+        <div className="flex flex-wrap justify-between gap-2 text-body">
           <button
             type="button"
             onClick={() => {

@@ -11,9 +11,9 @@ const variants = {
 } as const;
 
 const sizes = {
-  sm: "px-2.5 py-[7px] text-xs",
-  md: "px-3 py-2 text-[13px]",
-  xs: "px-2.5 py-1.5 text-xs",
+  sm: "px-2.5 py-[7px] text-caption",
+  md: "px-3 py-2 text-body-sm",
+  xs: "px-2.5 py-1.5 text-caption",
 } as const;
 
 export function Badge({

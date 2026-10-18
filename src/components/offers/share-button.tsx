@@ -102,7 +102,7 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
                 trackOffer(offerId, "share");
                 setOpen(false);
               }}
-              className="flex flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-xs font-medium hover:bg-canvas"
+              className="flex flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-caption font-medium hover:bg-canvas"
             >
               {option.icon}
               {option.label}
@@ -111,13 +111,13 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
           <button
             type="button"
             onClick={copyLink}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-xs font-medium hover:bg-canvas"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-caption font-medium hover:bg-canvas"
           >
             <Link2 size={22} aria-hidden />
             {t("Copy link")}
           </button>
         </div>
-        <p className="mt-4 truncate rounded-xl border border-line px-3.5 py-3 text-[13px] text-muted">
+        <p className="mt-4 truncate rounded-xl border border-line px-3.5 py-3 text-body-sm text-muted">
           {url.replace(/^https?:\/\//, "")}
         </p>
       </Sheet>

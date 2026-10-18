@@ -4,10 +4,10 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const sizes = {
-  sm: "h-[34px] px-3.5 text-[13px]",
-  md: "h-9 px-4 text-[13px]",
-  lg: "h-[38px] px-[18px] text-sm",
-  xl: "h-10 px-3.5 text-sm",
+  sm: "h-[34px] px-3.5 text-body-sm",
+  md: "h-9 px-4 text-body-sm",
+  lg: "h-[38px] px-[18px] text-body",
+  xl: "h-10 px-3.5 text-body",
 } as const;
 
 const tones = {
@@ -96,7 +96,7 @@ export function RemovableChip({ children, className, ...props }: ComponentProps<
   return (
     <Link
       className={cn(
-        "inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-full border border-ink bg-white px-3 text-[13px] font-medium whitespace-nowrap hover:bg-surface",
+        "inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-full border border-ink bg-white px-3 text-body-sm font-medium whitespace-nowrap hover:bg-surface",
         className,
       )}
       {...props}
@@ -112,7 +112,7 @@ export function AreaChip({ children, className, ...props }: ComponentProps<typeo
   return (
     <Link
       className={cn(
-        "inline-flex h-[38px] shrink-0 items-center gap-1.5 rounded-full border border-input bg-white px-4 text-sm font-medium whitespace-nowrap transition-colors hover:border-ink lg:h-10",
+        "inline-flex h-[38px] shrink-0 items-center gap-1.5 rounded-full border border-input bg-white px-4 text-body font-medium whitespace-nowrap transition-colors hover:border-ink lg:h-10",
         className,
       )}
       {...props}

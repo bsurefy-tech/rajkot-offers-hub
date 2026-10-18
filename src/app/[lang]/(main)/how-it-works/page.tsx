@@ -40,7 +40,7 @@ interface StepData {
 function Steps({ title, steps }: { title: string; steps: StepData[] }) {
   return (
     <>
-      <h2 className="mb-6 text-xl font-semibold lg:mb-10 lg:text-[32px]">{title}</h2>
+      <h2 className="mb-6 text-page font-semibold lg:mb-10">{title}</h2>
       <ol className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-6">
         {steps.map((step, i) => (
           <StepCard key={step.title} n={i + 1} {...step} />
@@ -97,10 +97,10 @@ export default async function HowItWorksPage() {
         <Container className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="flex flex-col gap-4">
             <Eyebrow>{t("About us")}</Eyebrow>
-            <h1 className="text-[28px] leading-tight font-bold lg:text-[52px] lg:leading-[1.15]">
+            <h1 className="text-display leading-tight font-semibold lg:leading-[1.15]">
               {t("Rajkot’s offers, now easy to find")}
             </h1>
-            <p className="max-w-[520px] text-base leading-relaxed text-muted lg:text-lg">
+            <p className="max-w-[520px] text-heading leading-relaxed text-muted">
               {t("Rajkot Offers Hub brings offers from Rajkot’s local shops, cafés and salons together in one place.")}
             </p>
           </div>
@@ -132,7 +132,7 @@ export default async function HowItWorksPage() {
       </Section>
 
       <Section tone="surface">
-        <h2 className="mb-6 text-xl font-semibold lg:mb-10 lg:text-[32px]">{t("Our promise")}</h2>
+        <h2 className="mb-6 text-page font-semibold lg:mb-10">{t("Our promise")}</h2>
         <ul className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-12">
           {promises.map((p) => (
             <PromiseItem key={p.title} {...p} />
@@ -142,7 +142,7 @@ export default async function HowItWorksPage() {
 
       <Section>
         <div className="lg:grid lg:grid-cols-[1fr_2fr] lg:gap-16">
-          <h2 className="mb-4 text-xl font-semibold lg:text-[32px]">{t("Frequently asked questions")}</h2>
+          <h2 className="mb-4 text-page font-semibold">{t("Frequently asked questions")}</h2>
           <div>
             {faqs.map((faq, i) => (
               <AccordionItem key={faq.q} title={faq.q} defaultOpen={i === 0}>

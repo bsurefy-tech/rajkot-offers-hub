@@ -59,7 +59,7 @@ export async function PhotoMosaic({
             {moreCount > 0 && (
               <span
                 className={cn(
-                  "absolute inset-0 items-center justify-center bg-black/45 text-xl font-semibold text-white",
+                  "absolute inset-0 items-center justify-center bg-black/45 text-heading font-semibold text-white",
                   phoneMore && deskMore ? "flex" : phoneMore ? "flex lg:hidden" : "hidden lg:flex",
                 )}
               >

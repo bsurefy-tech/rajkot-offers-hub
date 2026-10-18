@@ -31,7 +31,7 @@ export function ViewToggle({ className }: { className?: string }) {
       aria-pressed={view === value}
       onClick={() => setView(value)}
       className={cn(
-        "inline-flex h-full cursor-pointer items-center justify-center gap-1.5 px-4 text-sm font-medium",
+        "inline-flex h-full cursor-pointer items-center justify-center gap-1.5 px-4 text-body font-medium",
         view === value ? "bg-ink text-white" : "bg-white text-ink hover:bg-surface",
       )}
     >

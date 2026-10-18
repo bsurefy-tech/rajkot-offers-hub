@@ -94,7 +94,7 @@ export function EmptyStage({ onClose }: { onClose: () => void }) {
   return (
     <Shell>
       <div className="flex h-full flex-col items-center justify-center gap-4 px-8 text-center text-white">
-        <p className="text-base">{t("Nothing here yet. Check back soon.")}</p>
+        <p className="text-body">{t("Nothing here yet. Check back soon.")}</p>
         <button type="button" onClick={onClose} className={buttonClass({ variant: "primary" })}>
           {t("Close")}
         </button>
@@ -258,8 +258,8 @@ export function Overlay({ story, kind, clip, bars, muted, onMute, onClose }: Ove
       <div className="flex flex-col gap-3">
         <div className="flex items-end gap-3">
           <div className="min-w-0 flex-1 pb-1 text-white">
-            {!clip.caption && story.caption && <span className="mb-2 inline-block rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold">{story.caption}</span>}
-            {text && <h2 className="line-clamp-2 text-lg leading-snug font-semibold">{text}</h2>}
+            {!clip.caption && story.caption && <span className="mb-2 inline-block rounded-full bg-primary px-2.5 py-0.5 text-caption font-semibold">{story.caption}</span>}
+            {text && <h2 className="line-clamp-2 text-heading leading-snug font-semibold">{text}</h2>}
           </div>
           <Rail story={story} clip={clip} muted={muted} onMute={onMute} />
         </div>
@@ -300,8 +300,8 @@ function Header({ story, kind, clip, onClose }: { story: ZalakStory; kind: Zalak
           <ShopAvatar shop={story.shop} sizes="40px" />
         </span>
         <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold">{story.shop.name}</span>
-          <span className="block truncate text-xs text-white/85">{[detail, story.distanceKm === undefined ? null : formatDistance(story.distanceKm, t), story.shop.areaName].filter(Boolean).join(" · ")}</span>
+          <span className="block truncate text-body font-semibold">{story.shop.name}</span>
+          <span className="block truncate text-caption text-white/85">{[detail, story.distanceKm === undefined ? null : formatDistance(story.distanceKm, t), story.shop.areaName].filter(Boolean).join(" · ")}</span>
         </span>
       </Link>
       {!story.shop.platform && <FollowPill slug={story.shop.slug} />}
@@ -322,7 +322,7 @@ function FollowPill({ slug }: { slug: string }) {
       aria-pressed={saved}
       onClick={onToggle}
       className={cn(
-        "shrink-0 cursor-pointer rounded-full border-[1.5px] border-white px-3 py-1 text-xs font-bold transition-colors",
+        "shrink-0 cursor-pointer rounded-full border-[1.5px] border-white px-3 py-1 text-caption font-semibold transition-colors",
         saved ? "bg-white text-primary" : "text-white hover:bg-white/15",
       )}
     >
@@ -435,8 +435,8 @@ function RailButton({ label, count, pressed, onClick, children }: { label: strin
       className="flex w-14 cursor-pointer flex-col items-center gap-1 text-white [filter:drop-shadow(0_1px_3px_rgb(0_0_0/0.55))]"
     >
       {children}
-      <span className="text-[13px] leading-none font-bold">{label}</span>
-      {count !== undefined && <span className="text-[13px] leading-none font-medium text-white/90">{count}</span>}
+      <span className="text-body-sm leading-none font-semibold">{label}</span>
+      {count !== undefined && <span className="text-body-sm leading-none font-medium text-white/90">{count}</span>}
     </button>
   );
 }
@@ -459,7 +459,7 @@ export function Tour({ steps, step, onNext }: { steps: TourStep[]; step: number;
       <span className="flex size-24 items-center justify-center rounded-full border border-white/35 bg-white/10">
         <Icon size={36} strokeWidth={2.2} aria-hidden />
       </span>
-      <p className="text-base leading-snug text-white/90">{text}</p>
+      <p className="text-body leading-snug text-white/90">{text}</p>
       {steps.length > 1 && (
         <span aria-hidden className="flex gap-1.5">
           {steps.map((_, i) => (
@@ -467,7 +467,7 @@ export function Tour({ steps, step, onNext }: { steps: TourStep[]; step: number;
           ))}
         </span>
       )}
-      <span className="rounded-full border border-white/50 px-6 py-2 text-[15px]">{button}</span>
+      <span className="rounded-full border border-white/50 px-6 py-2 text-body">{button}</span>
     </button>
   );
 }

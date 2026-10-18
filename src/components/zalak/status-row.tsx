@@ -33,7 +33,7 @@ export function StatusRow({ stories }: { stories: ZalakStory[] }) {
                   <ShopAvatar shop={story.shop} sizes="80px" iconSize={24} />
                 </span>
               </span>
-              <span className={cn("w-full truncate text-center text-xs lg:text-[13px]", watched ? "text-muted" : "font-medium")}>{story.shop.name}</span>
+              <span className={cn("w-full truncate text-center text-caption", watched ? "text-muted" : "font-medium")}>{story.shop.name}</span>
             </Link>
           </li>
         );

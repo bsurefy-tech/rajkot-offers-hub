@@ -101,7 +101,7 @@ async function OffersTab({ active, expired }: { active: OfferSummary[]; expired:
       )}
       {expired.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xs font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
+          <h2 className="mb-4 text-caption font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
             {expired.map((offer) => (
               <OfferCard key={offer.slug} offer={offer} sizes="(min-width: 1024px) 400px, 100vw" />
@@ -117,7 +117,7 @@ async function PhotosTab({ business, images }: { business: Business; images: str
   const t = await getT();
   return (
     <div>
-      <h2 className="mb-3 text-base font-semibold lg:text-[22px]">{t("Photos")}</h2>
+      <h2 className="mb-3 text-heading font-semibold">{t("Photos")}</h2>
       <ul className="grid grid-cols-3 gap-2 lg:gap-4">
         {images.map((src) => (
           <li key={src} className="relative aspect-square overflow-hidden rounded-xl bg-surface lg:aspect-[4/3]">
@@ -134,7 +134,7 @@ async function OutletsTab({ business, path }: { business: Business; path: string
   const t = await getT();
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-base lg:text-lg font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
+      <h2 className="text-heading font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
       <OutletSideCards outlets={business.outlets} contact={business} path={path} />
     </div>
   );
@@ -145,8 +145,8 @@ async function AboutTab({ business }: { business: Business }) {
   return (
     <div className="flex flex-col gap-7">
       <section>
-        <h2 className="mb-2 text-base font-semibold lg:text-[22px]">{t("About us")}</h2>
-        <p className="max-w-[640px] text-sm leading-relaxed text-muted lg:text-base">{business.about}</p>
+        <h2 className="mb-2 text-heading font-semibold">{t("About us")}</h2>
+        <p className="max-w-[640px] text-body-sm leading-relaxed text-muted">{business.about}</p>
       </section>
       <div className="lg:hidden">
         <LinkRows business={business} />
@@ -204,10 +204,10 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
               <ShopAvatar logo={business.logo} className="size-16 shrink-0 lg:size-20" />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <h1 className="text-2xl leading-tight font-semibold lg:text-[30px]">{business.name}</h1>
-                  {rating && <RatingInline rating={rating} className="text-sm text-muted" />}
+                  <h1 className="text-page leading-tight font-semibold">{business.name}</h1>
+                  {rating && <RatingInline rating={rating} className="text-body-sm text-muted" />}
                 </div>
-                <p className="mt-1 text-sm text-muted lg:text-[15px]">{subtitle}</p>
+                <p className="mt-1 text-body-sm text-muted">{subtitle}</p>
               </div>
             </div>
             {/* Follow: new offers from this shop come first and are announced. On desktop it sits at the right of the header; on a phone it is in the bottom bar. */}
@@ -230,7 +230,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
                     <Image src={business.logo} alt="" fill sizes="32px" className="object-cover" />
                   </span>
                 )}
-                <p className="min-w-0 flex-1 truncate text-base font-semibold">{business.name}</p>
+                <p className="min-w-0 flex-1 truncate text-title font-semibold">{business.name}</p>
                 <div className="flex shrink-0 items-center">
                   <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className={headerAction}>
                     <Phone size={20} aria-hidden />

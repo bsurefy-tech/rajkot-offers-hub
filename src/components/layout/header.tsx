@@ -69,7 +69,7 @@ export function MobileTopBar({
     <header className="sticky top-0 z-30 border-b border-line bg-white transition-shadow [html[data-scrolled]_&]:shadow-header lg:hidden">
       <div className="grid h-14 grid-cols-[40px_1fr_40px] items-center px-2">
         <BackLink fallbackHref={backHref} />
-        <h1 className="truncate pl-1 text-base font-semibold">{title}</h1>
+        <h1 className="truncate pl-1 text-title font-semibold">{title}</h1>
         <div className="flex justify-end">{action}</div>
       </div>
     </header>

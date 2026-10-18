@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 /** Shared box style for every text-like control. */
 export function controlClass(invalid?: boolean, className?: string) {
   return cn(
-    "w-full rounded-xl border bg-white text-base text-ink caret-primary transition-[border-color,box-shadow] outline-none",
+    "w-full rounded-xl border bg-white text-field text-ink caret-primary transition-[border-color,box-shadow] outline-none",
     "focus:border-primary focus:shadow-ring focus-visible:outline-none",
     invalid
       ? "border-danger shadow-ring-danger focus:border-danger focus:shadow-ring-danger"
@@ -41,7 +41,7 @@ export function PhoneInput({ invalid, className, ...props }: ComponentProps<"inp
         cn("flex h-12 overflow-hidden focus-within:border-primary focus-within:shadow-ring", className),
       )}
     >
-      <span className="flex items-center border-r border-input bg-surface px-3 text-base font-medium">
+      <span className="flex items-center border-r border-input bg-surface px-3 text-field font-medium">
         +91
       </span>
       <input

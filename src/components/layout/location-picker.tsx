@@ -24,7 +24,7 @@ interface LocationPickerProps {
 }
 
 const pillClass =
-  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border bg-white pr-2.5 pl-2.5 text-[13px] font-medium lg:h-10 lg:px-3.5 lg:text-sm";
+  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border bg-white pr-2.5 pl-2.5 text-body-sm font-medium lg:h-10 lg:px-3.5";
 
 /**
  * Header city pill. Opens "near me" (GPS, kept in a cookie) and a list
@@ -132,7 +132,7 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
             router.refresh();
           }}
         />
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold tracking-[0.04em] text-muted">{t("Areas")}</p>
+        <p className="px-3 pt-3 pb-1 text-caption font-semibold tracking-[0.04em] text-muted">{t("Areas")}</p>
         <ul className="flex flex-col gap-0.5 pb-1">
           <AreaRow
             href={hrefFor()}
@@ -178,7 +178,7 @@ function AreaRow({
         aria-current={selected ? "true" : undefined}
         onClick={onPick}
         className={cn(
-          "flex items-center gap-3 rounded-xl px-3 py-3 text-[15px] transition-colors",
+          "flex items-center gap-3 rounded-xl px-3 py-3 text-body transition-colors",
           selected ? "bg-primary-soft font-medium" : "hover:bg-surface",
         )}
       >
@@ -188,7 +188,7 @@ function AreaRow({
           <MapPin size={18} className="shrink-0 text-faint" aria-hidden />
         )}
         <span className="flex-1">{name}</span>
-        <span className={cn("text-[13px]", selected ? "text-primary" : "text-muted")}>{count}</span>
+        <span className={cn("text-body-sm", selected ? "text-primary" : "text-muted")}>{count}</span>
       </NextLink>
     </li>
   );

@@ -24,10 +24,10 @@ async function Intro({ large }: { large?: boolean }) {
   const t = await getT();
   return (
     <div>
-      <h1 className={large ? "text-4xl leading-tight font-bold" : "text-2xl leading-[1.3] font-bold"}>
+      <h1 className={large ? "text-page leading-tight font-semibold" : "text-page leading-[1.3] font-semibold"}>
         {t("Take your offer to Rajkot")}
       </h1>
-      <p className={large ? "mt-3 max-w-[440px] text-base text-muted" : "mt-2 text-sm text-muted"}>
+      <p className={large ? "mt-3 max-w-[440px] text-body text-muted" : "mt-2 text-body-sm text-muted"}>
         {t("Shop owners list and manage their offers in the Rajkot Offers business app. Our team checks every offer before it goes live.")}
       </p>
     </div>
@@ -56,8 +56,8 @@ async function HowSteps({ large }: { large?: boolean }) {
             <Icon size={18} aria-hidden />
           </span>
           <span>
-            {large && <span className="block text-xs text-faint">{t("Step {number}", { number: i + 1 })}</span>}
-            <span className={large ? "text-[15px]" : "text-sm"}>{text}</span>
+            {large && <span className="block text-caption text-faint">{t("Step {number}", { number: i + 1 })}</span>}
+            <span className={large ? "text-body" : "text-body"}>{text}</span>
           </span>
         </li>
       ))}
@@ -71,8 +71,8 @@ async function GetTheApp() {
   const { android, ios } = site.ownerApp;
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="text-xl font-semibold">{t("List your offer with the business app")}</h2>
-      <p className="text-sm text-muted">{t("It is free. Add your shop once, then post new offers whenever you like and see how many people view, call and visit.")}</p>
+      <h2 className="text-heading font-semibold">{t("List your offer with the business app")}</h2>
+      <p className="text-body-sm text-muted">{t("It is free. Add your shop once, then post new offers whenever you like and see how many people view, call and visit.")}</p>
       <div className="flex flex-col gap-3 sm:flex-row">
         {android && (
           <ButtonAnchor href={android} target="_blank" rel="noreferrer">
@@ -127,7 +127,7 @@ export default async function SubmitOfferPage() {
             </div>
             <GetTheApp />
             <div className="flex flex-col gap-4 border-t border-line pt-6">
-              <h2 className="text-lg font-semibold">{t("How it works")}</h2>
+              <h2 className="text-heading font-semibold">{t("How it works")}</h2>
               <HowSteps />
             </div>
           </div>

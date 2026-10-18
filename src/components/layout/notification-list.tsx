@@ -112,9 +112,9 @@ export function NotificationList() {
                 {n.type?.startsWith("loyalty.") ? <Gift size={18} /> : <Bell size={18} />}
               </span>
               <span className="min-w-0 flex-1">
-                <span className={cn("block text-sm lg:text-[15px]", n.read ? "font-medium" : "font-semibold")}>{title(n)}</span>
-                {n.body && <span className="mt-0.5 block text-sm text-muted">{n.body}</span>}
-                <span className="mt-1 block text-xs text-faint">{timeAgo(n.createdAt, locale)}</span>
+                <span className={cn("block text-body", n.read ? "font-medium" : "font-semibold")}>{title(n)}</span>
+                {n.body && <span className="mt-0.5 block text-body-sm text-muted">{n.body}</span>}
+                <span className="mt-1 block text-caption text-faint">{timeAgo(n.createdAt, locale)}</span>
               </span>
             </>
           );

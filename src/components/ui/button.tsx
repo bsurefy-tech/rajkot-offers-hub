@@ -13,9 +13,9 @@ const variants = {
 } as const;
 
 const sizes = {
-  sm: "h-10 px-[18px] text-sm",
-  md: "h-12 px-5 text-[15px]",
-  lg: "h-[52px] px-7 text-base",
+  sm: "h-10 px-[18px] text-body",
+  md: "h-12 px-5 text-body",
+  lg: "h-[52px] px-7 text-body",
 } as const;
 
 export interface ButtonStyleProps {

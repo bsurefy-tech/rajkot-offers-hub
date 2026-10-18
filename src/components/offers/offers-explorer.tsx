@@ -102,7 +102,7 @@ export async function OffersExplorer({
               {`“${filters.q}”`}
             </RemovableChip>
           )}
-          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-[13px]">
+          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-body-sm">
             {t("Clear all")}
           </ButtonLink>
         </div>
@@ -136,7 +136,7 @@ export async function OffersExplorer({
     <>
       {anyFilter && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-[13px]">
+          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-body-sm">
             {t("Clear all")}
           </ButtonLink>
         </div>

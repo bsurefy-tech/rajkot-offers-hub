@@ -21,17 +21,17 @@ export function Field({ id, label, optional, helper, error, className, children 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex items-baseline justify-between gap-3">
-        <label htmlFor={id} className="text-sm font-medium text-ink">
+        <label htmlFor={id} className="text-body font-medium text-ink">
           {label}
         </label>
-        {optional && <span className="text-xs text-faint">{t("Optional")}</span>}
+        {optional && <span className="text-caption text-faint">{t("Optional")}</span>}
       </div>
       {children}
       {error ? (
         <FieldError id={`${id}-error`}>{error}</FieldError>
       ) : (
         helper && (
-          <p id={`${id}-helper`} className="text-xs leading-[1.4] text-muted">
+          <p id={`${id}-helper`} className="text-caption leading-[1.4] text-muted">
             {helper}
           </p>
         )
@@ -42,7 +42,7 @@ export function Field({ id, label, optional, helper, error, className, children 
 
 export function FieldError({ id, children }: { id?: string; children: ReactNode }) {
   return (
-    <p id={id} role="alert" className="flex items-center gap-1.5 text-[13px] text-danger">
+    <p id={id} role="alert" className="flex items-center gap-1.5 text-body-sm text-danger">
       <CircleAlert size={14} aria-hidden className="shrink-0" />
       {children}
     </p>

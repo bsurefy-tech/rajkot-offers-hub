@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export function SettingsGroup({ title, children, className }: { title?: string; children: ReactNode; className?: string }) {
   return (
     <section className={className}>
-      {title && <h2 className="mb-2 px-1 text-xs font-semibold tracking-[0.08em] text-muted uppercase">{title}</h2>}
+      {title && <h2 className="mb-2 px-1 text-caption font-semibold tracking-[0.08em] text-muted uppercase">{title}</h2>}
       <div className="overflow-hidden rounded-2xl border border-line bg-white [&>*+*]:border-t [&>*+*]:border-line">{children}</div>
     </section>
   );
@@ -34,8 +34,8 @@ function RowBody({ icon: Icon, title, hint, badge, tone = "default", arrow = tru
         <Icon size={20} strokeWidth={1.8} aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
-        <span className={cn("block text-sm lg:text-[15px] leading-snug font-semibold", tone === "danger" && "text-danger")}>{title}</span>
-        {hint && <span className="mt-0.5 block text-[13px] leading-snug text-muted">{hint}</span>}
+        <span className={cn("block text-body leading-snug font-semibold", tone === "danger" && "text-danger")}>{title}</span>
+        {hint && <span className="mt-0.5 block text-body-sm leading-snug text-muted">{hint}</span>}
       </span>
       {badge}
       {arrow && <ChevronRight size={18} className="shrink-0 text-faint" aria-hidden />}
@@ -62,5 +62,5 @@ export function SettingsButton({ onClick, type = "button", ...props }: RowProps 
 
 /** The small pink count pill on a row. */
 export function RowBadge({ children }: { children: ReactNode }) {
-  return <span className="shrink-0 rounded-full bg-primary px-2 py-1 text-xs leading-none font-semibold text-white">{children}</span>;
+  return <span className="shrink-0 rounded-full bg-primary px-2 py-1 text-caption leading-none font-semibold text-white">{children}</span>;
 }

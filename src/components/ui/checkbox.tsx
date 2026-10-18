@@ -9,7 +9,7 @@ export function Checkbox({
   ...props
 }: Omit<ComponentProps<"input">, "type"> & { label: ReactNode }) {
   return (
-    <label className={cn("flex cursor-pointer items-center gap-2.5 text-sm text-ink", className)}>
+    <label className={cn("flex cursor-pointer items-center gap-2.5 text-body text-ink", className)}>
       <span className="relative flex size-5 shrink-0">
         <input
           type="checkbox"
@@ -35,7 +35,7 @@ export function FilterCheckbox({
   ...props
 }: Omit<ComponentProps<"input">, "type"> & { label: ReactNode }) {
   return (
-    <label className={cn("flex cursor-pointer items-center gap-2.5 text-sm text-ink", className)}>
+    <label className={cn("flex cursor-pointer items-center gap-2.5 text-body text-ink", className)}>
       <span className="relative flex size-5 shrink-0">
         <input
           type="checkbox"
@@ -60,7 +60,7 @@ export function Radio({
   ...props
 }: Omit<ComponentProps<"input">, "type"> & { label: ReactNode }) {
   return (
-    <label className={cn("flex cursor-pointer items-center gap-2.5 text-sm text-ink", className)}>
+    <label className={cn("flex cursor-pointer items-center gap-2.5 text-body text-ink", className)}>
       <input
         type="radio"
         className="size-5 shrink-0 cursor-pointer appearance-none rounded-full border-[1.5px] border-line-strong bg-white checked:border-[6px] checked:border-ink"

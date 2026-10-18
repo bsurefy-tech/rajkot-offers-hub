@@ -78,8 +78,8 @@ function Intro({ onLogin }: { onLogin: () => void }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-2xl bg-ink p-6 text-white">
-        <p className="text-sm text-white/70">{t("Rajkot Offers Hub rewards")}</p>
-        <p className="mt-1 text-xl lg:text-2xl leading-snug font-bold">{t("Earn points every time you shop local.")}</p>
+        <p className="text-body-sm text-white/70">{t("Rajkot Offers Hub rewards")}</p>
+        <p className="mt-1 text-page leading-snug font-semibold">{t("Earn points every time you shop local.")}</p>
         <Button className="mt-5 bg-white text-ink hover:bg-white/90" block onClick={onLogin}>
           {t("Log in to see your points")}
         </Button>
@@ -91,8 +91,8 @@ function Intro({ onLogin }: { onLogin: () => void }) {
               <Icon size={20} aria-hidden />
             </span>
             <div>
-              <p className="text-sm lg:text-[15px] font-medium">{title}</p>
-              <p className="text-[13px] text-muted">{hint}</p>
+              <p className="text-body font-medium">{title}</p>
+              <p className="text-body-sm text-muted">{hint}</p>
             </div>
           </li>
         ))}
@@ -117,11 +117,11 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-2xl border border-line bg-white p-5 text-center">
-        <p className="text-sm text-muted">{wallet.name}</p>
-        <p className="mt-1 text-[44px] leading-none font-bold">{wallet.balance.toLocaleString("en-IN")}</p>
-        <p className="mt-1 text-sm text-muted">{wallet.point_label}</p>
+        <p className="text-body-sm text-muted">{wallet.name}</p>
+        <p className="mt-1 text-display leading-none font-semibold">{wallet.balance.toLocaleString("en-IN")}</p>
+        <p className="mt-1 text-body-sm text-muted">{wallet.point_label}</p>
         {expiresSoon && (
-          <p className="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
+          <p className="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-caption font-medium text-primary">
             <Clock size={13} aria-hidden />
             {t("Some points expire on {date}", { date: formatShortDate(day(nextExpiry), locale) })}
           </p>
@@ -130,14 +130,14 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
           <QrCode size={18} aria-hidden />
           {t("Show my code")}
         </Button>
-        <p className="mt-2 text-xs text-muted">{t("Show it at a partner shop when you pay, to earn points.")}</p>
+        <p className="mt-2 text-caption text-muted">{t("Show it at a partner shop when you pay, to earn points.")}</p>
       </section>
 
       {data.cards.length > 0 && (
         <section>
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-base font-semibold">{t("Scratch cards")}</h2>
-            <span className="text-[13px] text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>
+            <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
+            <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>
           </div>
           <ul className="no-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
             {data.cards.map((card) => (
@@ -148,8 +148,8 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
                   className="flex h-[104px] w-[118px] cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl bg-primary px-2 text-center text-white transition-transform hover:scale-[1.02] active:scale-95"
                 >
                   <Sparkles size={24} aria-hidden />
-                  <span className="text-[13px] font-semibold">{t("Scratch")}</span>
-                  {card.expires_at && <span className="text-[11px] text-white/80">{t("Use by {date}", { date: formatShortDate(day(card.expires_at), locale) })}</span>}
+                  <span className="text-body-sm font-semibold">{t("Scratch")}</span>
+                  {card.expires_at && <span className="text-micro text-white/80">{t("Use by {date}", { date: formatShortDate(day(card.expires_at), locale) })}</span>}
                 </button>
               </li>
             ))}
@@ -184,8 +184,8 @@ function CodeSheet({ open, onClose, data }: { open: boolean; onClose: () => void
     <Sheet open={open} onClose={onClose} title={t("Your code")}>
       <div className="flex flex-col items-center gap-3 pb-1 text-center">
         <Qr payload={data.code.qr_payload ?? data.code.code} size={208} />
-        <p className="font-mono text-3xl font-bold tracking-[0.25em]">{data.code.code}</p>
-        <p className="text-sm text-muted">{t("Show this to the cashier when you pay at a partner shop. They scan it or type it in, and your points are added.")}</p>
+        <p className="font-mono text-3xl font-semibold tracking-[0.25em]">{data.code.code}</p>
+        <p className="text-body-sm text-muted">{t("Show this to the cashier when you pay at a partner shop. They scan it or type it in, and your points are added.")}</p>
       </div>
     </Sheet>
   );
@@ -206,7 +206,7 @@ function RewardsTab({ data, reload }: { data: RewardsOverview; reload: () => Pro
     <div className="flex flex-col gap-6">
       {codes.length > 0 && (
         <section>
-          <h2 className="mb-3 text-base font-semibold">{t("My reward codes")}</h2>
+          <h2 className="mb-3 text-title font-semibold">{t("My reward codes")}</h2>
           <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
             {codes.map((code) => (
               <li key={code.id}>
@@ -215,7 +215,7 @@ function RewardsTab({ data, reload }: { data: RewardsOverview; reload: () => Pro
                     <Gift size={20} aria-hidden />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm lg:text-[15px] font-medium">{code.reward.title}</span>
+                    <span className="block truncate text-body font-medium">{code.reward.title}</span>
                     <span className="block font-mono text-sm tracking-widest text-muted">{code.code}</span>
                   </span>
                   <Badge variant="neutral" size="xs">
@@ -229,7 +229,7 @@ function RewardsTab({ data, reload }: { data: RewardsOverview; reload: () => Pro
       )}
 
       <section>
-        <h2 className="mb-3 text-base font-semibold">{t("Spend your points")}</h2>
+        <h2 className="mb-3 text-title font-semibold">{t("Spend your points")}</h2>
         {data.rewards.length === 0 ? (
           <EmptyState icon={Gift} size="md" title={t("No rewards yet")} hint={t("New rewards from partner shops will show up here.")} className="rounded-2xl border border-line bg-white py-10" />
         ) : (
@@ -241,8 +241,8 @@ function RewardsTab({ data, reload }: { data: RewardsOverview; reload: () => Pro
                     <Gift size={22} aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm lg:text-[15px] leading-snug font-semibold">{reward.title}</p>
-                    <p className="text-[13px] text-muted">
+                    <p className="text-body leading-snug font-semibold">{reward.title}</p>
+                    <p className="text-body-sm text-muted">
                       {reward.value_label ?? t(KIND[reward.kind])}
                       {" · "}
                       {reward.redeem_at ? (reward.redeem_at.length === 1 ? reward.redeem_at[0].business_name : t("At {count} shops", { count: reward.redeem_at.length })) : t("At partner shops")}
@@ -270,10 +270,10 @@ function RewardsTab({ data, reload }: { data: RewardsOverview; reload: () => Pro
                         >
                           <div className="h-full rounded-full bg-primary" style={{ width: `${Math.min(100, (balance / reward.points_cost) * 100)}%` }} />
                         </div>
-                        <p className="mt-1.5 text-[13px] text-muted">{t("{points} more points to unlock", { points: (reward.points_cost - balance).toLocaleString("en-IN") })}</p>
+                        <p className="mt-1.5 text-body-sm text-muted">{t("{points} more points to unlock", { points: (reward.points_cost - balance).toLocaleString("en-IN") })}</p>
                       </>
                     )}
-                    {reward.can_afford && <p className="text-[13px] text-muted">{reward.stock_left === 0 ? t("Sold out") : t("You have already claimed the most allowed.")}</p>}
+                    {reward.can_afford && <p className="text-body-sm text-muted">{reward.stock_left === 0 ? t("Sold out") : t("You have already claimed the most allowed.")}</p>}
                   </div>
                 )}
               </li>
@@ -344,9 +344,9 @@ function ConfirmSheet({
     >
       {reward && (
         <div className="flex flex-col gap-3">
-          <p className="text-base lg:text-lg font-semibold">{reward.title}</p>
-          {reward.description && <p className="text-sm lg:text-[15px] text-muted">{reward.description}</p>}
-          <dl className="grid grid-cols-2 gap-3 rounded-xl bg-surface p-4 text-sm">
+          <p className="text-heading font-semibold">{reward.title}</p>
+          {reward.description && <p className="text-body-sm text-muted">{reward.description}</p>}
+          <dl className="grid grid-cols-2 gap-3 rounded-xl bg-surface p-4 text-body">
             <dt className="text-muted">{t("Costs")}</dt>
             <dd className="text-right font-semibold">{t("{points} pts", { points: reward.points_cost.toLocaleString("en-IN") })}</dd>
             <dt className="text-muted">{t("You will have")}</dt>
@@ -355,11 +355,11 @@ function ConfirmSheet({
             <dd className="text-right font-semibold">{t("{hours} hours", { hours: reward.claim_validity_hours })}</dd>
           </dl>
           {reward.redeem_at && (
-            <p className="text-[13px] text-muted">{t("Works at: {shops}", { shops: [...new Set(reward.redeem_at.map((r) => r.business_name))].join(", ") })}</p>
+            <p className="text-body-sm text-muted">{t("Works at: {shops}", { shops: [...new Set(reward.redeem_at.map((r) => r.business_name))].join(", ") })}</p>
           )}
-          {reward.terms && <p className="text-xs text-muted">{reward.terms}</p>}
+          {reward.terms && <p className="text-caption text-muted">{reward.terms}</p>}
           {error && (
-            <p role="alert" className="text-sm text-danger">
+            <p role="alert" className="text-body text-danger">
               {error}
             </p>
           )}
@@ -420,13 +420,13 @@ function RedemptionSheet({ redemption, onClose, onGivenBack }: { redemption: Loy
           {usable ? (
             <>
               {redemption.qr_payload && <Qr payload={redemption.qr_payload} size={190} />}
-              <p className="font-mono text-3xl font-bold tracking-[0.25em]">{redemption.code}</p>
-              <p className="text-sm text-muted">{t("Show this to the cashier. It works once.")}</p>
-              {redemption.expires_at && <p className="text-[13px] font-medium">{t("Use it by {date}.", { date: formatShortDate(day(redemption.expires_at), locale) })}</p>}
-              {redemption.reward.terms && <p className="text-xs text-muted">{redemption.reward.terms}</p>}
+              <p className="font-mono text-3xl font-semibold tracking-[0.25em]">{redemption.code}</p>
+              <p className="text-body-sm text-muted">{t("Show this to the cashier. It works once.")}</p>
+              {redemption.expires_at && <p className="text-body-sm font-medium">{t("Use it by {date}.", { date: formatShortDate(day(redemption.expires_at), locale) })}</p>}
+              {redemption.reward.terms && <p className="text-caption text-muted">{redemption.reward.terms}</p>}
             </>
           ) : (
-            <p className="text-sm text-muted">{t("This code has been used or has expired.")}</p>
+            <p className="text-body-sm text-muted">{t("This code has been used or has expired.")}</p>
           )}
         </div>
       )}
@@ -468,7 +468,7 @@ function HistoryTab({ data }: { data: RewardsOverview }) {
               aria-pressed={scope === s}
               onClick={() => pick(s)}
               className={cn(
-                "h-[34px] cursor-pointer rounded-full border px-3.5 text-[13px] font-medium",
+                "h-[34px] cursor-pointer rounded-full border px-3.5 text-body-sm font-medium",
                 scope === s ? "border-ink bg-ink text-white" : "border-input bg-white text-ink hover:border-ink",
               )}
             >
@@ -491,13 +491,13 @@ function HistoryTab({ data }: { data: RewardsOverview }) {
                   {gain ? <Plus size={18} aria-hidden /> : <Minus size={18} aria-hidden />}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm lg:text-[15px] font-medium">{tx.business && tx.type === "earn" ? t("Bill at {shop}", { shop: tx.business.name }) : t(TX_TITLE[tx.type])}</p>
-                  <p className="text-[13px] text-muted">
+                  <p className="truncate text-body font-medium">{tx.business && tx.type === "earn" ? t("Bill at {shop}", { shop: tx.business.name }) : t(TX_TITLE[tx.type])}</p>
+                  <p className="text-body-sm text-muted">
                     {formatShortDate(day(tx.created_at), locale)}
                     {tx.expires_at && gain ? ` · ${t("expires {date}", { date: formatShortDate(day(tx.expires_at), locale) })}` : ""}
                   </p>
                 </div>
-                <span className={cn("shrink-0 text-sm lg:text-[15px] font-semibold", gain ? "text-success" : "text-ink")}>
+                <span className={cn("shrink-0 text-body font-semibold", gain ? "text-success" : "text-ink")}>
                   {gain ? "+" : "−"}
                   {Math.abs(tx.points).toLocaleString("en-IN")}
                 </span>

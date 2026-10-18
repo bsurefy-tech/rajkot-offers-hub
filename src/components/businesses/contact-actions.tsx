@@ -17,8 +17,8 @@ interface Contact {
 
 const external = { target: "_blank", rel: "noreferrer" } as const;
 
-const tileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-surface text-xs font-medium hover:bg-canvas";
-const whatsappTileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-whatsapp-soft text-xs font-medium text-whatsapp-ink hover:bg-whatsapp/15";
+const tileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-surface text-caption font-medium hover:bg-canvas";
+const whatsappTileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-whatsapp-soft text-caption font-medium text-whatsapp-ink hover:bg-whatsapp/15";
 
 /** Call (icon only), WhatsApp and directions (icon and text) in one row. */
 export async function ContactRow({

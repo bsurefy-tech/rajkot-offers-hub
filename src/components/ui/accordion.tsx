@@ -36,8 +36,8 @@ export function AccordionItem({
       <summary
         className={cn(
           "flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden",
-          variant === "plain" && "py-[18px] text-[15px] font-semibold lg:py-[22px] lg:text-lg",
-          variant === "card" && "px-[18px] py-4 text-[15px] font-semibold",
+          variant === "plain" && "py-[18px] text-heading font-semibold lg:py-[22px]",
+          variant === "card" && "px-[18px] py-4 text-title font-semibold",
         )}
       >
         {title}
@@ -49,7 +49,7 @@ export function AccordionItem({
       <div
         className={cn(
           variant === "plain" &&
-            "pr-[34px] pb-[18px] text-sm leading-relaxed text-muted lg:max-w-[640px] lg:pr-0 lg:pb-[22px] lg:text-base",
+            "pr-[34px] pb-[18px] text-body-sm leading-relaxed text-muted lg:max-w-[640px] lg:pr-0 lg:pb-[22px]",
           variant === "card" && "px-[18px] pb-[18px]",
         )}
       >

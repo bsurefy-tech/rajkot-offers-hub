@@ -80,7 +80,7 @@ export function FollowingList() {
   return (
     <div className="flex flex-col gap-6">
       <section aria-label={t("Shops you follow")}>
-        <p className="mb-3 text-sm text-muted">
+        <p className="mb-3 text-body-sm text-muted">
           {liveTotal > 0 ? t("{offers} live from {shops} of your shops", { offers: liveTotal, shops: withOffers.length }) : t("None of your shops has a live offer right now.")}
         </p>
         <ul className="no-scrollbar -mx-5 flex gap-4 overflow-x-auto px-5 pb-1 lg:mx-0 lg:px-0">
@@ -90,7 +90,7 @@ export function FollowingList() {
                 <span className={cn("rounded-full border-2 p-0.5", shop.offers.length ? "border-primary" : "border-line")}>
                   <ShopAvatar logo={shop.logo} className="size-[52px] border-0" />
                 </span>
-                <span className="w-full truncate text-center text-xs font-medium">{shop.name}</span>
+                <span className="w-full truncate text-center text-caption font-medium">{shop.name}</span>
               </Link>
             </li>
           ))}
@@ -106,8 +106,8 @@ export function FollowingList() {
                 <Link href={shopPath(shop.slug)} className="flex min-w-0 flex-1 items-center gap-3">
                   <ShopAvatar logo={shop.logo} className="size-14 shrink-0" />
                   <span className="min-w-0">
-                    <span className="block truncate text-sm lg:text-[15px] font-semibold">{shop.name}</span>
-                    <span className="block truncate text-sm text-muted">{t("{category} • {area}, Rajkot", { category: shop.categoryName, area: shop.areaName })}</span>
+                    <span className="block truncate text-body font-semibold">{shop.name}</span>
+                    <span className="block truncate text-body-sm text-muted">{t("{category} • {area}, Rajkot", { category: shop.categoryName, area: shop.areaName })}</span>
                   </span>
                 </Link>
                 <IconButton variant="soft" size="lg" aria-label={t("Unfollow")} onClick={() => onUnfollow(shop.slug)}>
@@ -117,18 +117,18 @@ export function FollowingList() {
               {latest ? (
                 <Link href={offerPath(latest)} className="flex items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3 transition-colors hover:bg-canvas">
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold">{latest.title}</span>
-                    <span className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
+                    <span className="block truncate text-body font-semibold">{latest.title}</span>
+                    <span className="mt-0.5 flex items-center gap-1.5 text-body-sm text-muted">
                       {latest.daysLeft <= ENDING_SOON_DAYS && <Clock size={13} aria-hidden className="text-warning" />}
                       <span className={cn(latest.daysLeft <= ENDING_SOON_DAYS && "font-medium text-warning")}>{formatEndsIn(latest.daysLeft, locale)}</span>
                     </span>
                   </span>
-                  <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-white">
+                  <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-caption font-semibold text-white">
                     {shop.offers.length > 1 ? t("{count} live", { count: shop.offers.length }) : latest.badge}
                   </span>
                 </Link>
               ) : (
-                <p className="rounded-xl bg-surface px-3.5 py-3 text-[13px] text-muted">{t("No live offers right now. We'll tell you when there is one.")}</p>
+                <p className="rounded-xl bg-surface px-3.5 py-3 text-body-sm text-muted">{t("No live offers right now. We'll tell you when there is one.")}</p>
               )}
             </li>
           );

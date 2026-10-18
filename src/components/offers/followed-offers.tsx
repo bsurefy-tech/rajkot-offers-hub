@@ -33,7 +33,7 @@ export function FollowedOffers({ framed, className }: { framed?: boolean; classN
 
   const content = (
     <div className={className}>
-      <h2 className="mb-4 text-lg leading-[1.3] font-semibold lg:mb-7 lg:text-[28px]">{t("From shops you follow")}</h2>
+      <h2 className="mb-4 text-page leading-[1.3] font-semibold lg:mb-7">{t("From shops you follow")}</h2>
       <OfferCarousel offers={offers} />
     </div>
   );

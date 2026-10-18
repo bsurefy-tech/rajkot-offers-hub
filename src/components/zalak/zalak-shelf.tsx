@@ -29,13 +29,13 @@ export function ZalakShelf({ stories }: { stories: ZalakStory[] }) {
               />
             )}
             <span aria-hidden className="absolute inset-0 bg-linear-to-b from-black/35 via-transparent via-40% to-black/80" />
-            <span className="absolute top-2 left-2 flex max-w-[calc(100%-1rem)] items-center gap-1.5 text-[11px] font-semibold text-white">
+            <span className="absolute top-2 left-2 flex max-w-[calc(100%-1rem)] items-center gap-1.5 text-micro font-semibold text-white">
               <span className="relative flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full border-[1.5px] border-white bg-white/25">
                 <ShopAvatar shop={story.shop} sizes="24px" iconSize={12} />
               </span>
               <span className="truncate">{story.shop.name}</span>
             </span>
-            <span className="absolute inset-x-2.5 bottom-2.5 truncate text-xs leading-snug font-semibold text-white">{story.title}</span>
+            <span className="absolute inset-x-2.5 bottom-2.5 truncate text-caption leading-snug font-semibold text-white">{story.title}</span>
           </Link>
         </li>
       ))}

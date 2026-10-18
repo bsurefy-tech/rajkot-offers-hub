@@ -7,7 +7,7 @@ import { useT } from "@/lib/i18n/client";
 import { PICK_LOCATION_EVENT, readNearCookie, subscribeNear } from "@/lib/location";
 import { cn } from "@/lib/utils";
 
-const linkClass = "inline-flex cursor-pointer items-center gap-1.5 text-sm font-medium text-primary hover:underline";
+const linkClass = "inline-flex cursor-pointer items-center gap-1.5 text-body font-medium text-primary hover:underline";
 
 /** "Offers near me": the nearest-first list, or the location sheet when no location is set yet. */
 export function NearMeLink({ className }: { className?: string }) {

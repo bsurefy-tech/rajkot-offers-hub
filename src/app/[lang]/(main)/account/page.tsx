@@ -47,7 +47,7 @@ export default async function AccountPage() {
   const t = await getT();
   return (
     <Container className="max-w-3xl py-6 lg:py-14">
-      <h1 className="mb-5 text-2xl font-bold lg:mb-6 lg:text-4xl">{t("My account")}</h1>
+      <h1 className="mb-5 text-page font-semibold lg:mb-6">{t("My account")}</h1>
       <Suspense fallback={<AccountSkeleton rewards={loyaltyEnabled()} />}>
         <Account />
       </Suspense>

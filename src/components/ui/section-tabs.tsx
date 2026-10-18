@@ -130,7 +130,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
               onClick={(event) => go(event, item.value)}
               className={cn(
                 item.className,
-                "-mb-px shrink-0 border-b-2 pt-3 pb-3 text-[15px] whitespace-nowrap transition-colors",
+                "-mb-px shrink-0 border-b-2 pt-3 pb-3 text-body whitespace-nowrap transition-colors",
                 selected
                   ? "border-primary font-semibold text-ink"
                   : "border-transparent font-medium text-muted hover:text-ink",

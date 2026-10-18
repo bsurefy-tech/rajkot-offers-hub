@@ -22,12 +22,12 @@ async function ReportBox() {
   const t = await getT();
   return (
     <div className="rounded-2xl border border-line bg-white p-5">
-      <p className="text-sm leading-relaxed">{t("Spotted an incorrect offer? Tell us and we will look into it.")}</p>
+      <p className="text-body leading-relaxed">{t("Spotted an incorrect offer? Tell us and we will look into it.")}</p>
       <a
         href={whatsappHref(site.whatsapp, t("I want to report an offer:"))}
         target="_blank"
         rel="noreferrer"
-        className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
+        className="mt-2 inline-flex items-center gap-1 text-body font-semibold text-primary hover:underline"
       >
         {t("Report it")}
         <ArrowRight size={14} aria-hidden />
@@ -50,8 +50,8 @@ export default async function ContactPage() {
     <>
       <Container className="pt-8 pb-8 lg:pt-20 lg:pb-12">
         <Eyebrow>{t("Contact")}</Eyebrow>
-        <h1 className="mt-2 text-[28px] leading-tight font-bold lg:text-[52px]">{t("Contact us")}</h1>
-        <p className="mt-3 text-base text-muted lg:text-lg">{t("Questions, suggestions or offer details: let us know.")}</p>
+        <h1 className="mt-2 text-display leading-tight font-semibold">{t("Contact us")}</h1>
+        <p className="mt-3 text-heading text-muted">{t("Questions, suggestions or offer details: let us know.")}</p>
       </Container>
 
       <Container className="flex flex-col gap-8 pb-10 lg:grid lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-12 lg:pb-20">
@@ -61,8 +61,8 @@ export default async function ContactPage() {
               <>
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface">{c.icon}</span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold">{c.title}</span>
-                  <span className="block truncate text-sm text-muted">{c.value}</span>
+                  <span className="block text-body font-semibold">{c.title}</span>
+                  <span className="block truncate text-body-sm text-muted">{c.value}</span>
                 </span>
                 {c.href && <ChevronRight size={18} className="text-muted" aria-hidden />}
               </>
@@ -85,8 +85,8 @@ export default async function ContactPage() {
 
         <div className="flex flex-col gap-4">
           <div className="rounded-2xl border border-line bg-white p-5 lg:p-8">
-            <h2 className="text-base lg:text-lg font-semibold">{t("The quickest way to reach us")}</h2>
-            <p className="mt-2 text-sm text-muted">{t("Message us on WhatsApp with your question or the offer you want to tell us about. We reply on working days.")}</p>
+            <h2 className="text-heading font-semibold">{t("The quickest way to reach us")}</h2>
+            <p className="mt-2 text-body-sm text-muted">{t("Message us on WhatsApp with your question or the offer you want to tell us about. We reply on working days.")}</p>
             <ButtonAnchor href={whatsappHref(site.whatsapp)} target="_blank" rel="noreferrer" variant="whatsappSolid" className="mt-4">
               <WhatsAppIcon size={18} />
               {t("Message us on WhatsApp")}

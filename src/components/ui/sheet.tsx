@@ -76,7 +76,7 @@ export function Sheet({ open, onClose, title, children, footer, className }: She
       <SheetClose onClose={onClose} />
       <div className="flex max-h-[85dvh] min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl">
         <div className="flex items-center justify-between border-b border-line px-5 py-4 lg:px-6 lg:pt-5">
-          <h2 className="text-lg font-semibold">{title}</h2>
+          <h2 className="text-heading font-semibold">{title}</h2>
           <IconButton variant="soft" size="sm" aria-label={t("Close")} onClick={onClose} className="hidden lg:inline-flex">
             <X size={18} />
           </IconButton>

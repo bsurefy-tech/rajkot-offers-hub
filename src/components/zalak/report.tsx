@@ -73,7 +73,7 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
           </Button>
         }
       >
-        <p className="mb-2 text-sm text-muted">{t("Why are you reporting it?")}</p>
+        <p className="mb-2 text-body-sm text-muted">{t("Why are you reporting it?")}</p>
         <ul role="radiogroup" aria-label={t("Why are you reporting it?")} className="flex flex-col">
           {REASONS.map((item) => {
             const selected = reason === item.value;
@@ -84,7 +84,7 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
                   role="radio"
                   aria-checked={selected}
                   onClick={() => setReason(item.value)}
-                  className={cn("flex min-h-12 w-full cursor-pointer items-center justify-between gap-4 text-left text-[15px]", selected && "font-semibold")}
+                  className={cn("flex min-h-12 w-full cursor-pointer items-center justify-between gap-4 text-left text-body", selected && "font-semibold")}
                 >
                   {t(item.label)}
                   <span aria-hidden className={cn("size-5 shrink-0 rounded-full border-2 border-input", selected && "border-[6px] border-primary")} />
@@ -93,7 +93,7 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
             );
           })}
         </ul>
-        <label className="mt-4 block text-sm font-medium" htmlFor="report-note">
+        <label className="mt-4 block text-body font-medium" htmlFor="report-note">
           {t("Add a note (optional)")}
         </label>
         <textarea
@@ -102,7 +102,7 @@ export function ReportButton({ story, clip }: { story: ZalakStory; clip: ZalakCl
           onChange={(event) => setNote(event.target.value)}
           maxLength={1000}
           rows={3}
-          className="mt-1.5 w-full rounded-xl border border-input bg-white p-3 text-base outline-none focus:border-primary"
+          className="mt-1.5 w-full rounded-xl border border-input bg-white p-3 text-field outline-none focus:border-primary"
         />
       </Sheet>
     </>

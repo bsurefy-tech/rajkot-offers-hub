@@ -151,8 +151,8 @@ export function ScratchSheet({
       {card && (
         <div className="flex flex-col items-center gap-4 pb-1 text-center">
           <div>
-            <p className="text-[13px] text-muted">{card.campaign.title}</p>
-            <p className="mt-1 text-lg font-semibold">{showPrize ? (prize.kind === "nothing" ? t("Better luck next time") : t("You won")) : t("Scratch to reveal your prize")}</p>
+            <p className="text-body-sm text-muted">{card.campaign.title}</p>
+            <p className="mt-1 text-heading font-semibold">{showPrize ? (prize.kind === "nothing" ? t("Better luck next time") : t("You won")) : t("Scratch to reveal your prize")}</p>
           </div>
 
           <div className="relative flex h-[150px] w-[268px] touch-none items-center justify-center overflow-hidden rounded-2xl bg-primary-soft">
@@ -179,16 +179,16 @@ export function ScratchSheet({
           </div>
 
           {error && (
-            <p role="alert" className="text-sm text-danger">
+            <p role="alert" className="text-body text-danger">
               {t(error)}
             </p>
           )}
 
           {showPrize && prize.kind === "reward" && prize.redemption && <RewardPrize redemption={prize.redemption} />}
-          {showPrize && prize.kind === "points" && <p className="text-sm text-muted">{t("Added to your points.")}</p>}
+          {showPrize && prize.kind === "points" && <p className="text-body-sm text-muted">{t("Added to your points.")}</p>}
 
           {card.expires_at && !cleared && (
-            <p className="text-xs text-muted">{t("Use it by {date}.", { date: formatShortDate(card.expires_at.slice(0, 10), locale) })}</p>
+            <p className="text-caption text-muted">{t("Use it by {date}.", { date: formatShortDate(card.expires_at.slice(0, 10), locale) })}</p>
           )}
         </div>
       )}
@@ -203,13 +203,13 @@ function Prize({ prize }: { prize: NonNullable<LoyaltyScratchCard["prize"]> }) {
     <div className="relative flex animate-prize-pop flex-col items-center gap-1 motion-reduce:animate-none">
       {prize.kind === "points" ? (
         <>
-          <span className="text-5xl leading-none font-bold text-primary">+{prize.points ?? 0}</span>
-          <span className="text-[15px] font-semibold">{t("points")}</span>
+          <span className="text-display leading-none font-semibold text-primary">+{prize.points ?? 0}</span>
+          <span className="text-title font-semibold">{t("points")}</span>
         </>
       ) : (
         <>
           <Icon size={40} className={cn(prize.kind === "reward" ? "text-primary" : "text-muted")} aria-hidden />
-          <span className="max-w-56 text-base leading-snug font-semibold">{prize.label}</span>
+          <span className="max-w-56 text-title leading-snug font-semibold">{prize.label}</span>
         </>
       )}
       {prize.kind !== "nothing" && (
@@ -228,10 +228,10 @@ function RewardPrize({ redemption }: { redemption: NonNullable<NonNullable<Loyal
   const t = useT();
   return (
     <div className="flex w-full flex-col items-center gap-2 rounded-2xl border border-line p-4">
-      <p className="text-sm font-semibold">{redemption.reward.title}</p>
+      <p className="text-body font-semibold">{redemption.reward.title}</p>
       {redemption.qr_payload && <Qr payload={redemption.qr_payload} size={150} />}
-      <p className="font-mono text-xl font-bold tracking-[0.2em]">{redemption.code}</p>
-      <p className="text-xs text-muted">{t("Show this code at a partner shop. It is saved under My reward codes.")}</p>
+      <p className="font-mono text-xl font-semibold tracking-[0.2em]">{redemption.code}</p>
+      <p className="text-caption text-muted">{t("Show this code at a partner shop. It is saved under My reward codes.")}</p>
     </div>
   );
 }

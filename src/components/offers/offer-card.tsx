@@ -60,12 +60,12 @@ export function OfferCard({
         </Badge>
       </div>
       <div className={cn("flex flex-col gap-1 px-3.5 pt-3 pb-3.5 lg:gap-1.5 lg:px-4 lg:pt-4 lg:pb-[18px]", expired && "opacity-65")}>
-        <h3 className="line-clamp-2 text-[15px] leading-[1.4] font-semibold lg:text-base lg:leading-[1.45]">
+        <h3 className="line-clamp-2 text-title leading-[1.4] font-semibold lg:leading-[1.45]">
           <Link href={offerPath(offer)} className="after:absolute after:inset-0 after:content-['']">
             {offer.title}
           </Link>
         </h3>
-        <p className="text-[13px] text-muted lg:text-sm">
+        <p className="text-body-sm text-muted">
           {offer.businessName}
           {offer.distanceKm !== undefined && (
             <>
@@ -74,7 +74,7 @@ export function OfferCard({
             </>
           )}
         </p>
-        <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-muted lg:mt-1.5 lg:text-[13px]">
+        <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-caption text-muted lg:mt-1.5">
           <span className="inline-flex items-center gap-1">
             <MapPin size={14} aria-hidden />
             {offer.areaName}
@@ -96,7 +96,7 @@ export function OfferCard({
           )}
         </p>
         {offer.minSpend && (
-          <p className="flex items-center gap-1 text-xs text-muted lg:text-[13px]">
+          <p className="flex items-center gap-1 text-caption text-muted">
             <Tag size={14} aria-hidden />
             {t("On bills of {amount} or more", { amount: formatRupees(offer.minSpend) })}
           </p>
