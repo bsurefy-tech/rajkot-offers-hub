@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Navigation, Phone, Store } from "lucide-react";
+import { ArrowRight, ChevronDown, Navigation, Phone } from "lucide-react";
 import type { OpeningHours, Outlet } from "@/types";
 import { Link } from "@/components/i18n/link";
 import { WhatsAppIcon } from "@/components/icons/brand";
@@ -7,12 +7,14 @@ import { buttonClass } from "@/components/ui/button";
 import { RatingInline } from "@/components/ui/rating";
 import { getT } from "@/lib/i18n/server";
 import { directionsHref } from "@/lib/utils";
+import { ShopAvatar } from "./avatar";
 import { ContactLink } from "./contact-link";
 import { HoursTable, OpenStatusPill } from "./opening-hours";
 
 interface SideContact {
   slug: string;
   name: string;
+  logo?: string;
   phone: string;
   whatsapp: string;
   contactMasked: boolean;
@@ -39,20 +41,19 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
         return (
           <section key={outlet.id} className="overflow-hidden rounded-2xl border border-line bg-white">
             <div className="flex flex-col gap-3 p-4 lg:gap-4 lg:p-6">
-              <div className="flex gap-3">
-                {many ? (
-                  <span aria-hidden className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-ink text-caption font-semibold text-white">
-                    {i + 1}
-                  </span>
-                ) : (
-                  <Store size={20} aria-hidden className="mt-0.5 shrink-0 text-muted" />
-                )}
+              <div className="flex items-center gap-3">
+                <ShopAvatar logo={contact.logo} className="size-11 border-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-body font-semibold">{contact.name}</p>
                   {many && (
-                    <p className="mt-0.5 text-body-sm font-medium">
-                      {outlet.name}
-                      {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-caption font-medium text-muted">{t("Main outlet")}</span>}
+                    <p className="mt-0.5 flex items-center gap-2 text-body-sm font-medium">
+                      <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-full bg-ink text-micro font-semibold text-white">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0">
+                        {outlet.name}
+                        {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-caption font-medium text-muted">{t("Main outlet")}</span>}
+                      </span>
                     </p>
                   )}
                   <p className="mt-0.5 text-body-sm leading-relaxed text-muted">{outlet.address}</p>
@@ -64,6 +65,21 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
                   {outlet.rating && <RatingInline rating={outlet.rating} className="text-body-sm text-muted" />}
                 </div>
               )}
+              <div className="grid grid-cols-4 gap-2">
+                <ContactLink business={contact.slug} kind="call" number={contact.phone} masked={contact.contactMasked} className={iconClass("primary")}>
+                  <Phone size={18} aria-hidden />
+                  <span className="sr-only">{t("Call")}</span>
+                </ContactLink>
+                <ContactLink business={contact.slug} kind="whatsapp" number={contact.whatsapp} masked={contact.contactMasked} className={iconClass("whatsapp")}>
+                  <WhatsAppIcon size={18} />
+                  <span className="sr-only">WhatsApp</span>
+                </ContactLink>
+                <a href={directionsHref(geo.lat, geo.lng)} target="_blank" rel="noreferrer" className={iconClass("outline")}>
+                  <Navigation size={18} aria-hidden />
+                  <span className="sr-only">{t("Directions")}</span>
+                </a>
+                <ShareButton title={contact.name} path={path} variant="tile" />
+              </div>
             </div>
             <details className="group border-t border-line">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-body font-semibold lg:px-6 lg:py-4 [&::-webkit-details-marker]:hidden">
@@ -77,21 +93,6 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
                 <HoursTable hours={hours} compact />
               </div>
             </details>
-            <div className="grid grid-cols-4 gap-2 border-t border-line p-4 lg:px-6">
-              <ContactLink business={contact.slug} kind="call" number={contact.phone} masked={contact.contactMasked} className={iconClass("primary")}>
-                <Phone size={18} aria-hidden />
-                <span className="sr-only">{t("Call")}</span>
-              </ContactLink>
-              <ContactLink business={contact.slug} kind="whatsapp" number={contact.whatsapp} masked={contact.contactMasked} className={iconClass("whatsapp")}>
-                <WhatsAppIcon size={18} />
-                <span className="sr-only">WhatsApp</span>
-              </ContactLink>
-              <a href={directionsHref(geo.lat, geo.lng)} target="_blank" rel="noreferrer" className={iconClass("outline")}>
-                <Navigation size={18} aria-hidden />
-                <span className="sr-only">{t("Directions")}</span>
-              </a>
-              <ShareButton title={contact.name} path={path} variant="tile" />
-            </div>
             {storeHref && (
               <Link href={storeHref} className="flex items-center justify-between border-t border-line px-4 py-3 text-body font-semibold text-primary hover:bg-surface lg:px-6 lg:py-4">
                 {t("View outlet")}
