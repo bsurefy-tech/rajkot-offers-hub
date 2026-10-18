@@ -269,7 +269,7 @@ privacy page, `.env.example`, `.env.production`, `.dev.vars.example`, `README.md
   production project): the script loads through `/api/op/op1.js`, events post to `/api/op/track` and arrive upstream with
   `openpanel-client-id`, `origin` and `openpanel-client-ip`; page views carry `lang`, `page_type`, `signed_in`;
   `page_type` updates on client navigation; `offer_view` is sent from `trackOffer()`. `tsc`, `eslint` and `pnpm build` pass.
-- Not checked: Workers (`pnpm preview`), the real IP and city in the dashboard, the off state (flag unset).
+- Checked later on Workers (see Workers check below). Not checked: the real IP and city in the dashboard, the off state (flag unset).
 - Findings that changed the plan:
   - `@openpanel/nextjs` has no server SDK in its main export (only the `createRouteHandler` proxy at `/server`). For
     Stage C use `OpenPanelBase` re-exported from `@openpanel/nextjs`, or add `@openpanel/sdk` directly.
@@ -332,3 +332,12 @@ privacy page, `.env.example`, `.env.production`, `.dev.vars.example`, `README.md
 - Fixed on the way: events sent before the script was ready could be lost or reordered. The queue now waits for
   `window.openpanel` (the script's own start signal), keeps calls in order, and decides "analytics is on" from a
   `data-analytics` attribute the layout puts on `<body>` (the script's own tag is added only after the page has loaded).
+
+### Workers check (`opennextjs-cloudflare build` + `preview`, in a copy of the project, against a local stand-in for OpenPanel)
+
+- The worker builds. `/api/op/op1.js` is served (200, 7781 bytes, `text/javascript`); `POST /api/op/track` is forwarded and
+  `cf-connecting-ip` arrives upstream as `openpanel-client-ip`; any other `/api/op/*` path is 404. A browser visit sends
+  `screen_view` and `web_vitals` through the proxy. With the API unreachable the page answers 500 and the server `api_error`
+  events (secret read from the Worker's env) reach the stand-in, one per endpoint.
+- Still open: the real project (client secret, real IP/location in the dashboard) and deployment itself. `wrangler`
+  prints a `DOQueueHandler` Durable Object warning on startup; it was there before this work.
