@@ -388,6 +388,8 @@ export const gu = {
   "Showing distances from your location": "તમારા લોકેશનથી અંતર બતાવીએ છીએ",
   "We could not get your location.": "તમારું લોકેશન મળ્યું નહીં.",
   "Location access is off.": "લોકેશનની પરવાનગી બંધ છે.",
+  "Location is turned off for this site.": "આ સાઇટ માટે લોકેશન બંધ છે.",
+  "To see offers near you, allow location from the lock icon next to the address bar, then tap Offers near me again.": "તમારી નજીકની ઓફર્સ જોવા માટે, એડ્રેસ બારની બાજુના લૉક આઇકનથી લોકેશનની પરવાનગી આપો, પછી ફરી \"મારી નજીકની ઓફર્સ\" પર ટૅપ કરો.",
   "You seem to be outside Rajkot.": "તમે રાજકોટની બહાર લાગો છો.",
   "{m} m": "{m} મી.",
   "{km} km": "{km} કિ.મી.",
