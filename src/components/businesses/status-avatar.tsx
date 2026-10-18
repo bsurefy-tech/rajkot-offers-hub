@@ -18,7 +18,7 @@ export async function ShopStatusAvatar({
   status?: { unseen: boolean };
   className?: string;
 }) {
-  if (!status) return <ShopAvatar logo={logo} className={className} />;
+  if (!status) return <ShopAvatar logo={logo} className={cn("border-2 lg:border-4", className)} />;
   const t = await getT();
   return (
     <Link

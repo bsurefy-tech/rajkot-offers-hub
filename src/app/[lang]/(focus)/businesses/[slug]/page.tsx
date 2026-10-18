@@ -80,7 +80,7 @@ function overallRating(business: Business, reviews: { items: Review[]; total: nu
 async function OffersTab({ active, expired }: { active: OfferSummary[]; expired: OfferSummary[] }) {
   const t = await getT();
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 lg:gap-6">
       {active.length ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
           {active.map((offer) => (
@@ -201,9 +201,9 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
           <PhotoMosaic images={images} alt={business.name}>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-4 pb-1 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
-            <div className="flex min-w-0 items-center gap-3.5">
-              <ShopStatusAvatar logo={business.logo} slug={business.slug} status={status} className="size-16 lg:size-20" />
+          <div className="flex flex-col gap-3 px-5 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <ShopStatusAvatar logo={business.logo} slug={business.slug} status={status} className="size-[60px] lg:size-20" />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                   <h1 className="text-heading leading-tight font-semibold lg:text-page">{business.name}</h1>
@@ -219,7 +219,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
       </Container>
 
       <Container className="pb-24 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6 lg:pb-0">
-        <div className="mt-2 min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8">
+        <div className="mt-1 min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8">
           <SectionTabs
             label={t("Page sections")}
             topBar={

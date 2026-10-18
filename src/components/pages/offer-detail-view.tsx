@@ -165,11 +165,11 @@ async function OfferContent({ slug }: { slug: string }) {
             <div className={cn("absolute bottom-4 left-4 hidden lg:block", expired && "opacity-80")}>{badge}</div>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-3 px-5 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
             <div className="flex min-w-0 items-start gap-4 lg:items-center">
                             <ShopAvatar logo={business.logo} className="hidden size-20 shrink-0 lg:flex" />
               <div className="min-w-0">
-                <h1 className={cn("text-page leading-snug font-semibold lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
+                <h1 className={cn("text-heading leading-snug font-semibold lg:text-page lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
                 {/* On a phone only the rating shows here; the header's store icon leads to the shop. */}
                 <p className={cn("mt-1 flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-muted lg:flex", offer.rating ? "flex" : "hidden")}>
                   <Link href={shopPath(business.slug)} className="hidden font-medium text-ink hover:underline lg:inline">
