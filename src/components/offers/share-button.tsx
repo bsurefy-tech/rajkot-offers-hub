@@ -74,7 +74,7 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
           <span className="sr-only">{t("Share")}</span>
         </Button>
       ) : variant === "bar" ? (
-        <Button variant="outline" size="sm" onClick={onShare} className="min-w-0 flex-1 px-2">
+        <Button variant="outline" size="sm" onClick={onShare} className="min-w-0 flex-1 border-whatsapp px-2 text-whatsapp-ink hover:bg-whatsapp-soft">
           <Share2 size={18} aria-hidden />
           {t("Share")}
         </Button>
