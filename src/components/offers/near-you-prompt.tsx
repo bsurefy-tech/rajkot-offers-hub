@@ -1,6 +1,6 @@
 "use client";
 
-import { LocateFixed, TriangleAlert } from "lucide-react";
+import { Check, LocateFixed, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,10 @@ export function NearYouPrompt() {
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-5 lg:p-7">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+      {/* Radar rings: a quiet hint of "around you" behind the content. */}
+      <span aria-hidden className="pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full border border-primary/10 lg:-right-10 lg:-bottom-32 lg:size-96" />
+      <span aria-hidden className="pointer-events-none absolute -right-6 -bottom-14 size-48 rounded-full border border-primary/10 lg:right-4 lg:-bottom-20 lg:size-64" />
+      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
         <div className="flex items-center gap-4 lg:gap-5">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-primary shadow-card ring-4 ring-primary/10 lg:size-16">
             <LocateFixed size={26} aria-hidden />
@@ -70,24 +73,32 @@ export function NearYouPrompt() {
           <div className="min-w-0">
             <p className="text-base leading-snug font-bold lg:text-xl">{t("Find offers around you")}</p>
             <p className="mt-1 text-sm leading-snug text-muted lg:text-[15px]">{t("See the offers closest to you, nearest first.")}</p>
+            <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px] font-medium text-ink">
+              {(["Nearest first", "Distance on every offer"] as const).map((benefit) => (
+                <li key={benefit} className="inline-flex items-center gap-1.5">
+                  <Check size={14} strokeWidth={2.5} className="text-primary" aria-hidden />
+                  {t(benefit)}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
         <Button onClick={locate} disabled={busy} size="lg" className="w-full lg:w-auto">
           <LocateFixed size={18} aria-hidden />
-          {locating ? t("Finding you…") : t("Enable location to see nearest offers")}
+          {locating ? t("Finding you…") : blocked ? t("Try again") : t("Enable location to see nearest offers")}
         </Button>
       </div>
       {blocked && (
-        <div role="alert" className="mt-4 flex items-start gap-2.5 rounded-xl bg-white/80 p-3.5 text-sm leading-snug text-ink ring-1 ring-line">
+        <div role="alert" className="relative mt-4 flex items-start gap-2.5 rounded-xl bg-white/80 p-3.5 text-sm leading-snug text-ink ring-1 ring-line">
           <TriangleAlert size={18} className="mt-px shrink-0 text-primary" aria-hidden />
           <p>
             <span className="font-semibold">{t("Location is turned off for this site.")}</span>{" "}
-            <span className="text-muted">{t("To see offers near you, allow location from the lock icon next to the address bar, then tap the button again.")}</span>
+            <span className="text-muted">{t("To see offers near you, allow location from the lock icon next to the address bar, then tap Try again.")}</span>
           </p>
         </div>
       )}
       {error && (
-        <p role="alert" className="mt-3 text-sm text-danger">
+        <p role="alert" className="relative mt-3 text-sm text-danger">
           {t(error)}
         </p>
       )}
