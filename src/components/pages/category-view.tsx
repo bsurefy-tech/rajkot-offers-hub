@@ -101,7 +101,7 @@ async function EmptyCategorySuggestions({ slug, filters }: { slug: string; filte
     <div className="mt-4 flex flex-col gap-10 lg:mt-8 lg:gap-12">
       {others.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-base lg:text-lg font-semibold">{t("Categories with offers")}</h2>
+          <h2 className="text-heading font-semibold">{t("Categories with offers")}</h2>
           <div className="flex flex-wrap gap-2">
             {others.map((category) => (
               <ChipLink key={category.slug} href={`/categories/${category.slug}`}>
@@ -119,8 +119,8 @@ async function EmptyCategorySuggestions({ slug, filters }: { slug: string; filte
       )}
       <section className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-white p-5 lg:flex-row lg:items-center lg:justify-between lg:p-6">
         <div>
-          <h2 className="text-base lg:text-lg font-semibold">{t("Run a shop in this category?")}</h2>
-          <p className="mt-1 text-sm lg:text-[15px] text-muted">{t("List your shop’s offer for free and reach local customers.")}</p>
+          <h2 className="text-heading font-semibold">{t("Run a shop in this category?")}</h2>
+          <p className="mt-1 text-body-sm text-muted">{t("List your shop’s offer for free and reach local customers.")}</p>
         </div>
         <ButtonLink href="/submit-offer" variant="outline" className="shrink-0">
           {t("Submit an offer")}

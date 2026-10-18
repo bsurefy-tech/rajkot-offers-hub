@@ -65,17 +65,17 @@ export function Tabs({ items, defaultValue, className, listClassName, panelClass
                 "cursor-pointer transition-colors",
                 variant === "underline" &&
                   cn(
-                    "-mb-px border-b-2 pb-3 text-[15px]",
+                    "-mb-px border-b-2 pb-3 text-body",
                     selected ? "border-primary font-semibold text-ink" : "border-transparent font-medium text-muted hover:text-ink",
                   ),
                 variant === "segmented" &&
                   cn(
-                    "h-11 flex-1 rounded-full px-2 text-sm whitespace-nowrap sm:px-6 sm:text-[15px] lg:flex-none",
+                    "h-11 flex-1 rounded-full px-2 text-body whitespace-nowrap sm:px-6 lg:flex-none",
                     selected ? "bg-white font-semibold text-ink shadow-card" : "font-medium text-muted hover:text-ink",
                   ),
                 variant === "chips" &&
                   cn(
-                    "h-[34px] rounded-full border px-3.5 text-[13px] font-medium",
+                    "h-[34px] rounded-full border px-3.5 text-body-sm font-medium",
                     selected ? "border-ink bg-ink text-white" : "border-input bg-white text-ink hover:border-ink",
                   ),
               )}

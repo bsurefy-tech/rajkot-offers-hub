@@ -88,7 +88,7 @@ export function OfferResults({ query, initialItems, initialPage, initialHasMore,
     pins ? (
       <OffersMap pins={pins.pins} total={pins.total || total} fill={fill} />
     ) : mapFailed ? (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-16 text-sm text-muted">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-16 text-body-sm text-muted">
         {t("We could not load the map.")}
         <Button type="button" variant="outline" onClick={() => setMapFailed(false)}>
           {t("Try again")}
@@ -110,7 +110,7 @@ export function OfferResults({ query, initialItems, initialPage, initialHasMore,
           {hasMore && (
             <div ref={sentinel} className="mt-6 lg:mt-10">
               {failed ? (
-                <div className="flex flex-col items-center gap-3 text-sm text-muted">
+                <div className="flex flex-col items-center gap-3 text-body-sm text-muted">
                   {t("We could not load more offers.")}
                   <Button type="button" variant="outline" onClick={() => void loadMore()}>
                     {t("Try again")}
@@ -123,7 +123,7 @@ export function OfferResults({ query, initialItems, initialPage, initialHasMore,
                 </div>
               )}
               <noscript>
-                <a href={nextHref} className="block text-center text-sm font-medium text-primary">
+                <a href={nextHref} className="block text-center text-body font-medium text-primary">
                   {t("Show more offers")}
                 </a>
               </noscript>

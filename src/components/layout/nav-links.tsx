@@ -23,7 +23,7 @@ export function HeaderNav() {
   const t = useT();
   return (
     <nav aria-label={t("Main menu")}>
-      <ul className="flex items-center gap-5 text-[15px] xl:gap-9 font-medium">
+      <ul className="flex items-center gap-5 text-title xl:gap-9 font-medium">
         {mainNav.map((item) => {
           const active = isActive(pathname, item.href, area);
           return (
@@ -83,7 +83,7 @@ export function BottomNav({ rewards, zalak: withZalak = true }: { rewards?: bool
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-full flex-col items-center justify-center gap-1 text-[11px]",
+                  "relative flex h-full flex-col items-center justify-center gap-1 text-micro",
                   active ? "font-semibold text-primary" : "font-medium text-muted",
                 )}
               >

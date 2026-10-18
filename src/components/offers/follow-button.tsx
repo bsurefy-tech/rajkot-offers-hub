@@ -41,6 +41,7 @@ export function FollowBarButton({ slug }: { slug: string }) {
   return (
     <Button
       variant={following ? "outline" : "primary"}
+      size="sm"
       aria-pressed={following}
       onClick={onToggle}
       className={cn("min-w-0 flex-1 px-2", following ? "border-primary text-primary hover:bg-primary-soft" : PULSE)}

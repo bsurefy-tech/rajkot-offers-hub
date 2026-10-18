@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, MapPin, Navigation, Phone } from "lucide-react";
+import { ArrowRight, ChevronDown, Navigation, Phone } from "lucide-react";
 import type { OpeningHours, Outlet } from "@/types";
 import { Link } from "@/components/i18n/link";
 import { WhatsAppIcon } from "@/components/icons/brand";
@@ -7,12 +7,14 @@ import { buttonClass } from "@/components/ui/button";
 import { RatingInline } from "@/components/ui/rating";
 import { getT } from "@/lib/i18n/server";
 import { directionsHref } from "@/lib/utils";
+import { ShopAvatar } from "./avatar";
 import { ContactLink } from "./contact-link";
 import { HoursTable, OpenStatusPill } from "./opening-hours";
 
 interface SideContact {
   slug: string;
   name: string;
+  logo?: string;
   phone: string;
   whatsapp: string;
   contactMasked: boolean;
@@ -21,13 +23,11 @@ interface SideContact {
 }
 
 /**
- * Desktop sidebar: one card per outlet, numbered like the map's pins. Each has its address, whether it is open,
- * four icon buttons (call, WhatsApp, directions, share) and its weekly hours folded away until opened.
+ * One card per outlet, numbered like the map's pins. Each has the shop's name, the outlet's address, whether it is open,
+ * its weekly hours folded away until opened, and four icon buttons (call, WhatsApp, directions, share) after them.
  * With `storeHref` (pages that are not the shop's own) each card ends with a link to the shop's page (labelled "View outlet").
  */
 export async function OutletSideCards({ outlets, contact, path, storeHref }: { outlets: Outlet[]; contact: SideContact; path: string; storeHref?: string }) {
-  // On the offer page there is no status pill; whether the outlet is open shows on the "Opening hours" row instead.
-  const statusInRow = !!storeHref;
   const t = await getT();
   const many = outlets.length > 1;
   const iconClass = (variant: "primary" | "outline" | "whatsapp") => buttonClass({ variant, size: "sm", block: true, className: "px-0" });
@@ -38,31 +38,26 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
         const hours = outlet.hours.length ? outlet.hours : contact.hours;
         return (
           <section key={outlet.id} className="overflow-hidden rounded-2xl border border-line bg-white">
-            <div className="flex flex-col gap-4 p-6">
-              <div className="flex gap-3">
-                {many ? (
-                  <span aria-hidden className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-bold text-white">
-                    {i + 1}
-                  </span>
-                ) : (
-                  <MapPin size={20} aria-hidden className="mt-0.5 shrink-0 text-muted" />
-                )}
+            <div className="flex flex-col gap-3 p-4 lg:gap-4 lg:p-6">
+              <div className="flex items-center gap-3">
+                <ShopAvatar logo={contact.logo} className="size-11 border-0" />
                 <div className="min-w-0 flex-1">
+                  <p className="text-body font-semibold">{contact.name}</p>
                   {many && (
-                    <p className="text-sm lg:text-[15px] font-semibold">
-                      {outlet.name}
-                      {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-xs font-medium text-muted">{t("Main outlet")}</span>}
+                    <p className="mt-0.5 flex items-center gap-2 text-body-sm font-medium">
+                      <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-full bg-ink text-micro font-semibold text-white">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0">
+                        {outlet.name}
+                        {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-caption font-medium text-muted">{t("Main outlet")}</span>}
+                      </span>
                     </p>
                   )}
-                  <p className={many ? "mt-0.5 text-sm leading-relaxed text-muted" : "text-sm lg:text-[15px] leading-relaxed font-medium"}>{outlet.address}</p>
+                  <p className="mt-0.5 text-body-sm leading-relaxed text-muted">{outlet.address}</p>
                 </div>
               </div>
-              {(!statusInRow || outlet.rating) && (
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  {!statusInRow && <OpenStatusPill hours={hours} />}
-                  {outlet.rating && <RatingInline rating={outlet.rating} className="text-sm text-muted" />}
-                </div>
-              )}
+              {outlet.rating && <RatingInline rating={outlet.rating} className="text-body-sm text-muted" />}
               <div className="grid grid-cols-4 gap-2">
                 <ContactLink business={contact.slug} kind="call" number={contact.phone} masked={contact.contactMasked} className={iconClass("primary")}>
                   <Phone size={18} aria-hidden />
@@ -80,19 +75,19 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
               </div>
             </div>
             <details className="group border-t border-line">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-6 py-4 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-body font-semibold lg:px-6 lg:py-4 [&::-webkit-details-marker]:hidden">
                 <span className="flex min-w-0 flex-col gap-1">
                   {t("Opening hours")}
-                  {statusInRow && <OpenStatusPill hours={hours} className="min-h-0 bg-transparent p-0 text-[13px] font-normal text-muted" />}
+                  <OpenStatusPill hours={hours} className="min-h-0 bg-transparent p-0 text-body-sm font-normal text-muted" />
                 </span>
                 <ChevronDown aria-hidden className="size-[18px] shrink-0 text-muted transition-transform group-open:rotate-180" />
               </summary>
-              <div className="px-6 pb-5">
+              <div className="px-4 pb-4 lg:px-6 lg:pb-5">
                 <HoursTable hours={hours} compact />
               </div>
             </details>
             {storeHref && (
-              <Link href={storeHref} className="flex items-center justify-between border-t border-line px-6 py-4 text-sm font-semibold text-primary hover:bg-surface">
+              <Link href={storeHref} className="flex items-center justify-between border-t border-line px-4 py-3 text-body font-semibold text-primary hover:bg-surface lg:px-6 lg:py-4">
                 {t("View outlet")}
                 <ArrowRight size={16} aria-hidden />
               </Link>

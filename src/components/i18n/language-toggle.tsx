@@ -44,7 +44,7 @@ function Toggle({ className }: { className?: string }) {
       lang={target}
       hrefLang={target}
       className={cn(
-        "inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-[13px] font-medium hover:border-input lg:h-10 lg:text-sm",
+        "inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-body-sm font-medium hover:border-input lg:h-10",
         className,
       )}
     >

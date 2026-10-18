@@ -46,9 +46,9 @@ export function LoginProvider({ children }: { children: ReactNode }) {
     <LoginContext value={value}>
       {children}
       <Sheet open={open} onClose={() => setOpen(false)} title={t("Log in to continue")}>
-        <p className="mb-5 text-sm text-muted">{t("Use your mobile number. The first time, we send you a code on WhatsApp.")}</p>
+        <p className="mb-5 text-body-sm text-muted">{t("Use your mobile number. The first time, we send you a code on WhatsApp.")}</p>
         {open && <LoginForm key={round} next={null} onDone={done} />}
-        <p className="mt-6 text-xs leading-relaxed text-muted">
+        <p className="mt-6 text-caption leading-relaxed text-muted">
           {t("By continuing, you agree to our terms and privacy policy.")}{" "}
           <Link href="/terms" className="underline hover:text-ink">
             {t("Terms of use")}

@@ -27,12 +27,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/[lang]/log
   return (
     <Container className="flex justify-center py-10 lg:py-20">
       <div className="w-full max-w-md rounded-2xl border border-line bg-white p-6 shadow-form lg:p-8">
-        <h1 className="text-xl lg:text-2xl font-bold">{t("Log in to Rajkot Offers Hub")}</h1>
-        <p className="mt-1 mb-6 text-sm text-muted">{t("Use your mobile number. The first time, we send you a code on WhatsApp.")}</p>
+        <h1 className="text-page font-semibold">{t("Log in to Rajkot Offers Hub")}</h1>
+        <p className="mt-1 mb-6 text-body-sm text-muted">{t("Use your mobile number. The first time, we send you a code on WhatsApp.")}</p>
         <Suspense fallback={<LoginFormSkeleton />}>
           <Login searchParams={searchParams} />
         </Suspense>
-        <p className="mt-6 text-xs leading-relaxed text-muted">
+        <p className="mt-6 text-caption leading-relaxed text-muted">
           {t("By continuing, you agree to our terms and privacy policy.")}{" "}
           <Link href="/terms" className="underline hover:text-ink">
             {t("Terms of use")}

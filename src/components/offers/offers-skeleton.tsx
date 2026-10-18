@@ -20,7 +20,7 @@ export function OfferListSkeleton({ search }: { search?: boolean }) {
           <Skeleton className="h-[46px] rounded-xl" />
         </div>
       )}
-      <div className="-mx-5 flex justify-between gap-4 border-b border-line bg-white px-5 py-3 lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0">
+      <div className="-mx-4 flex justify-between gap-4 border-b border-line bg-white px-4 py-3 lg:mx-0 lg:border-0 lg:bg-transparent lg:p-0">
         <div className="no-scrollbar flex gap-2 overflow-hidden">
           {CHIP_WIDTHS.map((width) => (
             <Skeleton key={width} className={`h-8 shrink-0 rounded-full lg:h-[38px] ${width}`} />

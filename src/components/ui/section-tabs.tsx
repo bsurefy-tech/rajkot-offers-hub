@@ -97,7 +97,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
   }
 
   return (
-    <div className={cn("relative flex flex-col gap-6 lg:gap-8", className)}>
+    <div className={cn("relative flex flex-col gap-4 lg:gap-8", className)}>
       {topBar && (
         <div
           inert={!stuck}
@@ -115,7 +115,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
         ref={bar}
         aria-label={label}
         className={cn(
-          "sticky z-30 -mx-5 flex gap-6 overflow-x-auto border-b [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-line bg-white px-5 lg:top-[73px] lg:mx-0 lg:gap-8 lg:rounded-t-2xl lg:px-8",
+          "sticky z-30 -mx-4 flex gap-6 overflow-x-auto border-b [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-line bg-white px-4 lg:top-[73px] lg:mx-0 lg:gap-8 lg:rounded-t-2xl lg:px-8",
           topBar ? "top-14" : "top-0",
         )}
       >
@@ -130,7 +130,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
               onClick={(event) => go(event, item.value)}
               className={cn(
                 item.className,
-                "-mb-px shrink-0 border-b-2 pt-3 pb-3 text-[15px] whitespace-nowrap transition-colors",
+                "-mb-px shrink-0 border-b-2 py-2.5 text-body whitespace-nowrap transition-colors",
                 selected
                   ? "border-primary font-semibold text-ink"
                   : "border-transparent font-medium text-muted hover:text-ink",

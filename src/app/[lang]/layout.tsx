@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anek_Gujarati, Inter } from "next/font/google";
+import { Anek_Gujarati, IBM_Plex_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { LoginProvider } from "@/components/auth/login-dialog";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
@@ -12,7 +12,7 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import "../globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"] });
 
 const anek = Anek_Gujarati({
   variable: "--font-anek",
@@ -72,7 +72,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   if (!hasLocale(lang)) notFound();
 
   return (
-    <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(inter.variable, lang === "gu" && anek.variable)}>
+    <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(plex.variable, lang === "gu" && anek.variable)}>
       <body className="flex min-h-dvh flex-col">
         <LocaleProvider locale={lang}>
           <ToastProvider>

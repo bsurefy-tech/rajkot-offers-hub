@@ -58,10 +58,10 @@ export function NearMe({ near, onLocated, onCleared }: { near?: Near; onLocated:
   return (
     <div className="flex flex-col gap-3 px-1 pb-2">
       {near && (
-        <div className="flex items-center gap-2 rounded-xl bg-primary-soft px-3 py-2.5 text-sm">
+        <div className="flex items-center gap-2 rounded-xl bg-primary-soft px-3 py-2.5 text-body">
           <LocateFixed size={16} className="shrink-0 text-primary" aria-hidden />
           <span className="flex-1">{t("Showing distances from your location")}</span>
-          <button type="button" onClick={clear} disabled={busy} className="inline-flex cursor-pointer items-center gap-1 text-[13px] font-medium text-muted hover:text-ink">
+          <button type="button" onClick={clear} disabled={busy} className="inline-flex cursor-pointer items-center gap-1 text-body-sm font-medium text-muted hover:text-ink">
             <X size={14} aria-hidden />
             {t("Clear")}
           </button>
@@ -72,7 +72,7 @@ export function NearMe({ near, onLocated, onCleared }: { near?: Near; onLocated:
         {locating ? t("Finding you…") : t("Offers near me")}
       </Button>
       {error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="text-body text-danger">
           {t(error)}
         </p>
       )}

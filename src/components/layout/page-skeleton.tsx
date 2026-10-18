@@ -34,7 +34,7 @@ export function DetailSkeleton({ kind }: { kind: "offer" | "shop" }) {
         )}
         <div className="overflow-hidden lg:rounded-2xl lg:border lg:border-line lg:bg-white">
           <Skeleton className="h-48 rounded-none sm:h-60 lg:h-[280px]" />
-          <div className="flex flex-col gap-3 px-5 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-3 px-4 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
             <div className="flex min-w-0 flex-1 items-start gap-4 lg:items-center">
               {/* A phone's offer page leaves the shop's logo out of the header. */}
               <Skeleton className={cn("size-16 shrink-0 rounded-full lg:size-20", offer && "hidden lg:block")} />
@@ -81,7 +81,7 @@ export function DetailSkeleton({ kind }: { kind: "offer" | "shop" }) {
       <Container className={cn("lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6", !offer && "pb-28 lg:pb-0")}>
         <div className={cn("min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8", offer ? "mt-3" : "mt-6")}>
           <div className="flex flex-col gap-6 lg:gap-8">
-            <div className="-mx-5 flex h-[49px] items-center gap-6 overflow-hidden border-b border-line bg-white px-5 lg:mx-0 lg:gap-8 lg:rounded-t-2xl lg:px-8">
+            <div className="-mx-4 flex h-[49px] items-center gap-6 overflow-hidden border-b border-line bg-white px-4 lg:mx-0 lg:gap-8 lg:rounded-t-2xl lg:px-8">
               {[64, 88, 56, 72].map((width, i) => (
                 <Skeleton key={i} className="h-4 shrink-0" style={{ width }} />
               ))}
@@ -192,7 +192,7 @@ export function CategoriesSkeleton() {
         </div>
         <div>
           <Skeleton className="mb-4 h-[26px] w-44 lg:mb-6 lg:h-[39px] lg:w-64" />
-          <div className="no-scrollbar -mx-5 flex gap-2 overflow-hidden px-5 lg:mx-0 lg:flex-wrap lg:gap-3 lg:px-0">
+          <div className="no-scrollbar -mx-4 flex gap-2 overflow-hidden px-4 lg:mx-0 lg:flex-wrap lg:gap-3 lg:px-0">
             {[96, 120, 88, 110, 104, 92, 116, 100, 108, 96, 112, 90, 118, 104].map((width, i) => (
               <Skeleton key={i} className="h-[38px] shrink-0 rounded-full lg:h-10" style={{ width }} />
             ))}
@@ -251,7 +251,7 @@ export function HomeSectionsSkeleton() {
 
       <Section compact>
         <SectionHeaderSkeleton />
-        <div className="no-scrollbar -mx-5 flex gap-2 overflow-hidden px-5 lg:mx-0 lg:flex-wrap lg:gap-3 lg:px-0">
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-hidden px-4 lg:mx-0 lg:flex-wrap lg:gap-3 lg:px-0">
           {[110, 128, 96, 118, 104, 124, 100, 116, 108, 120].map((width, i) => (
             <Skeleton key={i} className="h-[38px] shrink-0 rounded-full lg:h-10" style={{ width }} />
           ))}

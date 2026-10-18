@@ -62,7 +62,7 @@ export async function CategoriesView({ area: areaSlug }: { area?: string }) {
         <CategoryImageGrid categories={grid} />
 
         <section id="areas" className="scroll-mt-20">
-          <h2 className="mb-4 text-lg font-semibold lg:mb-6 lg:text-[28px]">{t("Browse by area")}</h2>
+          <h2 className="mb-4 text-page font-semibold lg:mb-6">{t("Browse by area")}</h2>
           <AreaPills areas={await getAreas()} />
         </section>
       </Container>

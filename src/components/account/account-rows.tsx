@@ -29,20 +29,20 @@ export function ProfileCard({ name, mobile, email }: { name: string | null; mobi
         onClick={() => setOpen(true)}
         className="flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-line bg-white p-4 text-left transition-colors hover:bg-surface"
       >
-        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base lg:text-lg font-bold text-primary">
+        <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary-soft text-heading font-semibold text-primary">
           {initials(name, "R")}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-base lg:text-lg leading-snug font-semibold">{name || t("Add your name")}</span>
+          <span className="block truncate text-heading leading-snug font-semibold">{name || t("Add your name")}</span>
           {mobile && (
-            <span className="block text-sm text-muted">
+            <span className="block text-body-sm text-muted">
               <span className="sr-only">{t("Mobile")}: </span>
               {mobile}
             </span>
           )}
-          {email && <span className="block truncate text-[13px] text-muted">{email}</span>}
+          {email && <span className="block truncate text-body-sm text-muted">{email}</span>}
         </span>
-        <span className="text-sm font-semibold text-primary">{t("Edit")}</span>
+        <span className="text-body font-semibold text-primary">{t("Edit")}</span>
       </button>
       <Sheet open={open} onClose={() => setOpen(false)} title={t("Your details")}>
         <NameForm name={name ?? undefined} />
@@ -120,8 +120,8 @@ function FollowingPushRow() {
         <BellRing size={20} strokeWidth={1.8} aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm leading-snug font-semibold lg:text-[15px]">{t("Alerts from shops you follow")}</span>
-        <span className="mt-0.5 block text-[13px] leading-snug text-muted">{t("New offers, statuses and reels, as phone alerts")}</span>
+        <span className="block text-body leading-snug font-semibold">{t("Alerts from shops you follow")}</span>
+        <span className="mt-0.5 block text-body-sm leading-snug text-muted">{t("New offers, statuses and reels, as phone alerts")}</span>
       </span>
       <span aria-hidden className={cn("flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors", on ? "bg-primary" : "bg-line-strong")}>
         <span className={cn("size-5 rounded-full bg-white shadow transition-transform", on && "translate-x-5")} />

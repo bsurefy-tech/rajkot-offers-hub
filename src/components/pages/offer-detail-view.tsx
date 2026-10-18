@@ -15,8 +15,8 @@ import { OfferCode } from "@/components/offers/offer-code";
 import { BusinessRow, HowToGetSteps, TermsAccordion } from "@/components/offers/offer-sections";
 import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
-import { StoreLink } from "@/components/offers/store-link";
 import { ShareButton } from "@/components/offers/share-button";
+import { StoreButton } from "@/components/offers/store-button";
 import { TrackOfferView } from "@/components/offers/track";
 import { Badge } from "@/components/ui/badge";
 import { DetailRow } from "@/components/ui/display";
@@ -145,7 +145,7 @@ async function OfferContent({ slug }: { slug: string }) {
       {!expired && <TrackOfferView offerId={offer.id} />}
       <JsonLd data={crumbs} />
       {expired && (
-        <div role="status" className="bg-surface px-5 py-3 text-center text-sm font-medium text-muted lg:mb-6 lg:rounded-2xl">
+        <div role="status" className="bg-surface px-4 py-3 text-center text-body-sm font-medium text-muted lg:mb-6 lg:rounded-2xl">
           {t("This offer has ended")}
         </div>
       )}
@@ -165,13 +165,13 @@ async function OfferContent({ slug }: { slug: string }) {
             <div className={cn("absolute bottom-4 left-4 hidden lg:block", expired && "opacity-80")}>{badge}</div>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+          <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
             <div className="flex min-w-0 items-start gap-4 lg:items-center">
                             <ShopAvatar logo={business.logo} className="hidden size-20 shrink-0 lg:flex" />
               <div className="min-w-0">
-                <h1 className={cn("text-xl leading-snug font-semibold lg:text-[28px] lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
-                {/* On a phone only the rating shows here; the header's store icon leads to the shop. */}
-                <p className={cn("mt-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted lg:flex lg:text-[15px]", offer.rating ? "flex" : "hidden")}>
+                <h1 className={cn("text-heading leading-snug font-semibold lg:text-page lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
+                {/* On a phone only the rating shows here; the bottom bar's Shop button leads to the shop. */}
+                <p className={cn("mt-1 flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-muted lg:flex", offer.rating ? "flex" : "hidden")}>
                   <Link href={shopPath(business.slug)} className="hidden font-medium text-ink hover:underline lg:inline">
                     {business.name}
                   </Link>
@@ -179,10 +179,10 @@ async function OfferContent({ slug }: { slug: string }) {
                     •
                   </span>
                   <span className="hidden lg:inline">{t("{area}, Rajkot", { area: offer.areaName })}</span>
-                  {offer.rating && <RatingInline rating={offer.rating} className="text-sm text-muted" />}
+                  {offer.rating && <RatingInline rating={offer.rating} className="text-body-sm text-muted" />}
                 </p>
-                <p className="mt-2 text-xs leading-relaxed text-faint lg:text-[13px]">
-                  {t("Offer details are provided by the business. Please confirm with the store before you buy.")}
+                <p className="mt-2 text-caption leading-relaxed text-primary">
+                  {t("Every offer is checked by our team before it goes live. Please verify the details before you buy.")}
                 </p>
               </div>
             </div>
@@ -198,10 +198,9 @@ async function OfferContent({ slug }: { slug: string }) {
               <div className="flex h-full items-center justify-between gap-1 border-b border-line px-2">
                 <BackLink fallbackHref="/offers" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-base leading-tight font-semibold">{offer.title}</p>
-                  <p className="truncate text-xs leading-tight text-muted">{business.name}</p>
+                  <p className="truncate text-title leading-tight font-semibold">{offer.title}</p>
+                  <p className="truncate text-caption leading-tight text-muted">{business.name}</p>
                 </div>
-                <StoreLink href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
               </div>
             }
             items={[
@@ -243,9 +242,9 @@ async function OfferContent({ slug }: { slug: string }) {
           <section className="overflow-hidden rounded-2xl border border-line bg-white">
             <OutletMap outlets={pins} className="h-[220px]" />
             <div className="flex flex-col gap-1 p-6">
-              <p className="text-sm lg:text-[15px] leading-relaxed font-medium">{offer.address}</p>
+              <p className="text-body leading-relaxed font-medium">{offer.address}</p>
               {offer.validAt.length > 0 && (
-                <ul className="text-sm text-muted">
+                <ul className="text-body-sm text-muted">
                   {offer.validAt.map((branch) => (
                     <li key={branch}>{branch}</li>
                   ))}
@@ -275,11 +274,12 @@ async function OfferContent({ slug }: { slug: string }) {
       </div>
 
       {/* Room for the mobile action bar. */}
-      <div aria-hidden className={cn("lg:hidden", hasCode ? "h-40" : "h-28")} />
+      <div aria-hidden className={cn("lg:hidden", hasCode ? "h-40" : "h-24")} />
       <StickyActionBar
         lead={
           <>
-            <SaveBarButton slug={offer.slug} />
+            <StoreButton href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
+            <SaveBarButton slug={offer.slug} variant="outline" />
             <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
           </>
         }

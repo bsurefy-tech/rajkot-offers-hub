@@ -14,10 +14,10 @@ export async function BusinessCta({ image }: { image: string }) {
         <Image src={image} alt="" fill sizes="(min-width: 1024px) 570px, 100vw" className="object-cover" />
       </div>
       <div className="flex flex-col items-start gap-3 p-5 lg:justify-center lg:gap-4 lg:px-14 lg:py-16">
-        <h2 className="text-xl leading-[1.3] font-semibold lg:text-4xl lg:leading-tight">
+        <h2 className="text-page leading-[1.3] font-semibold lg:leading-tight">
           {t("Take your offer to Rajkot")}
         </h2>
-        <p className="text-sm leading-relaxed text-muted lg:text-lg">
+        <p className="text-heading leading-relaxed text-muted">
           {t("List your shop’s offer for free and reach local customers.")}
         </p>
         <ButtonLink href="/submit-offer" className="mt-2 w-full lg:w-auto lg:px-7">
@@ -34,8 +34,8 @@ export async function FollowBand({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between", className)}>
       <div>
-        <p className="text-base font-semibold lg:text-2xl">{t("Follow us on Instagram for daily offers")}</p>
-        <p className="mt-1 text-sm text-muted lg:text-base">{site.instagram}</p>
+        <p className="text-page font-semibold">{t("Follow us on Instagram for daily offers")}</p>
+        <p className="mt-1 text-body-sm text-muted">{site.instagram}</p>
       </div>
       <ButtonAnchor
         href={instagramHref(site.instagram)}

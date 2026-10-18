@@ -79,7 +79,7 @@ export async function OffersExplorer({
   );
 
   const chipRow = (
-    <div className={cn("no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5", "lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0")}>
+    <div className={cn("no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4", "lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0")}>
       {scope.options.length > 1 && (
         <ChipMenu label={scope.label} options={scopeOptions} value={scopeValue > 0 ? scope.options[scopeValue].label : undefined} />
       )}
@@ -102,7 +102,7 @@ export async function OffersExplorer({
               {`“${filters.q}”`}
             </RemovableChip>
           )}
-          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-[13px]">
+          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-body-sm">
             {t("Clear all")}
           </ButtonLink>
         </div>
@@ -136,7 +136,7 @@ export async function OffersExplorer({
     <>
       {anyFilter && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-[13px]">
+          <ButtonLink href={basePath} scroll={false} variant="ghost" size="sm" className="h-[34px] px-2 text-body-sm">
             {t("Clear all")}
           </ButtonLink>
         </div>

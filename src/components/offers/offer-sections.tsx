@@ -28,12 +28,12 @@ export async function BusinessRow({
         {logo ? <Image src={logo} alt="" fill sizes="44px" className="object-cover" /> : <Store size={20} aria-hidden />}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm lg:text-[15px] font-semibold">{name}</p>
-        <p className="truncate text-[13px] text-muted">{t("{area}, Rajkot", { area })}</p>
+        <p className="truncate text-body font-semibold">{name}</p>
+        <p className="truncate text-body-sm text-muted">{t("{area}, Rajkot", { area })}</p>
       </div>
       <Link
         href={shopPath(slug)}
-        className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline"
+        className="inline-flex shrink-0 items-center gap-1 text-body font-semibold text-primary hover:underline"
       >
         {t("View store")}
         <ArrowRight size={15} aria-hidden />
@@ -46,12 +46,12 @@ export async function BusinessRow({
 export async function HowToGetSteps({ steps }: { steps: OfferStep[] }) {
   const t = await getT();
   return (
-    <section className="rounded-2xl bg-surface p-5 lg:p-6">
-      <h2 className="mb-4 text-base font-semibold lg:text-lg">{t("How to get this offer")}</h2>
+    <section className="rounded-2xl bg-surface p-4 lg:p-6">
+      <h2 className="mb-4 text-heading font-semibold">{t("How to get this offer")}</h2>
       <ol className="flex flex-col gap-3 lg:gap-4">
         {steps.map((step, i) => (
-          <li key={step.text} className="flex items-center gap-3 text-sm lg:text-[15px]">
-            <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-white text-[13px] font-semibold">
+          <li key={step.text} className="flex items-center gap-3 text-body">
+            <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-white text-body-sm font-semibold">
               {i + 1}
             </span>
             {step.text}
@@ -68,7 +68,7 @@ export async function TermsAccordion({ terms }: { terms: string[] }) {
     <AccordionItem variant="card" title={t("Terms and conditions")} defaultOpen>
       <ul className="flex flex-col gap-2.5">
         {terms.map((term) => (
-          <li key={term} className="flex gap-2.5 text-[13px] leading-relaxed text-muted lg:text-sm">
+          <li key={term} className="flex gap-2.5 text-body-sm leading-relaxed text-muted">
             <span aria-hidden className="mt-[9px] size-1 shrink-0 rounded-full bg-faint" />
             {term}
           </li>
@@ -109,15 +109,15 @@ export async function MapCard({
         </span>
       </div>
       <div className="flex flex-col items-start gap-3 p-4 lg:p-5">
-        {layout === "split" && <p className="text-xs text-muted">{t("Address")}</p>}
-        <p className="text-sm leading-relaxed">{address}</p>
+        {layout === "split" && <p className="text-caption text-muted">{t("Address")}</p>}
+        <p className="text-body leading-relaxed">{address}</p>
         <TrackedAnchor
           href={directionsHref(geo.lat, geo.lng)}
           target="_blank"
           rel="noreferrer"
           offerId={offerId}
           event="directions"
-          className={buttonClass({ variant: "outline", className: "h-[38px] px-4 text-sm" })}
+          className={buttonClass({ variant: "outline", className: "h-[38px] px-4 text-body" })}
         >
           <Navigation size={16} aria-hidden />
           {t("Get directions")}

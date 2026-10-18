@@ -4,9 +4,9 @@ import type { ComponentProps, ReactNode } from "react";
 import { getT } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
-/** 1200px content column with 20px gutters. */
+/** 1200px content column with 16px gutters on a phone, 20px on desktop. */
 export function Container({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("mx-auto w-full max-w-[1240px] px-5", className)} {...props} />;
+  return <div className={cn("mx-auto w-full max-w-[1240px] px-4 lg:px-5", className)} {...props} />;
 }
 
 interface SectionProps extends ComponentProps<"section"> {
@@ -43,11 +43,11 @@ export async function SectionHeader({ title, href, linkLabel, className, as: Tag
   const t = await getT();
   return (
     <div className={cn("mb-4 flex items-baseline justify-between gap-4 lg:mb-7", className)}>
-      <Tag className="text-lg leading-[1.3] font-semibold lg:text-[28px]">{title}</Tag>
+      <Tag className="text-page leading-[1.3] font-semibold">{title}</Tag>
       {href && (
         <Link
           href={href}
-          className="inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold text-primary hover:underline lg:text-[15px]"
+          className="inline-flex shrink-0 items-center gap-1 text-body-sm font-semibold text-primary hover:underline"
         >
           {linkLabel ?? t("See all")}
           <ArrowRight size={16} aria-hidden />
@@ -60,8 +60,8 @@ export async function SectionHeader({ title, href, linkLabel, className, as: Tag
 export function PageTitle({ title, subtitle, className }: { title: string; subtitle?: ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <h1 className="text-2xl leading-[1.25] font-bold lg:text-[40px] lg:leading-[1.2]">{title}</h1>
-      {subtitle && <p className="mt-1.5 text-sm text-muted lg:mt-2 lg:text-[17px]">{subtitle}</p>}
+      <h1 className="text-page leading-[1.25] font-semibold lg:leading-[1.2]">{title}</h1>
+      {subtitle && <p className="mt-1.5 text-body-sm text-muted lg:mt-2">{subtitle}</p>}
     </div>
   );
 }
@@ -69,7 +69,7 @@ export function PageTitle({ title, subtitle, className }: { title: string; subti
 export async function Breadcrumb({ items }: { items: { href?: string; label: string }[] }) {
   const t = await getT();
   return (
-    <nav aria-label={t("Breadcrumb")} className="hidden text-sm text-muted lg:block">
+    <nav aria-label={t("Breadcrumb")} className="hidden text-body-sm text-muted lg:block">
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((item, i) => (
           <li key={item.label} className="flex items-center gap-1.5">

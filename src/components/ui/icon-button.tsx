@@ -36,7 +36,7 @@ function classes({ variant = "plain", size = "md" }: IconButtonStyle, className?
 function CountBadge({ count }: { count?: number }) {
   if (!count) return null;
   return (
-    <span className="absolute -top-1.5 -right-1.5 flex size-[18px] items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-white ring-2 ring-white">
+    <span className="absolute -top-1.5 -right-1.5 flex size-[18px] items-center justify-center rounded-full bg-primary text-micro font-semibold text-white ring-2 ring-white">
       {count}
     </span>
   );

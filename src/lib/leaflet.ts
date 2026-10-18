@@ -12,7 +12,7 @@ export function pinHtml(main: boolean, label: string | number | null) {
   return `<svg width="${size}" height="${size * 1.25}" viewBox="0 0 32 40" aria-hidden="true" style="filter:drop-shadow(0 3px 4px rgb(0 0 0 / .3))">
     <path d="M16 39C14 30 3 25 3 14a13 13 0 1 1 26 0c0 11-11 16-13 25Z" fill="${fill}" stroke="#fff" stroke-width="2.5"/>
     <circle cx="16" cy="14" r="${main ? 5.5 : 4.5}" fill="#fff"/>
-    ${label ? `<text x="16" y="18" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="${fill}">${label}</text>` : ""}
+    ${label ? `<text x="16" y="18" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="${fill}">${label}</text>` : ""}
   </svg>`;
 }
 

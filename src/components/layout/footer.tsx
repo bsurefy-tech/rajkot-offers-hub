@@ -14,11 +14,11 @@ export async function Footer({ className }: { className?: string }) {
       <Container className="flex flex-col gap-5 py-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-10 lg:py-12">
         <div className="flex flex-col gap-3">
           <Logo size="sm" className="self-start" />
-          <p className="text-sm text-muted">{t(site.tagline)}</p>
+          <p className="text-body-sm text-muted">{t(site.tagline)}</p>
         </div>
 
         <nav aria-label={t("Footer menu")}>
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm lg:gap-8">
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-body lg:gap-8">
             {footerNav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="text-ink hover:text-primary">
@@ -29,7 +29,7 @@ export async function Footer({ className }: { className?: string }) {
           </ul>
         </nav>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted lg:flex-col lg:items-end lg:gap-1.5">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-body-sm text-muted lg:flex-col lg:items-end lg:gap-1.5">
           <a
             href={instagramHref(site.instagram)}
             target="_blank"

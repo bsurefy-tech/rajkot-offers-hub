@@ -34,7 +34,7 @@ export async function AreaLinks({ area, category }: { area?: Area; category?: Ca
 
   return (
     <section aria-labelledby="area-links" className="mt-10 border-t border-line pt-8 lg:mt-14 lg:pt-10">
-      <h2 id="area-links" className="mb-4 text-base font-semibold lg:text-xl">
+      <h2 id="area-links" className="mb-4 text-heading font-semibold">
         {heading}
       </h2>
       <ul className="flex flex-wrap gap-2 lg:gap-3">
@@ -42,7 +42,7 @@ export async function AreaLinks({ area, category }: { area?: Area; category?: Ca
           <li key={a.slug}>
             <Link
               href={offersPath(a.slug, category?.slug)}
-              className="inline-flex h-[38px] items-center gap-1.5 rounded-full border border-input bg-white px-4 text-sm font-medium whitespace-nowrap transition-colors hover:border-ink lg:h-10"
+              className="inline-flex h-[38px] items-center gap-1.5 rounded-full border border-input bg-white px-4 text-body font-medium whitespace-nowrap transition-colors hover:border-ink lg:h-10"
             >
               <MapPin size={15} className="text-muted" aria-hidden />
               {a.name}

@@ -61,7 +61,7 @@ export function NearYouPrompt() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-5 lg:p-7">
+    <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary-soft via-white to-white p-4 lg:p-7">
       {/* Radar rings: a quiet hint of "around you" behind the content. */}
       <span aria-hidden className="pointer-events-none absolute -right-16 -bottom-24 size-72 rounded-full border border-primary/10 lg:-right-10 lg:-bottom-32 lg:size-96" />
       <span aria-hidden className="pointer-events-none absolute -right-6 -bottom-14 size-48 rounded-full border border-primary/10 lg:right-4 lg:-bottom-20 lg:size-64" />
@@ -71,9 +71,9 @@ export function NearYouPrompt() {
             <LocateFixed size={26} aria-hidden />
           </span>
           <div className="min-w-0">
-            <p className="text-base leading-snug font-bold lg:text-xl">{t("Find offers around you")}</p>
-            <p className="mt-1 text-sm leading-snug text-muted lg:text-[15px]">{t("See the offers closest to you, nearest first.")}</p>
-            <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px] font-medium text-ink">
+            <p className="text-heading leading-snug font-semibold">{t("Find offers around you")}</p>
+            <p className="mt-1 text-body-sm leading-snug text-muted">{t("See the offers closest to you, nearest first.")}</p>
+            <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-body-sm font-medium text-ink">
               {(["Nearest first", "Distance on every offer"] as const).map((benefit) => (
                 <li key={benefit} className="inline-flex items-center gap-1.5">
                   <Check size={14} strokeWidth={2.5} className="text-primary" aria-hidden />
@@ -89,7 +89,7 @@ export function NearYouPrompt() {
         </Button>
       </div>
       {blocked && (
-        <div role="alert" className="relative mt-4 flex items-start gap-2 text-sm leading-snug">
+        <div role="alert" className="relative mt-4 flex items-start gap-2 text-body leading-snug">
           <TriangleAlert size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
           <p>
             <span className="font-semibold text-ink">{t("Location is turned off for this site.")}</span>{" "}
@@ -98,7 +98,7 @@ export function NearYouPrompt() {
         </div>
       )}
       {error && (
-        <p role="alert" className="relative mt-3 text-sm text-danger">
+        <p role="alert" className="relative mt-3 text-body text-danger">
           {t(error)}
         </p>
       )}

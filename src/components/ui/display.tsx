@@ -50,8 +50,8 @@ export function EmptyState({ icon: Icon, title, hint, action, size = "lg", class
       >
         <Icon size={size === "lg" ? 30 : 26} strokeWidth={1.6} aria-hidden />
       </div>
-      <h2 className="text-lg lg:text-xl font-semibold">{title}</h2>
-      {hint && <p className="mt-2 max-w-xs text-sm lg:text-[15px] leading-relaxed text-muted">{hint}</p>}
+      <h2 className="text-heading font-semibold">{title}</h2>
+      {hint && <p className="mt-2 max-w-xs text-body-sm leading-relaxed text-muted">{hint}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
@@ -72,8 +72,8 @@ export function DetailRow({ icon: Icon, label, children, className }: DetailRowP
         <Icon size={20} />
       </span>
       <div className="min-w-0">
-        <div className="text-xs text-muted">{label}</div>
-        <div className="mt-0.5 text-sm lg:text-[15px] leading-normal font-medium break-words">{children}</div>
+        <div className="text-caption text-muted">{label}</div>
+        <div className="mt-0.5 text-body leading-normal font-medium break-words">{children}</div>
       </div>
     </div>
   );
@@ -93,8 +93,8 @@ export function Stepper({ title, step, total, stepLabel, labels }: StepperProps)
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-base font-semibold lg:text-xl">{title}</h2>
-        <span className="text-[13px] whitespace-nowrap text-muted lg:text-sm">
+        <h2 className="text-heading font-semibold">{title}</h2>
+        <span className="text-body-sm whitespace-nowrap text-muted">
           {stepLabel}
         </span>
       </div>
@@ -112,7 +112,7 @@ export function Stepper({ title, step, total, stepLabel, labels }: StepperProps)
         />
       </div>
       {labels && (
-        <ol className="hidden justify-between text-[13px] font-medium lg:flex">
+        <ol className="hidden justify-between text-body-sm font-medium lg:flex">
           {labels.map((label, i) => (
             <li key={label} className={i + 1 === step ? "text-primary" : "text-faint"}>
               {label}
@@ -126,5 +126,5 @@ export function Stepper({ title, step, total, stepLabel, labels }: StepperProps)
 
 /** Small uppercase-style label above a section title. */
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
-  return <p className={cn("text-[13px] font-semibold text-primary", className)}>{children}</p>;
+  return <p className={cn("text-body-sm font-semibold text-primary", className)}>{children}</p>;
 }

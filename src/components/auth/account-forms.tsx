@@ -23,7 +23,7 @@ function useSubmit() {
     });
   }
   const shown = message && (
-    <p role={message.ok ? "status" : "alert"} className={message.ok ? "text-sm text-open" : "text-sm text-danger"}>
+    <p role={message.ok ? "status" : "alert"} className={message.ok ? "text-body text-open" : "text-body text-danger"}>
       {message.text}
     </p>
   );
@@ -72,13 +72,13 @@ export function ChangeMpinForm() {
     <div className="flex flex-col gap-3">
       <form id={formId} key={formKey} onSubmit={submit} noValidate className="flex flex-col gap-4">
         <Field id="current" label={t("Current MPIN")}>
-          <PinInput id="current" name="current" secret required className="h-12 text-lg" />
+          <PinInput id="current" name="current" secret required className="h-12 text-heading" />
         </Field>
         <Field id="mpin" label={t("New MPIN")}>
-          <PinInput id="mpin" name="mpin" secret required autoComplete="new-password" className="h-12 text-lg" />
+          <PinInput id="mpin" name="mpin" secret required autoComplete="new-password" className="h-12 text-heading" />
         </Field>
         <Field id="confirm" label={t("Confirm MPIN")}>
-          <PinInput id="confirm" name="confirm" secret required autoComplete="new-password" className="h-12 text-lg" />
+          <PinInput id="confirm" name="confirm" secret required autoComplete="new-password" className="h-12 text-heading" />
         </Field>
       </form>
       {shown}
@@ -105,7 +105,7 @@ export function DeleteAccountForm({ startConfirming, onCancel }: { startConfirmi
   }
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-muted">
+      <p className="text-body-sm text-muted">
         {t("This deletes your account, your name and your claimed codes. You can sign up again later with the same number.")}
       </p>
       {shown}

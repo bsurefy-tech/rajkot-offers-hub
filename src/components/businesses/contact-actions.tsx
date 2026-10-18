@@ -17,8 +17,8 @@ interface Contact {
 
 const external = { target: "_blank", rel: "noreferrer" } as const;
 
-const tileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-surface text-xs font-medium hover:bg-canvas";
-const whatsappTileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-whatsapp-soft text-xs font-medium text-whatsapp-ink hover:bg-whatsapp/15";
+const tileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-surface text-caption font-medium hover:bg-canvas";
+const whatsappTileClass = "flex h-[72px] w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl bg-whatsapp-soft text-caption font-medium text-whatsapp-ink hover:bg-whatsapp/15";
 
 /** Call (icon only), WhatsApp and directions (icon and text) in one row. */
 export async function ContactRow({
@@ -92,7 +92,7 @@ export function StickyActionBar({
   disabled?: boolean;
 }) {
   return (
-    <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-line bg-white px-5 pt-3 pb-[max(20px,env(safe-area-inset-bottom))] lg:hidden">
+    <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-line bg-white px-4 pt-2.5 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden">
       {children}
       {lead && <div className="flex gap-2.5">{lead}</div>}
       {contact && <ContactRow contact={contact} disabled={disabled} offerId={offerId} />}

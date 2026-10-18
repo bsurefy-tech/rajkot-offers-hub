@@ -23,7 +23,7 @@ export async function MyCodes({ token }: { token: string }) {
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   const { data: claims } = await api<Page<PromotionClaim>>("/promotion-claims", { token, query: { per_page: 30 } });
   return (
-    <section className="rounded-2xl border border-line bg-white p-5 lg:p-6">
+    <section className="rounded-2xl border border-line bg-white p-4 lg:p-6">
       {claims.length === 0 ? (
         <EmptyState
           icon={Ticket}
@@ -43,9 +43,9 @@ export async function MyCodes({ token }: { token: string }) {
                     {claim.promotion.title}
                   </Link>
                 ) : null}
-                {claim.promotion && <p className="text-sm text-muted">{claim.promotion.business.name}</p>}
-                <p className="font-mono text-lg font-bold tracking-[0.2em]">{claim.code}</p>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+                {claim.promotion && <p className="text-body-sm text-muted">{claim.promotion.business.name}</p>}
+                <p className="font-mono text-lg font-semibold tracking-[0.2em]">{claim.code}</p>
+                <div className="flex flex-wrap items-center gap-2 text-caption text-muted">
                   <Badge variant={claim.status === "claimed" ? "offer" : "neutral"} size="xs">
                     {t(STATUS[claim.status])}
                   </Badge>

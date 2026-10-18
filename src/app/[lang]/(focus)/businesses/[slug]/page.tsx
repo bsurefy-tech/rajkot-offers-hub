@@ -5,8 +5,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Globe, Navigation, Phone, Tag } from "lucide-react";
 import { InstagramIcon, WhatsAppIcon } from "@/components/icons/brand";
-import { ShopAvatar } from "@/components/businesses/avatar";
-import { ContactRow, StickyActionBar } from "@/components/businesses/contact-actions";
+import { ShopStatusAvatar } from "@/components/businesses/status-avatar";
+import { StickyActionBar } from "@/components/businesses/contact-actions";
 import { ContactLink } from "@/components/businesses/contact-link";
 import { OutletSideCards } from "@/components/businesses/outlets";
 import { OutletMap, type MapOutlet } from "@/components/businesses/outlet-map";
@@ -24,6 +24,7 @@ import { SectionTabs } from "@/components/ui/section-tabs";
 import { offersPath } from "@/lib/areas";
 import { getBusiness, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
+import { getShopStatus } from "@/lib/zalak/api";
 import { cn, directionsHref } from "@/lib/utils";
 import { breadcrumbLd, JsonLd, localBusinessLd, pageMetadata } from "@/lib/seo";
 import type { Business, OfferSummary, Rating, Review } from "@/types";
@@ -79,7 +80,7 @@ function overallRating(business: Business, reviews: { items: Review[]; total: nu
 async function OffersTab({ active, expired }: { active: OfferSummary[]; expired: OfferSummary[] }) {
   const t = await getT();
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 lg:gap-6">
       {active.length ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
           {active.map((offer) => (
@@ -101,7 +102,7 @@ async function OffersTab({ active, expired }: { active: OfferSummary[]; expired:
       )}
       {expired.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xs font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
+          <h2 className="mb-4 text-caption font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
             {expired.map((offer) => (
               <OfferCard key={offer.slug} offer={offer} sizes="(min-width: 1024px) 400px, 100vw" />
@@ -117,7 +118,7 @@ async function PhotosTab({ business, images }: { business: Business; images: str
   const t = await getT();
   return (
     <div>
-      <h2 className="mb-3 text-base font-semibold lg:text-[22px]">{t("Photos")}</h2>
+      <h2 className="mb-3 text-heading font-semibold">{t("Photos")}</h2>
       <ul className="grid grid-cols-3 gap-2 lg:gap-4">
         {images.map((src) => (
           <li key={src} className="relative aspect-square overflow-hidden rounded-xl bg-surface lg:aspect-[4/3]">
@@ -134,7 +135,7 @@ async function OutletsTab({ business, path }: { business: Business; path: string
   const t = await getT();
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-base lg:text-lg font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
+      <h2 className="text-heading font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
       <OutletSideCards outlets={business.outlets} contact={business} path={path} />
     </div>
   );
@@ -145,8 +146,8 @@ async function AboutTab({ business }: { business: Business }) {
   return (
     <div className="flex flex-col gap-7">
       <section>
-        <h2 className="mb-2 text-base font-semibold lg:text-[22px]">{t("About us")}</h2>
-        <p className="max-w-[640px] text-sm leading-relaxed text-muted lg:text-base">{business.about}</p>
+        <h2 className="mb-2 text-heading font-semibold">{t("About us")}</h2>
+        <p className="max-w-[640px] text-body-sm leading-relaxed text-muted">{business.about}</p>
       </section>
       <div className="lg:hidden">
         <LinkRows business={business} />
@@ -159,11 +160,12 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   const t = await getT();
   const business = await getBusiness((await params).slug);
   if (!business) notFound();
-  const [{ active, expired }, reviews, category] = await Promise.all([
+  const [{ active, expired }, reviews, category, status] = await Promise.all([
     getBusinessOffers(business.slug),
     getBusinessReviews(business.id, business.outlets),
     // A shop's own category can sit below the offer categories ("Footwear Stores" under "Footwear"); only those have a list page.
     getCategory(business.categorySlug),
+    getShopStatus(business.slug),
   ]);
   const path = shopPath(business.slug);
   const subtitle = t("{category} • {area}, Rajkot", { category: business.categoryName, area: business.areaName });
@@ -199,27 +201,25 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
           <PhotoMosaic images={images} alt={business.name}>
             {mobileButtons}
           </PhotoMosaic>
-          <div className="flex flex-col gap-3 px-5 pt-5 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
-            <div className="flex min-w-0 items-start gap-4 lg:items-center">
-              <ShopAvatar logo={business.logo} className="size-16 shrink-0 lg:size-20" />
+          <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <ShopStatusAvatar logo={business.logo} slug={business.slug} status={status} className="size-[60px] lg:size-20" />
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <h1 className="text-2xl leading-tight font-semibold lg:text-[30px]">{business.name}</h1>
-                  {rating && <RatingInline rating={rating} className="text-sm text-muted" />}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                  <h1 className="text-heading leading-tight font-semibold lg:text-page">{business.name}</h1>
+                  {rating && <RatingInline rating={rating} className="text-body-sm text-muted" />}
                 </div>
-                <p className="mt-1 text-sm text-muted lg:text-[15px]">{subtitle}</p>
+                <p className="mt-0.5 text-body-sm text-muted">{subtitle}</p>
               </div>
             </div>
             {/* Follow: new offers from this shop come first and are announced. On desktop it sits at the right of the header; on a phone it is in the bottom bar. */}
             <FollowButton slug={business.slug} className="hidden lg:inline-flex lg:self-center" />
-            {/* On a phone the contact buttons sit under the name; on desktop they float at the bottom. */}
-            <ContactRow contact={business} className="lg:hidden" />
           </div>
         </div>
       </Container>
 
-      <Container className="pb-28 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6 lg:pb-0">
-        <div className="mt-6 min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8">
+      <Container className="pb-24 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6 lg:pb-0">
+        <div className="mt-1 min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8">
           <SectionTabs
             label={t("Page sections")}
             topBar={
@@ -230,7 +230,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
                     <Image src={business.logo} alt="" fill sizes="32px" className="object-cover" />
                   </span>
                 )}
-                <p className="min-w-0 flex-1 truncate text-base font-semibold">{business.name}</p>
+                <p className="min-w-0 flex-1 truncate text-title font-semibold">{business.name}</p>
                 <div className="flex shrink-0 items-center">
                   <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className={headerAction}>
                     <Phone size={20} aria-hidden />

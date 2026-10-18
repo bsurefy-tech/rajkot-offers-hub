@@ -93,7 +93,7 @@ export function OffersMap({ pins, total, fill, className }: { pins: OfferPin[]; 
 
   if (pins.length === 0) {
     return (
-      <p className="rounded-2xl border border-line bg-surface px-5 py-16 text-center text-sm text-muted">
+      <p className="rounded-2xl border border-line bg-surface px-5 py-16 text-center text-body-sm text-muted">
         {t("None of these offers has a place on the map yet.")}
       </p>
     );
@@ -113,10 +113,10 @@ export function OffersMap({ pins, total, fill, className }: { pins: OfferPin[]; 
           <div className="absolute right-3 bottom-3 left-3 z-[1000] rounded-2xl border border-line bg-white p-3 shadow-card lg:right-auto lg:w-[380px]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <Link href={shopPath(pin.businessSlug)} className="block truncate text-sm lg:text-[15px] font-semibold hover:underline">
+                <Link href={shopPath(pin.businessSlug)} className="block truncate text-body font-semibold hover:underline">
                   {pin.businessName}
                 </Link>
-                <p className="truncate text-[13px] text-muted">
+                <p className="truncate text-body-sm text-muted">
                   {pin.areaName}
                   {pin.distanceKm !== undefined && ` · ${formatDistance(pin.distanceKm, t)}`}
                 </p>
@@ -138,15 +138,15 @@ export function OffersMap({ pins, total, fill, className }: { pins: OfferPin[]; 
                       <Image src={offer.image} alt="" fill sizes="56px" className={offer.imageIsLogo ? "object-contain p-2" : "object-cover"} />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[13px] font-semibold text-primary">{offer.badge}</span>
-                      <span className="line-clamp-2 text-sm leading-snug">{offer.title}</span>
+                      <span className="block text-body-sm font-semibold text-primary">{offer.badge}</span>
+                      <span className="line-clamp-2 text-body leading-snug">{offer.title}</span>
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
             {pin.offers.length > SHOWN_OFFERS && (
-              <Link href={shopPath(pin.businessSlug)} className="mt-2 inline-block text-[13px] font-medium text-primary hover:underline">
+              <Link href={shopPath(pin.businessSlug)} className="mt-2 inline-block text-body-sm font-medium text-primary hover:underline">
                 {t("See all {count} offers", { count: pin.offers.length })}
               </Link>
             )}
@@ -154,7 +154,7 @@ export function OffersMap({ pins, total, fill, className }: { pins: OfferPin[]; 
         )}
       </div>
       {total > offerCount && (
-        <p className={cn("text-center text-[13px] text-muted", fill && "px-5")}>{t("{shown} of {total} offers are on the map; the rest have no location yet.", { shown: offerCount, total })}</p>
+        <p className={cn("text-center text-body-sm text-muted", fill && "px-5")}>{t("{shown} of {total} offers are on the map; the rest have no location yet.", { shown: offerCount, total })}</p>
       )}
     </div>
   );

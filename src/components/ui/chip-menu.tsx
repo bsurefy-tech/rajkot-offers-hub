@@ -59,8 +59,8 @@ export function ChipMenu({ label, options, value, className }: ChipMenuProps) {
     <ul role="listbox" aria-label={label} className="flex flex-col">
       {options.map((option) => {
         const row = cn(
-          "flex min-h-12 w-full cursor-pointer items-center justify-between gap-4 text-left text-[15px]",
-          "lg:min-h-10 lg:rounded-[10px] lg:px-3 lg:text-sm lg:hover:bg-surface",
+          "flex min-h-12 w-full cursor-pointer items-center justify-between gap-4 text-left text-body",
+          "lg:min-h-10 lg:rounded-[10px] lg:px-3 lg:text-body lg:hover:bg-surface",
           option.selected && "font-semibold lg:bg-surface",
         );
         const mark = (
@@ -108,7 +108,7 @@ export function ChipMenu({ label, options, value, className }: ChipMenuProps) {
         aria-haspopup={open === "popover" ? "listbox" : "dialog"}
         aria-expanded={open !== null}
         onClick={toggle}
-        className={chipClass({ selected: Boolean(value), size: "md" }, "h-8 px-3 lg:h-[38px] lg:px-[18px] lg:text-sm")}
+        className={chipClass({ selected: Boolean(value), size: "md" }, "h-8 px-3 lg:h-[38px] lg:px-[18px] lg:text-body")}
       >
         {value ? `${label} · ${value}` : label}
         <ChevronDown size={14} className={cn("transition-transform", open === "popover" && "rotate-180")} aria-hidden />

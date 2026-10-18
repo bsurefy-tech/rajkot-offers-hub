@@ -32,7 +32,7 @@ export function EarnTab({ tasks, referral, onChanged }: { tasks: LoyaltyTask[]; 
   return (
     <div className="flex flex-col gap-6">
       <section className="rounded-2xl border border-line bg-white p-5">
-        <h2 className="text-base font-semibold">{t("How you earn points")}</h2>
+        <h2 className="text-title font-semibold">{t("How you earn points")}</h2>
         <ol className="mt-4 flex flex-col gap-4">
           {STEPS.map(({ icon: Icon, title, hint }, i) => (
             <li key={title} className="flex items-center gap-3">
@@ -40,10 +40,10 @@ export function EarnTab({ tasks, referral, onChanged }: { tasks: LoyaltyTask[]; 
                 <Icon size={20} aria-hidden />
               </span>
               <div>
-                <p className="text-sm lg:text-[15px] font-medium">
+                <p className="text-body font-medium">
                   {i + 1}. {t(title)}
                 </p>
-                <p className="text-[13px] text-muted">{t(hint)}</p>
+                <p className="text-body-sm text-muted">{t(hint)}</p>
               </div>
             </li>
           ))}
@@ -52,7 +52,7 @@ export function EarnTab({ tasks, referral, onChanged }: { tasks: LoyaltyTask[]; 
 
       {tasks.length > 0 && (
         <section>
-          <h2 className="mb-3 text-base font-semibold">{t("Quick tasks")}</h2>
+          <h2 className="mb-3 text-title font-semibold">{t("Quick tasks")}</h2>
           <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
             {tasks.map((item) => {
               // The API holds a task back until the shopper's profile is saved; the sheet asks for it first.
@@ -60,22 +60,22 @@ export function EarnTab({ tasks, referral, onChanged }: { tasks: LoyaltyTask[]; 
               return (
                 <li key={item.id} className="flex items-center gap-3 p-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm lg:text-[15px] font-medium">{item.title}</p>
-                    {item.description && <p className="text-[13px] text-muted">{item.description}</p>}
-                    {item.status === "rejected" && item.reject_reason && <p className="mt-1 text-[13px] text-danger">{item.reject_reason}</p>}
+                    <p className="text-body font-medium">{item.title}</p>
+                    {item.description && <p className="text-body-sm text-muted">{item.description}</p>}
+                    {item.status === "rejected" && item.reject_reason && <p className="mt-1 text-body-sm text-danger">{item.reject_reason}</p>}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1.5">
                     <Badge variant="offer" size="xs">
                       {t("+{points} pts", { points: item.points })}
                     </Badge>
                     {item.status === "submitted" || (item.status === "approved" && !startable) ? (
-                      <span className="flex items-center gap-1 text-xs font-medium text-muted">
+                      <span className="flex items-center gap-1 text-caption font-medium text-muted">
                         {item.status === "approved" ? <Check size={13} aria-hidden /> : <Clock size={13} aria-hidden />}
                         {t(STATUS[item.status])}
                       </span>
                     ) : (
                       startable && (
-                        <Button size="sm" variant="outline" className="h-8 px-3 text-[13px]" onClick={() => setTask(item)}>
+                        <Button size="sm" variant="outline" className="h-8 px-3 text-body-sm" onClick={() => setTask(item)}>
                           {item.status === "rejected" ? t("Try again") : t("Send proof")}
                         </Button>
                       )
@@ -123,9 +123,9 @@ function TaskSheet({ task, onClose, onDone }: { task: LoyaltyTask | null; onClos
     <Sheet open={Boolean(task)} onClose={onClose} title={task?.title ?? ""}>
       {task && (
         <form id="task-form" action={submit} className="flex flex-col gap-4">
-          {task.description && <p className="text-sm lg:text-[15px] text-muted">{task.description}</p>}
+          {task.description && <p className="text-body-sm text-muted">{task.description}</p>}
           {task.target_url && (
-            <a href={task.target_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm lg:text-[15px] font-semibold text-primary">
+            <a href={task.target_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-body font-semibold text-primary">
               <Link2 size={16} aria-hidden />
               {task.target_handle ?? t("Open the page")}
             </a>
@@ -142,7 +142,7 @@ function TaskSheet({ task, onClose, onDone }: { task: LoyaltyTask | null; onClos
             <Textarea id="note" name="note" rows={2} maxLength={500} />
           </Field>
           {error && (
-            <p role="alert" className="text-sm text-danger">
+            <p role="alert" className="text-body text-danger">
               {error}
             </p>
           )}
@@ -200,8 +200,8 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
           <Users size={20} aria-hidden />
         </span>
         <div>
-          <h2 className="text-base font-semibold">{t("Invite friends")}</h2>
-          <p className="text-[13px] text-muted">
+          <h2 className="text-title font-semibold">{t("Invite friends")}</h2>
+          <p className="text-body-sm text-muted">
             {referral.headline_points > 0
               ? t("Earn up to {points} points for each friend. You are paid as they complete each step.", { points: referral.headline_points })
               : t("Earn points as your friends complete each step.")}
@@ -209,7 +209,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
         </div>
       </div>
       <div className="mt-4 flex gap-2">
-        <div className="flex h-12 flex-1 items-center justify-center rounded-xl border border-dashed border-line-strong font-mono text-lg font-bold tracking-[0.2em]">{referral.code}</div>
+        <div className="flex h-12 flex-1 items-center justify-center rounded-xl border border-dashed border-line-strong font-mono text-lg font-semibold tracking-[0.2em]">{referral.code}</div>
         <Button variant="outline" iconOnly aria-label={t("Copy code")} onClick={() => void navigator.clipboard.writeText(referral.code).then(() => toast(t("Code copied")))}>
           <Copy size={18} aria-hidden />
         </Button>
@@ -217,7 +217,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
           <Share2 size={18} aria-hidden />
         </Button>
       </div>
-      <p className="mt-3 text-[13px] text-muted">
+      <p className="mt-3 text-body-sm text-muted">
         {t("{count} friends joined · {points} points earned", { count: joined, points: referral.earned_points })}
       </p>
       {!referral.invited_by && (

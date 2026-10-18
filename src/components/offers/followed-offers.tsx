@@ -33,14 +33,14 @@ export function FollowedOffers({ framed, className }: { framed?: boolean; classN
 
   const content = (
     <div className={className}>
-      <h2 className="mb-4 text-lg leading-[1.3] font-semibold lg:mb-7 lg:text-[28px]">{t("From shops you follow")}</h2>
+      <h2 className="mb-4 text-page leading-[1.3] font-semibold lg:mb-7">{t("From shops you follow")}</h2>
       <OfferCarousel offers={offers} />
     </div>
   );
   // Not `Section`/`Container`: that module is server-only, and this is a client component.
   return framed ? (
     <section className="bg-white py-8 lg:py-12">
-      <div className="mx-auto w-full max-w-[1240px] px-5">{content}</div>
+      <div className="mx-auto w-full max-w-[1240px] px-4 lg:px-5">{content}</div>
     </section>
   ) : (
     content
