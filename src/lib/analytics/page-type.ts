@@ -17,7 +17,8 @@ export type PageType =
   | "contact"
   | "how_it_works"
   | "submit_offer"
-  | "legal";
+  | "legal"
+  | "not_found";
 
 const STATIC: Record<string, PageType> = {
   offers: "offers",

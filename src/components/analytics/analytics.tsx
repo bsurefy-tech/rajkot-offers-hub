@@ -2,6 +2,7 @@
 
 import { OpenPanelComponent } from "@openpanel/nextjs";
 import { usePathname } from "next/navigation";
+import { useReportWebVitals } from "next/web-vitals";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { clearIdentity, noteIdentified, setGlobalProperties, track } from "@/lib/analytics/client";
 import { pageTypeOf } from "@/lib/analytics/page-type";
@@ -24,6 +25,20 @@ const FILTER = `function(e){
   }
   return true;
 }`;
+
+/** Share of visits that report web vitals (LCP, INP, CLS, TTFB): enough for a trend without an event per metric per visit. */
+const VITALS_SAMPLE = 0.2;
+const MAX_ERRORS_PER_VISIT = 5;
+
+/** Whether this visit reports web vitals; decided once per page load. */
+const sampled = typeof window !== "undefined" && Math.random() < VITALS_SAMPLE;
+
+/** A page's vitals, when this visit was picked. */
+function reportVital(metric: { name: string; value: number; rating?: string }) {
+  if (!sampled) return;
+  // CLS is a small ratio; the rest are milliseconds.
+  track("web_vitals", { metric: metric.name, value: metric.name === "CLS" ? Math.round(metric.value * 1000) / 1000 : Math.round(metric.value), rating: metric.rating ?? "" });
+}
 
 /**
  * Loads OpenPanel through this site's own `/api/op` proxy and keeps the properties every event carries
@@ -51,6 +66,30 @@ export function Analytics({ clientId, lang, signedIn, profileId }: { clientId: s
   useEffect(() => {
     if (profileId) noteIdentified();
   }, [profileId]);
+
+  useReportWebVitals(reportVital);
+
+  // Script errors and failed promises, a few per visit, short and without the stack (which can hold addresses with personal data).
+  useEffect(() => {
+    let sent = 0;
+    const report = (source: "error" | "promise", reason: unknown) => {
+      if (sent >= MAX_ERRORS_PER_VISIT) return;
+      sent++;
+      const message = reason instanceof Error ? reason.message : typeof reason === "string" ? reason : "unknown";
+      track("app_error", { source, message: message.slice(0, 120) });
+    };
+    const onError = (event: ErrorEvent) => report("error", event.error ?? event.message);
+    const onRejection = (event: PromiseRejectionEvent) => report("promise", event.reason);
+    const onInstalled = () => track("pwa_installed", {});
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
+  }, []);
 
   // An installed app (home-screen icon) against a browser tab.
   useEffect(() => {

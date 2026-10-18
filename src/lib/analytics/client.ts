@@ -1,6 +1,9 @@
 import type {} from "@openpanel/nextjs";
 import type { EventMap } from "./events";
 
+/** On `<body>` when analytics is on (set by the root layout). */
+export const ENABLED_ATTRIBUTE = "data-analytics";
+
 type Call = [method: string, ...args: unknown[]];
 
 /** Calls made before the OpenPanel script has started (it loads after the page); sent in order once it has. */
@@ -8,8 +11,13 @@ const waiting: Call[] = [];
 let timer: ReturnType<typeof setInterval> | undefined;
 const GIVE_UP_MS = 10_000;
 
+/** The script has loaded and started (`window.openpanel` exists). Before that `window.op` may be only a queue, and a call made now could run ahead of `init`. */
+function ready() {
+  return typeof window.op === "function" && Boolean(window.openpanel);
+}
+
 function flush(startedAt: number) {
-  if (typeof window.op === "function") {
+  if (ready()) {
     clearInterval(timer);
     timer = undefined;
     for (const call of waiting.splice(0)) window.op(...(call as Parameters<typeof window.op>));
@@ -21,14 +29,15 @@ function flush(startedAt: number) {
 }
 
 /**
- * Browser only, and never throws. Does nothing when analytics is off: the layout only renders the script's `#openpanel-init`
- * tag when it is on, so its absence means there is nothing to wait for.
+ * Browser only, and never throws. Does nothing when analytics is off: the layout only puts `data-analytics` on `<body>` when
+ * it is on, so without it there is nothing to wait for (the script's own tag is added only after the page has loaded).
  */
 function send(...call: Call) {
   if (typeof window === "undefined") return;
   try {
-    if (typeof window.op === "function") window.op(...(call as Parameters<typeof window.op>));
-    else if (document.getElementById("openpanel-init")) {
+    // Anything already waiting goes first, so a call never overtakes an earlier one.
+    if (ready() && waiting.length === 0) window.op(...(call as Parameters<typeof window.op>));
+    else if (document.body.hasAttribute(ENABLED_ATTRIBUTE)) {
       waiting.push(call);
       const startedAt = Date.now();
       timer ??= setInterval(() => flush(startedAt), 100);

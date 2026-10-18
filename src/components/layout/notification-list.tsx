@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Bell, Gift } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLogin } from "@/components/auth/login-dialog";
@@ -86,6 +87,7 @@ export function NotificationList() {
       setUnread(unread);
       return { ...current, items, unread };
     });
+    if (id === undefined) track("notifications_read_all", {});
     void markReadAction(id);
   }
 
@@ -122,7 +124,13 @@ export function NotificationList() {
           return (
             <li key={n.id}>
               {n.href ? (
-                <Link href={n.href} onClick={() => !n.read && read(n.id)} className={cn(style, "transition-colors hover:bg-surface")}>
+                <Link
+                  href={n.href}
+                  onClick={() => {
+                    track("notification_open", { type: n.type ?? "other" });
+                    if (!n.read) read(n.id);
+                  }} className={cn(style, "transition-colors hover:bg-surface")}
+                >
                   {content}
                 </Link>
               ) : (

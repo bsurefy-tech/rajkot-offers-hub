@@ -1,3 +1,4 @@
+import { NotFoundEvent } from "@/components/analytics/not-found-event";
 import { Footer } from "@/components/layout/footer";
 import { DesktopHeader, MobileHeader } from "@/components/layout/header";
 import { ButtonLink } from "@/components/ui/button";
@@ -9,6 +10,7 @@ export default async function NotFound() {
     <>
       <DesktopHeader />
       <MobileHeader />
+      <NotFoundEvent />
       <main className="flex flex-1 flex-col items-center justify-center px-8 pt-10 pb-14 text-center lg:min-h-[560px] lg:p-20">
         <p aria-hidden className="text-[72px] leading-none font-semibold tracking-[-0.03em] text-input lg:text-[120px]">
           404

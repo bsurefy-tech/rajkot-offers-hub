@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@/lib/analytics/client";
 import { Clock, Gift, History, Minus, Plus, QrCode, RotateCcw, Sparkles, Ticket } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { useLogin } from "@/components/auth/login-dialog";
@@ -320,6 +321,7 @@ function ConfirmSheet({
     setError(null);
     start(async () => {
       const done = await redeemRewardAction(choice.reward.id, choice.requestId);
+      track("reward_redeem", { result: done.ok ? "ok" : done.error === "login" ? "login" : "error" });
       if (done.ok) return onRedeemed(done.data);
       if (done.error === "login") return login.prompt("rewards", redeem);
       setError(done.detail ?? t(done.error));

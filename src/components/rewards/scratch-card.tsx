@@ -6,6 +6,7 @@ import { Qr } from "@/components/offers/offer-code";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { scratchCardAction } from "@/lib/actions/rewards";
+import { track } from "@/lib/analytics/client";
 import type { LoyaltyScratchCard } from "@/lib/api/types";
 import { useLocale, useT } from "@/lib/i18n/client";
 import { formatShortDate } from "@/lib/format";
@@ -77,6 +78,7 @@ export function ScratchSheet({
     setPhase("drawing");
     const done = await scratchCardAction(card.id);
     if (done.ok) {
+      track("scratch_reveal", { prize: done.data.prize?.kind ?? "nothing", points: done.data.prize?.points ?? 0 });
       setResult(done.data);
       setPhase("idle");
     } else {

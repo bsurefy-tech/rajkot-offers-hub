@@ -1,6 +1,6 @@
 # Plan: OpenPanel analytics (self-hosted)
 
-Status: Stages A to C built and checked on `feature/openpanel` (see section 8); D and E are not started. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
+Status: Stages A to D built and checked on `feature/openpanel` (see section 8); only E (dashboards, ship) is left. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
 
 Goal: every kind of analytics for the site in one self-hosted OpenPanel project: traffic (page views, sources,
 devices, places), product events (search, filters, offers, shops, Zalak, rewards), funnels (login, claim code,
@@ -315,3 +315,20 @@ privacy page, `.env.example`, `.env.production`, `.dev.vars.example`, `README.md
 - Privacy page: added the `ro_uid` cookie and the usage-statistics purpose.
 - Not checked: a real login (OTP and MPIN) end to end, account deletion, that OpenPanel merges the pre-login device into the
   profile, and server events against the real project (needs the secret).
+
+### Stage D (done; checked against the local stand-in where no login or Zalak data was needed)
+
+- Zalak and Status: `status_ring_open`, `status_view`, `reel_view`, `reel_complete`, `reel_share`, `reel_link_tap` (from the two
+  chokepoints in `use-zalak-memory.ts`), `zalak_react` (like or save, after the API accepted it), `zalak_report`,
+  `zalak_tour_done`. Not exercised in the browser: the API's `/reels` and `/status-tray` were not available to the check.
+- Rewards and notifications: `scratch_reveal`, `reward_redeem`, `task_submit`, `referral_share`, `referral_apply`,
+  `notification_open`, `notifications_read_all`, `push_toggle`. Not exercised (they need a login).
+- Other: `submit_offer_cta` and `contact_click` (server pages use the new `TrackClick`), `pwa_installed`, `not_found` (the page also
+  sets `page_type: not_found`), `app_error` (window errors and unhandled rejections, message cut to 120 characters, no
+  stack, five per visit), `web_vitals` (LCP, INP, CLS, FCP, TTFB, for a 20 % sample of visits). Outgoing links are also
+  sent by the script as `link_out`. Checked in the browser: `not_found`, `app_error`, `web_vitals`, `contact_click`.
+- Dropped from the plan: `language_switch` (switcher is off), `back_to_top`, `legal_open` (page views cover it),
+  `install_prompt`. No `error.tsx` was added: the site had none, and adding one changes what visitors see.
+- Fixed on the way: events sent before the script was ready could be lost or reordered. The queue now waits for
+  `window.openpanel` (the script's own start signal), keeps calls in order, and decides "analytics is on" from a
+  `data-analytics` attribute the layout puts on `<body>` (the script's own tag is added only after the page has loaded).

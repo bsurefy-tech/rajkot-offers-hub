@@ -26,7 +26,7 @@ import { offersPath } from "@/lib/areas";
 import { getBusiness, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
 import { getShopStatus } from "@/lib/zalak/api";
-import { cn, directionsHref } from "@/lib/utils";
+import { directionsHref } from "@/lib/utils";
 import { breadcrumbLd, JsonLd, localBusinessLd, pageMetadata } from "@/lib/seo";
 import type { Business, OfferSummary, Rating, Review } from "@/types";
 import { RatingInline } from "@/components/ui/rating";
@@ -43,9 +43,6 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/businesses
     image: business.cover,
   });
 }
-
-/** Icon buttons in the phone's sticky header. */
-const headerAction = "inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:bg-surface";
 
 /** The shop's Instagram and website, when it has them; address and phone live with the outlets. */
 async function LinkRows({ business }: { business: Business }) {
@@ -232,20 +229,12 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
                     <Image src={business.logo} alt="" fill sizes="32px" className="object-cover" />
                   </span>
                 )}
-                <p className="min-w-0 flex-1 truncate text-title font-semibold">{business.name}</p>
-                <div className="flex shrink-0 items-center">
-                  <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className={headerAction}>
-                    <Phone size={20} aria-hidden />
-                    <span className="sr-only">{t("Call")}</span>
-                  </ContactLink>
-                  <ContactLink business={business.slug} kind="whatsapp" number={business.whatsapp} masked={business.contactMasked} className={cn(headerAction, "text-whatsapp-ink")}>
-                    <WhatsAppIcon size={20} />
-                    <span className="sr-only">WhatsApp</span>
-                  </ContactLink>
-                  <a href={directionsHref(business.geo.lat, business.geo.lng)} target="_blank" rel="noreferrer" className={headerAction}>
-                    <Navigation size={20} aria-hidden />
-                    <span className="sr-only">{t("Directions")}</span>
-                  </a>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-title leading-tight font-semibold">{business.name}</p>
+                    {rating && <RatingInline rating={rating} className="shrink-0 text-caption text-muted" />}
+                  </div>
+                  <p className="truncate text-caption leading-tight text-muted">{subtitle}</p>
                 </div>
               </div>
             }
