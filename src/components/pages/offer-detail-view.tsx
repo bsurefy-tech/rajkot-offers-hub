@@ -275,11 +275,11 @@ async function OfferContent({ slug }: { slug: string }) {
       </div>
 
       {/* Room for the mobile action bar. */}
-      <div aria-hidden className={cn("lg:hidden", hasCode ? "h-40" : "h-28")} />
+      <div aria-hidden className={cn("lg:hidden", hasCode ? "h-40" : "h-24")} />
       <StickyActionBar
         lead={
           <>
-            <SaveBarButton slug={offer.slug} />
+            <SaveBarButton slug={offer.slug} variant="outline" />
             <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
           </>
         }

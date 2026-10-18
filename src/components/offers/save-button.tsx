@@ -98,7 +98,7 @@ export function SaveTextButton({ slug, kind = "offer", variant = "ghost" }: { sl
 }
 
 /** Full-width bookmark button with a label, for the mobile bottom bar (`outline` when it sits beside a primary action). */
-export function SaveBarButton({ slug, kind = "offer", variant = "primary" }: { slug: string; kind?: SaveKind; variant?: "primary" | "outline" }) {
+export function SaveBarButton({ slug, kind = "offer", variant = "outline" }: { slug: string; kind?: SaveKind; variant?: "primary" | "outline" }) {
   const t = useT();
   const { saved, onToggle } = useToggleSave(slug, kind);
   const outline = variant === "outline";
