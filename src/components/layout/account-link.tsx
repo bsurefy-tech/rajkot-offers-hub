@@ -11,7 +11,7 @@ export function AccountLink() {
   const unread = useUnread();
   return (
     <IconLink href="/account" variant="plain" size="xl" count={Math.min(unread, 9)} aria-label={unread ? t("My account ({count} new)", { count: unread }) : t("My account")}>
-      <CircleUserRound size={46} strokeWidth={1.4} aria-hidden />
+      <CircleUserRound size={34} strokeWidth={1.5} aria-hidden />
     </IconLink>
   );
 }
