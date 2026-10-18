@@ -1,6 +1,6 @@
 # Plan: OpenPanel analytics (self-hosted)
 
-Status: Stages A and B built and checked on `feature/openpanel` (see section 8); C to E are not started. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
+Status: Stages A to C built and checked on `feature/openpanel` (see section 8); D and E are not started. Branch when starting: `feature/openpanel` from `develop`, squash PR into `develop`.
 
 Goal: every kind of analytics for the site in one self-hosted OpenPanel project: traffic (page views, sources,
 devices, places), product events (search, filters, offers, shops, Zalak, rewards), funnels (login, claim code,
@@ -296,3 +296,22 @@ privacy page, `.env.example`, `.env.production`, `.dev.vars.example`, `README.md
   after the page view is sent); changing a filter counts as a new page view (the script counts the query string);
   `follow_toggle` / `save_toggle` were not exercised (they need a login); `banner`/promo clicks other than the home slider
   are not wired.
+
+### Stage C (done, checked against the local stand-in; no real login was possible)
+
+- Login funnel: `login_prompt_shown` (with `reason`: save_offer, save_shop, follow_shop, offer_code, shop_contact, zalak_like,
+  zalak_report, rewards, notifications, saved), `login_start` (method otp/mpin), `login_verified`, `mpin_set`,
+  `login_done` (`new_user`, `popup`), `login_failed` (`step`, `reason` = the message key). `login.prompt()` now takes the reason first.
+- Outcomes known to the browser are sent from the browser (`offer_code`, `contact_reveal` with `ok`/`login`/`error`), not
+  from the server, so nothing is counted twice.
+- Identity: at login the server sets a readable cookie `ro_uid` (the API user id, only when analytics is on; cleared with the
+  session). The layout passes it as `profileId` so every page load is identified; a popup login calls `identify` straight
+  away. When the sign-in hint cookie disappears (logout, expiry, deletion) `clear()` is called and one `signed_out`
+  event is sent. No phone, name or e-mail is ever sent. Existing sessions have no `ro_uid` until their next login.
+- Server events: `src/lib/analytics/server.ts` posts `api_error` (method and first path segment, status 0 = unreachable, or
+  5xx) straight to OpenPanel with `OPENPANEL_CLIENT_SECRET`, once a minute per endpoint per Worker, kept alive with
+  Workers' `waitUntil`. **Nothing is sent until that secret exists**: create a client secret for the project in
+  OpenPanel, then `npx wrangler secret put OPENPANEL_CLIENT_SECRET`.
+- Privacy page: added the `ro_uid` cookie and the usage-statistics purpose.
+- Not checked: a real login (OTP and MPIN) end to end, account deletion, that OpenPanel merges the pre-login device into the
+  profile, and server events against the real project (needs the secret).

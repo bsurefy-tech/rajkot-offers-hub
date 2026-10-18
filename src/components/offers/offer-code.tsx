@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useLogin } from "@/components/auth/login-dialog";
 import { Link } from "@/components/i18n/link";
 import { Button } from "@/components/ui/button";
+import { track } from "@/lib/analytics/client";
 import { claimCodeAction, revealCodeAction, type CodeResult } from "@/lib/actions/offers";
 import { useLocale, useT } from "@/lib/i18n/client";
 import { formatShortDate } from "@/lib/format";
@@ -46,15 +47,17 @@ export function OfferCode({
     setError(null);
     start(async () => {
       const result = await (claim ? claimCodeAction(offerId) : revealCodeAction(offerId));
+      const kind = claim ? "claim" : "reveal";
+      track("offer_code", { offer_id: offerId, kind, result: result.ok ? "ok" : result.error === "login" ? "login" : "error" });
       if (result.ok) setShown(result);
-      else if (result.error === "login") login.prompt(fetchCode);
+      else if (result.error === "login") login.prompt("offer_code", fetchCode);
       else setError(result.error);
     });
   }
 
   function get() {
     if (login.signedIn()) fetchCode();
-    else login.prompt(fetchCode);
+    else login.prompt("offer_code", fetchCode);
   }
 
   // In the phone's bottom bar the button stands alone; the card and its text come once there is a code to show.

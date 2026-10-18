@@ -56,7 +56,7 @@ export function NotificationList() {
         icon={Bell}
         title={t("Log in to see your notifications")}
         hint={t("Follow shops to hear about their new offers.")}
-        action={<Button onClick={() => login.prompt(load)}>{t("Log in")}</Button>}
+        action={<Button onClick={() => login.prompt("notifications", load)}>{t("Log in")}</Button>}
       />
     );
   }

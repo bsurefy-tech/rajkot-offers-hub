@@ -3,7 +3,7 @@
 import { OpenPanelComponent } from "@openpanel/nextjs";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { setGlobalProperties } from "@/lib/analytics/client";
+import { clearIdentity, noteIdentified, setGlobalProperties, track } from "@/lib/analytics/client";
 import { pageTypeOf } from "@/lib/analytics/page-type";
 import { signedInHint } from "@/lib/auth/hint";
 
@@ -29,7 +29,7 @@ const FILTER = `function(e){
  * Loads OpenPanel through this site's own `/api/op` proxy and keeps the properties every event carries
  * (`page_type`, `signed_in`, `lang`) current. Page views and outgoing link clicks are tracked by the script itself.
  */
-export function Analytics({ clientId, lang, signedIn }: { clientId: string; lang: string; signedIn: boolean }) {
+export function Analytics({ clientId, lang, signedIn, profileId }: { clientId: string; lang: string; signedIn: boolean; profileId?: string }) {
   const pathname = usePathname();
   const pageType = pageTypeOf(pathname);
   const first = useRef(true);
@@ -41,10 +41,16 @@ export function Analytics({ clientId, lang, signedIn }: { clientId: string; lang
       first.current = false;
       return;
     }
+    // Signed out since the last page (logout, expired, deleted): stop attributing events to the account.
+    if (!signedInHint() && clearIdentity()) track("signed_out", {});
     setGlobalProperties({ page_type: pageType, signed_in: signedInHint(), shop: undefined, category: undefined, area: undefined });
     // `pageType` follows `pathname`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  useEffect(() => {
+    if (profileId) noteIdentified();
+  }, [profileId]);
 
   // An installed app (home-screen icon) against a browser tab.
   useEffect(() => {
@@ -60,6 +66,7 @@ export function Analytics({ clientId, lang, signedIn }: { clientId: string; lang
       trackOutgoingLinks
       trackAttributes
       filter={FILTER}
+      profileId={profileId}
       globalProperties={{ lang, page_type: pageType, signed_in: signedIn, standalone: false }}
     />
   );

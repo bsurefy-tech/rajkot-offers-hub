@@ -18,6 +18,7 @@ export function useToggleSave(slug: string, kind: SaveKind) {
   const toast = useToast();
   const t = useT();
   const saved = isSaved(slug);
+  const reason = kind === "follow" ? "follow_shop" : kind === "shop" ? "save_shop" : "save_offer";
 
   /** False for a guest: nothing was changed. */
   const apply = (want?: boolean) => {
@@ -39,11 +40,11 @@ export function useToggleSave(slug: string, kind: SaveKind) {
       void loadSaves().then((member) => {
         if (member) apply(true);
         // The sign-in hint was stale (the session ended): ask once more.
-        else if (!justLoggedIn) login.prompt(() => afterLogin(true));
+        else if (!justLoggedIn) login.prompt(reason, () => afterLogin(true));
         else toast(t("Could not save. Please try again."));
       });
     if (login.signedIn()) afterLogin(false);
-    else login.prompt(() => afterLogin(true));
+    else login.prompt(reason, () => afterLogin(true));
   };
   return { saved, onToggle };
 }

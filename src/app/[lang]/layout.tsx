@@ -7,7 +7,7 @@ import { LoginProvider } from "@/components/auth/login-dialog";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { ToastProvider } from "@/components/ui/toast";
 import { analyticsConfig } from "@/lib/analytics/config";
-import { SIGNED_IN_HINT_COOKIE } from "@/lib/auth/cookies";
+import { ANALYTICS_USER_COOKIE, SIGNED_IN_HINT_COOKIE } from "@/lib/auth/cookies";
 import { hasLocale } from "@/lib/i18n/config";
 import { LocaleProvider } from "@/lib/i18n/client";
 import { getLocale, getT } from "@/lib/i18n/server";
@@ -75,12 +75,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
   const analytics = analyticsConfig();
-  const signedIn = analytics ? (await cookies()).has(SIGNED_IN_HINT_COOKIE) : false;
+  const jar = analytics ? await cookies() : undefined;
+  const signedIn = Boolean(jar?.has(SIGNED_IN_HINT_COOKIE));
+  const profileId = signedIn ? jar?.get(ANALYTICS_USER_COOKIE)?.value : undefined;
 
   return (
     <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(plex.variable, lang === "gu" && anek.variable)}>
       <body className="flex min-h-dvh flex-col">
-        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} />}
+        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} profileId={profileId} />}
         <LocaleProvider locale={lang}>
           <ToastProvider>
             <LoginProvider>{children}</LoginProvider>

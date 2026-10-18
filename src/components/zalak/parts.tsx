@@ -355,7 +355,7 @@ function useReaction(story: ZalakStory, clip: ZalakClip, reaction: "like" | "sav
     const result = await setReactionAction(story.kind, id!, reaction, want);
     if (result === "ok") return;
     setMine((all) => ({ ...all, [key]: before }));
-    if (result === "signed-out" && retry) login.prompt(() => void send(want, false));
+    if (result === "signed-out" && retry) login.prompt("zalak_like", () => void send(want, false));
     else toast(t("Could not save. Please try again."));
   }
 

@@ -25,7 +25,7 @@ export function SavedItems({ initialTab }: { initialTab?: "offers" | "shops" | "
         icon={Bookmark}
         title={t("Log in to see what you saved")}
         hint={t("Your saved offers and shops are kept on your account.")}
-        action={<Button onClick={() => login.prompt(() => void loadSaves())}>{t("Log in")}</Button>}
+        action={<Button onClick={() => login.prompt("saved", () => void loadSaves())}>{t("Log in")}</Button>}
       />
     );
   }

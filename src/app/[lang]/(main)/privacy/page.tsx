@@ -67,7 +67,7 @@ export default async function PrivacyPage() {
           title: "Cookies and storage on your device",
           body: (
             <ul>
-              <li>login cookies that keep you signed in (removed when you log out);</li>
+              <li>login cookies that keep you signed in (removed when you log out), and, while you are signed in, a cookie with your account&apos;s anonymous ID for our usage statistics;</li>
               <li>a cookie with your rounded location, only if you set one;</li>
               <li>your language choice;</li>
               <li>the offers you save, kept only in your browser.</li>
@@ -81,6 +81,11 @@ export default async function PrivacyPage() {
               <li>to log you in and keep your account secure;</li>
               <li>to show offers, distances, shop contact details and your codes;</li>
               <li>to give shops counts of how their offers are used;</li>
+              <li>
+                to understand how the website is used (pages visited, searches, taps) so we can improve it. This runs on our own
+                server, without advertising or third-party trackers, and does not record your mobile number, name or what you type
+                in search. It is skipped if your browser sends Do Not Track or Global Privacy Control;
+              </li>
               <li>to prevent spam, fraud and misuse, and to meet legal requirements.</li>
             </ul>
           ),

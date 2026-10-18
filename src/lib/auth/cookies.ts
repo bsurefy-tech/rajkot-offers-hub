@@ -1,3 +1,5 @@
+import { analyticsConfig } from "@/lib/analytics/config";
+
 /**
  * The web session: the API's access token (15 minutes) and refresh token
  * (30 days) in httpOnly cookies, so client code never sees either.
@@ -10,6 +12,12 @@ export const REFRESH_COOKIE = "ro_rt";
  */
 export const SIGNED_IN_HINT_COOKIE = "ro_in";
 
+/**
+ * Readable by the page's scripts: the account's id, for analytics (OpenPanel) to tell one signed-in visitor from another.
+ * Only set when analytics is on. An opaque id, not the mobile number or name.
+ */
+export const ANALYTICS_USER_COOKIE = "ro_uid";
+
 const REFRESH_TTL = 30 * 24 * 60 * 60;
 
 interface CookieWriter {
@@ -21,11 +29,12 @@ function options(maxAge: number) {
   return { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", maxAge };
 }
 
-export function setSessionCookies(jar: CookieWriter, tokens: { access_token: string; refresh_token?: string; expires_in?: number }) {
+export function setSessionCookies(jar: CookieWriter, tokens: { access_token: string; refresh_token?: string; expires_in?: number; user?: { id: string } }) {
   jar.set(ACCESS_COOKIE, tokens.access_token, options(tokens.expires_in ?? 900));
   if (tokens.refresh_token) {
     jar.set(REFRESH_COOKIE, tokens.refresh_token, options(REFRESH_TTL));
     jar.set(SIGNED_IN_HINT_COOKIE, "1", { ...options(REFRESH_TTL), httpOnly: false });
+    if (tokens.user && analyticsConfig()) jar.set(ANALYTICS_USER_COOKIE, tokens.user.id, { ...options(REFRESH_TTL), httpOnly: false });
   }
 }
 
@@ -33,6 +42,7 @@ export function clearSessionCookies(jar: CookieWriter) {
   jar.delete(ACCESS_COOKIE);
   jar.delete(REFRESH_COOKIE);
   jar.delete(SIGNED_IN_HINT_COOKIE);
+  jar.delete(ANALYTICS_USER_COOKIE);
 }
 
 /** Seconds until a JWT expires (0 when expired or unreadable). The API checks the signature; this only avoids a wasted call. */

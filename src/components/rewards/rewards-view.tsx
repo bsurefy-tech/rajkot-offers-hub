@@ -51,7 +51,7 @@ export function RewardsView() {
   }, [load]);
 
   if (!state) return <RewardsSkeleton />;
-  if (state.status === "guest") return <Intro onLogin={() => login.prompt(() => void load())} />;
+  if (state.status === "guest") return <Intro onLogin={() => login.prompt("rewards", () => void load())} />;
   if (state.status === "off") {
     return <EmptyState icon={Gift} title={t("Rewards are not available right now.")} hint={t("Please check back soon.")} />;
   }
@@ -321,7 +321,7 @@ function ConfirmSheet({
     start(async () => {
       const done = await redeemRewardAction(choice.reward.id, choice.requestId);
       if (done.ok) return onRedeemed(done.data);
-      if (done.error === "login") return login.prompt(redeem);
+      if (done.error === "login") return login.prompt("rewards", redeem);
       setError(done.detail ?? t(done.error));
     });
   }

@@ -43,20 +43,19 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
               <div className="flex items-center gap-3">
                 <ShopAvatar logo={contact.logo} className="size-11 border-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
                     <p className="min-w-0 text-body font-semibold">{contact.name}</p>
-                    {!many && rating}
+                    {rating}
                   </div>
                   {many && (
-                    <p className="mt-0.5 flex items-center justify-between gap-2 text-body-sm font-medium">
-                      <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-full bg-ink text-micro font-semibold text-white">
+                    <p className="mt-0.5 flex items-center gap-2 text-body-sm font-medium">
+                      <span aria-hidden className="hidden size-5 shrink-0 items-center justify-center rounded-full bg-ink text-micro font-semibold text-white lg:flex">
                         {i + 1}
                       </span>
-                      <span className="min-w-0 flex-1">
+                      <span className="min-w-0">
                         {outlet.name}
                         {outlet.isMain && !/main/i.test(outlet.name) && <span className="ml-2 text-caption font-medium text-muted">{t("Main outlet")}</span>}
                       </span>
-                      {rating}
                     </p>
                   )}
                   <p className="mt-0.5 text-body-sm leading-relaxed text-muted">{outlet.address}</p>

@@ -4,14 +4,16 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState, type
 import { Link } from "@/components/i18n/link";
 import { Sheet } from "@/components/ui/sheet";
 import { useT } from "@/lib/i18n/client";
+import { track } from "@/lib/analytics/client";
+import type { LoginReason } from "@/lib/analytics/events";
 import { signedInHint } from "@/lib/auth/hint";
 import { LoginForm } from "./login-form";
 
 interface Login {
   /** Does the visitor look signed in? (A hint; the API still decides.) */
   signedIn: () => boolean;
-  /** Opens the login popup on this page; `onDone` runs once they are logged in. */
-  prompt: (onDone?: () => void) => void;
+  /** Opens the login popup on this page; `onDone` runs once they are logged in. `reason` is what they were doing, for analytics. */
+  prompt: (reason: LoginReason, onDone?: () => void) => void;
 }
 
 const LoginContext = createContext<Login | null>(null);
@@ -27,7 +29,8 @@ export function LoginProvider({ children }: { children: ReactNode }) {
   const [round, setRound] = useState(0);
   const pending = useRef<(() => void) | undefined>(undefined);
 
-  const prompt = useCallback((onDone?: () => void) => {
+  const prompt = useCallback((reason: LoginReason, onDone?: () => void) => {
+    track("login_prompt_shown", { reason });
     pending.current = onDone;
     setRound((n) => n + 1);
     setOpen(true);
