@@ -182,7 +182,7 @@ async function OfferContent({ slug }: { slug: string }) {
                   {offer.rating && <RatingInline rating={offer.rating} className="text-body-sm text-muted" />}
                 </p>
                 <p className="mt-2 text-caption leading-relaxed text-primary">
-                  {t("Every offer is checked by our team before it goes live.")}
+                  {t("Every offer is checked by our team before it goes live. Please verify the details before you buy.")}
                 </p>
               </div>
             </div>
