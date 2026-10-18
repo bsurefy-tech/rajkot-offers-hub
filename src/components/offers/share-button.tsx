@@ -65,26 +65,26 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
   return (
     <>
       {variant === "floating" || variant === "plain" ? (
-        <IconButton variant={variant} size="lg" aria-label={t("Share")} onClick={onShare}>
+        <IconButton variant={variant} size="lg" aria-label={t("Share")} onClick={onShare} className="text-share">
           <Share2 size={20} aria-hidden />
         </IconButton>
       ) : variant === "tile" ? (
-        <Button variant="outline" size="sm" block className="px-0" onClick={onShare}>
+        <Button variant="outline" size="sm" block className="border-share px-0 text-share hover:bg-share-soft" onClick={onShare}>
           <Share2 size={18} aria-hidden />
           <span className="sr-only">{t("Share")}</span>
         </Button>
       ) : variant === "bar" ? (
-        <Button variant="outline" size="sm" onClick={onShare} className="min-w-0 flex-1 border-whatsapp px-2 text-whatsapp-ink hover:bg-whatsapp-soft">
+        <Button variant="outline" size="sm" onClick={onShare} className="min-w-0 flex-1 border-share px-2 text-share hover:bg-share-soft">
           <Share2 size={18} aria-hidden />
           {t("Share")}
         </Button>
       ) : variant === "pill" ? (
-        <Button variant="outline" size="sm" onClick={onShare}>
+        <Button variant="outline" size="sm" onClick={onShare} className="border-share text-share hover:bg-share-soft">
           <Share2 size={16} aria-hidden />
           {t("Share")}
         </Button>
       ) : (
-        <Button variant="ghost" size="sm" onClick={onShare} className="px-2">
+        <Button variant="ghost" size="sm" onClick={onShare} className="px-2 text-share hover:text-share">
           <Share2 size={18} aria-hidden />
           {t("Share")}
         </Button>

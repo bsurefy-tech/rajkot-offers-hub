@@ -23,6 +23,8 @@
   --color-whatsapp-hover: #178f47;
   --color-whatsapp-ink: #0e7a3b;
   --color-whatsapp-soft: #ecfaf1;
+  --color-share: #2f6fe4;
+  --color-share-soft: #eef4ff;
 
   --font-sans: var(--font-plex), var(--font-anek, ui-sans-serif), ui-sans-serif, system-ui, sans-serif;
 
