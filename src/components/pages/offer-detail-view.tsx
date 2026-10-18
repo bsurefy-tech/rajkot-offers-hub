@@ -16,9 +16,9 @@ import { BusinessRow, HowToGetSteps, TermsAccordion } from "@/components/offers/
 import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
 import { ShareButton } from "@/components/offers/share-button";
+import { StoreButton } from "@/components/offers/store-button";
 import { TrackOfferView } from "@/components/offers/track";
 import { Badge } from "@/components/ui/badge";
-import { ButtonLink } from "@/components/ui/button";
 import { DetailRow } from "@/components/ui/display";
 import { RatingInline } from "@/components/ui/rating";
 import { BackLink } from "@/components/layout/back-link";
@@ -278,10 +278,7 @@ async function OfferContent({ slug }: { slug: string }) {
       <StickyActionBar
         lead={
           <>
-            <ButtonLink href={shopPath(business.slug)} size="sm" className="min-w-0 flex-1 px-2">
-              <Store size={18} aria-hidden />
-              {t("Shop")}
-            </ButtonLink>
+            <StoreButton href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
             <SaveBarButton slug={offer.slug} variant="outline" />
             <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
           </>

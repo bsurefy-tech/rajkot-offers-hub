@@ -608,6 +608,7 @@ export const gu = {
   "View offer": "ઑફર જુઓ",
   "Visit shop": "દુકાન જુઓ",
   "Shop": "દુકાન",
+  "Store": "સ્ટોર",
   "Report": "રિપોર્ટ કરો",
   "Report this post": "આ પોસ્ટ રિપોર્ટ કરો",
   "Why are you reporting it?": "તમે શા માટે રિપોર્ટ કરી રહ્યા છો?",
