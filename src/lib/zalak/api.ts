@@ -105,6 +105,17 @@ async function playRing(ring: ZalakStory): Promise<ZalakStory | undefined> {
   return { ...ring, clips, unseen: clips.some((clip) => !clip.seen), title: first.caption ?? "", postedAt: ring.postedAt };
 }
 
+/** Whether a shop has a status up right now, and whether the viewer has watched all of it. For the shop page's logo ring; any failure just means no ring. */
+export async function getShopStatus(slug: string): Promise<{ unseen: boolean } | undefined> {
+  try {
+    const play = await orOff(api<StatusPlay>(`/status-tray/${encodeURIComponent(slug)}`, await viewer()), undefined);
+    const posts = play?.data ?? [];
+    return posts.length ? { unseen: posts.some((post) => !post.is_seen) } : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** The rings around the one that was opened, each with its posts, and where the opened one sits in the list. */
 export async function getStatusStories(open?: { shop?: string; platform?: boolean }): Promise<{ stories: ZalakStory[]; start: number }> {
   const rings = await getStatusRings();

@@ -105,6 +105,7 @@ export function SaveBarButton({ slug, kind = "offer", variant = "primary" }: { s
   return (
     <Button
       variant={outline ? "outline" : "primary"}
+      size="sm"
       aria-pressed={saved}
       onClick={onToggle}
       className={cn("min-w-0 flex-1", outline && "border-primary px-2 text-primary hover:bg-primary-soft")}

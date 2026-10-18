@@ -92,7 +92,7 @@ export function StickyActionBar({
   disabled?: boolean;
 }) {
   return (
-    <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-line bg-white px-5 pt-3 pb-[max(20px,env(safe-area-inset-bottom))] lg:hidden">
+    <div data-bottom-bar className="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-line bg-white px-5 pt-2.5 pb-[max(14px,env(safe-area-inset-bottom))] lg:hidden">
       {children}
       {lead && <div className="flex gap-2.5">{lead}</div>}
       {contact && <ContactRow contact={contact} disabled={disabled} offerId={offerId} />}

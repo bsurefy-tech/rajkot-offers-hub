@@ -603,6 +603,7 @@ export const gu = {
   "Find offers around you": "તમારી આસપાસની ઓફર્સ શોધો",
   "See the offers closest to you, nearest first.": "તમારી સૌથી નજીકની ઓફર્સ જુઓ, નજીકથી શરૂ કરીને.",
   "Status": "સ્ટેટસ",
+  "Watch status": "સ્ટેટસ જુઓ",
   "Profile": "પ્રોફાઇલ",
   "View offer": "ઑફર જુઓ",
   "Visit shop": "દુકાન જુઓ",
