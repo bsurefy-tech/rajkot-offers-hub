@@ -28,8 +28,6 @@ interface SideContact {
  * With `storeHref` (pages that are not the shop's own) each card ends with a link to the shop's page (labelled "View outlet").
  */
 export async function OutletSideCards({ outlets, contact, path, storeHref }: { outlets: Outlet[]; contact: SideContact; path: string; storeHref?: string }) {
-  // On the offer page there is no status pill; whether the outlet is open shows on the "Opening hours" row instead.
-  const statusInRow = !!storeHref;
   const t = await getT();
   const many = outlets.length > 1;
   const iconClass = (variant: "primary" | "outline" | "whatsapp") => buttonClass({ variant, size: "sm", block: true, className: "px-0" });
@@ -59,12 +57,7 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
                   <p className="mt-0.5 text-body-sm leading-relaxed text-muted">{outlet.address}</p>
                 </div>
               </div>
-              {(!statusInRow || outlet.rating) && (
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  {!statusInRow && <OpenStatusPill hours={hours} />}
-                  {outlet.rating && <RatingInline rating={outlet.rating} className="text-body-sm text-muted" />}
-                </div>
-              )}
+              {outlet.rating && <RatingInline rating={outlet.rating} className="text-body-sm text-muted" />}
               <div className="grid grid-cols-4 gap-2">
                 <ContactLink business={contact.slug} kind="call" number={contact.phone} masked={contact.contactMasked} className={iconClass("primary")}>
                   <Phone size={18} aria-hidden />
@@ -85,7 +78,7 @@ export async function OutletSideCards({ outlets, contact, path, storeHref }: { o
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-body font-semibold lg:px-6 lg:py-4 [&::-webkit-details-marker]:hidden">
                 <span className="flex min-w-0 flex-col gap-1">
                   {t("Opening hours")}
-                  {statusInRow && <OpenStatusPill hours={hours} className="min-h-0 bg-transparent p-0 text-body-sm font-normal text-muted" />}
+                  <OpenStatusPill hours={hours} className="min-h-0 bg-transparent p-0 text-body-sm font-normal text-muted" />
                 </span>
                 <ChevronDown aria-hidden className="size-[18px] shrink-0 text-muted transition-transform group-open:rotate-180" />
               </summary>
