@@ -85,7 +85,7 @@ export function NearYouPrompt() {
         </div>
         <Button onClick={locate} disabled={busy} size="lg" className="w-full lg:w-auto">
           <LocateFixed size={18} aria-hidden />
-          {locating ? t("Finding you…") : blocked ? t("Try again") : t("Enable location")}
+          {locating ? t("Finding you…") : t("Enable location")}
         </Button>
       </div>
       {blocked && (
@@ -93,7 +93,7 @@ export function NearYouPrompt() {
           <TriangleAlert size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
           <p>
             <span className="font-semibold text-ink">{t("Location is turned off for this site.")}</span>{" "}
-            <span className="text-muted">{t("To see offers near you, allow location from the lock icon next to the address bar, then tap Try again.")}</span>
+            <span className="text-muted">{t("To see offers near you, allow location from the lock icon next to the address bar, then tap Enable location.")}</span>
           </p>
         </div>
       )}

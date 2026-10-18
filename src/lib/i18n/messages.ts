@@ -391,7 +391,7 @@ export const gu = {
   "We could not get your location.": "તમારું લોકેશન મળ્યું નહીં.",
   "Location access is off.": "લોકેશનની પરવાનગી બંધ છે.",
   "Location is turned off for this site.": "આ સાઇટ માટે લોકેશન બંધ છે.",
-  "To see offers near you, allow location from the lock icon next to the address bar, then tap Try again.": "તમારી નજીકની ઓફર્સ જોવા માટે, એડ્રેસ બારની બાજુના લૉક આઇકનથી લોકેશનની પરવાનગી આપો, પછી ફરી \"ફરી પ્રયાસ કરો\" પર ટૅપ કરો.",
+  "To see offers near you, allow location from the lock icon next to the address bar, then tap Enable location.": "તમારી નજીકની ઓફર્સ જોવા માટે, એડ્રેસ બારની બાજુના લૉક આઇકનથી લોકેશનની પરવાનગી આપો, પછી ફરી \"લોકેશન ચાલુ કરો\" પર ટૅપ કરો.",
   "You seem to be outside Rajkot.": "તમે રાજકોટની બહાર લાગો છો.",
   "{m} m": "{m} મી.",
   "{km} km": "{km} કિ.મી.",
