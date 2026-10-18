@@ -382,7 +382,7 @@ export const gu = {
   "Near me": "મારી નજીક",
   "Areas": "વિસ્તારો",
   "Offers near me": "મારી નજીકની ઓફર્સ",
-  "Enable location to see nearest offers": "નજીકની ઓફર્સ જોવા લોકેશન ચાલુ કરો",
+  "Enable location": "લોકેશન ચાલુ કરો",
   "Nearest first": "સૌથી નજીકની પહેલા",
   "Distance on every offer": "દરેક ઓફર પર અંતર",
   "Finding you…": "તમારું લોકેશન શોધી રહ્યા છીએ…",
