@@ -19,6 +19,7 @@ import { StoreLink } from "@/components/offers/store-link";
 import { ShareButton } from "@/components/offers/share-button";
 import { TrackOfferView } from "@/components/offers/track";
 import { Badge } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
 import { DetailRow } from "@/components/ui/display";
 import { RatingInline } from "@/components/ui/rating";
 import { BackLink } from "@/components/layout/back-link";
@@ -281,6 +282,10 @@ async function OfferContent({ slug }: { slug: string }) {
           <>
             <SaveBarButton slug={offer.slug} variant="outline" />
             <ShareButton title={offer.title} path={path} variant="bar" offerId={offer.id} />
+            <ButtonLink href={shopPath(business.slug)} variant="outline" size="sm" className="min-w-0 flex-1 border-primary px-2 text-primary hover:bg-primary-soft">
+              <Store size={18} aria-hidden />
+              {t("Shop")}
+            </ButtonLink>
           </>
         }
       >
