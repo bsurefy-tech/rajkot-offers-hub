@@ -15,7 +15,6 @@ import { OfferCode } from "@/components/offers/offer-code";
 import { BusinessRow, HowToGetSteps, TermsAccordion } from "@/components/offers/offer-sections";
 import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
-import { StoreLink } from "@/components/offers/store-link";
 import { ShareButton } from "@/components/offers/share-button";
 import { TrackOfferView } from "@/components/offers/track";
 import { Badge } from "@/components/ui/badge";
@@ -171,7 +170,7 @@ async function OfferContent({ slug }: { slug: string }) {
                             <ShopAvatar logo={business.logo} className="hidden size-20 shrink-0 lg:flex" />
               <div className="min-w-0">
                 <h1 className={cn("text-heading leading-snug font-semibold lg:text-page lg:leading-tight", expired && "text-muted")}>{offer.title}</h1>
-                {/* On a phone only the rating shows here; the header's store icon leads to the shop. */}
+                {/* On a phone only the rating shows here; the bottom bar's Shop button leads to the shop. */}
                 <p className={cn("mt-1 flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-muted lg:flex", offer.rating ? "flex" : "hidden")}>
                   <Link href={shopPath(business.slug)} className="hidden font-medium text-ink hover:underline lg:inline">
                     {business.name}
@@ -202,7 +201,6 @@ async function OfferContent({ slug }: { slug: string }) {
                   <p className="truncate text-title leading-tight font-semibold">{offer.title}</p>
                   <p className="truncate text-caption leading-tight text-muted">{business.name}</p>
                 </div>
-                <StoreLink href={shopPath(business.slug)} name={business.name} outlets={business.outlets.map(({ id, name, address, isMain }) => ({ id, name, address, isMain }))} />
               </div>
             }
             items={[
