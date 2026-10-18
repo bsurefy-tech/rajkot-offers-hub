@@ -23,7 +23,7 @@ export function PointsCard() {
           </span>
         )}
       </div>
-      <p className="mt-1 text-page leading-tight font-semibold">{points.balance.toLocaleString("en-IN")}</p>
+      <p className="mt-1 text-display leading-tight font-semibold">{points.balance.toLocaleString("en-IN")}</p>
       <p className="mt-3 text-body-sm font-semibold text-white/90">{t("Open rewards")} →</p>
     </Link>
   );
