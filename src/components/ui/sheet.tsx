@@ -55,7 +55,11 @@ export function Sheet({ open, onClose, title, children, footer, className }: She
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if (open && !dialog.open) {
+      dialog.showModal();
+      // Focus the dialog itself, not its first control (the close button), so no focus ring shows on open.
+      dialog.focus();
+    }
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
@@ -63,12 +67,13 @@ export function Sheet({ open, onClose, title, children, footer, className }: She
     <dialog
       ref={ref}
       aria-label={title}
+      tabIndex={-1}
       onClose={onClose}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       className={cn(
-        "m-0 mt-auto w-full max-w-none bg-transparent p-0 backdrop:bg-ink/45",
+        "m-0 mt-auto w-full max-w-none bg-transparent p-0 outline-none backdrop:bg-ink/45",
         "lg:m-auto lg:max-w-[480px]",
         className,
       )}
