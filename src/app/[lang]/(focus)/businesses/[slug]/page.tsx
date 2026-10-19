@@ -10,6 +10,7 @@ import { StickyActionBar } from "@/components/businesses/contact-actions";
 import { ContactLink } from "@/components/businesses/contact-link";
 import { OutletSideCards } from "@/components/businesses/outlets";
 import { OutletMap, type MapOutlet } from "@/components/businesses/outlet-map";
+import { Catalog } from "@/components/businesses/catalog";
 import { PhotoMosaic } from "@/components/businesses/photo-mosaic";
 import { PageMarker } from "@/components/analytics/page-marker";
 import { Container } from "@/components/layout/container";
@@ -23,7 +24,7 @@ import { DetailRow, EmptyState } from "@/components/ui/display";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionTabs } from "@/components/ui/section-tabs";
 import { offersPath } from "@/lib/areas";
-import { getBusiness, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
+import { getBusiness, getBusinessCatalog, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
 import { getShopStatus } from "@/lib/zalak/api";
 import { directionsHref } from "@/lib/utils";
@@ -158,8 +159,9 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   const t = await getT();
   const business = await getBusiness((await params).slug);
   if (!business) notFound();
-  const [{ active, expired }, reviews, category, status] = await Promise.all([
+  const [{ active, expired }, catalog, reviews, category, status] = await Promise.all([
     getBusinessOffers(business.slug),
+    getBusinessCatalog(business.id),
     getBusinessReviews(business.id, business.outlets),
     // A shop's own category can sit below the offer categories ("Footwear Stores" under "Footwear"); only those have a list page.
     getCategory(business.categorySlug),
@@ -189,6 +191,19 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   );
   if (!pins.length) pins.push({ id: business.id, name: business.name, address: business.address, lat: business.geo.lat, lng: business.geo.lng, main: true });
   if (!pins.some((pin) => pin.main)) pins[0] = { ...pins[0], main: true };
+
+  const offersSection = {
+    value: "offers",
+    label: t("Offers ({count})", { count: active.length }),
+    content: <OffersTab active={active} expired={expired} />,
+  };
+  const catalogSection = {
+    value: "catalog",
+    label: t("Catalog ({count})", { count: catalog.total }),
+    content: <Catalog items={catalog.items} total={catalog.total} />,
+  };
+  // Offers come first; a catalog follows them, and leads only when there is no live offer to show.
+  const sections = !catalog.items.length ? [offersSection] : active.length ? [offersSection, catalogSection] : [catalogSection, offersSection];
 
   return (
     <div className="lg:bg-surface lg:pt-6 lg:pb-16">
@@ -239,11 +254,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
               </div>
             }
             items={[
-              {
-                value: "offers",
-                label: t("Offers ({count})", { count: active.length }),
-                content: <OffersTab active={active} expired={expired} />,
-              },
+              ...sections,
               { value: "about", label: t("About us"), content: <AboutTab business={business} /> },
               ...(images.length > 1
                 ? [{ value: "photos", label: t("Photos ({count})", { count: images.length }), content: <PhotosTab business={business} images={images} /> }]

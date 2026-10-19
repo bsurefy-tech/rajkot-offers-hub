@@ -642,6 +642,11 @@ export const gu = {
   "Tap anywhere to continue": "ચાલુ રાખવા કશે પણ ટૅપ કરો",
   "Nothing here yet. Check back soon.": "હજી અહીં કંઈ નથી. થોડા સમય પછી જુઓ.",
   "Could not share. Please try again.": "શેર થઈ શક્યું નથી. ફરી પ્રયત્ન કરો.",
+  "Catalog ({count})": "કેટલોગ ({count})",
+  "Featured": "ફીચર્ડ",
+  "From {price}": "{price} થી",
+  "Price on request": "ભાવ પૂછીને",
+  "See all {count} items": "બધી {count} વસ્તુઓ જુઓ",
 } as const;
 
 export type MessageKey = keyof typeof gu;
