@@ -657,6 +657,11 @@ export const gu = {
   "{count} shop in Rajkot": "રાજકોટમાં {count} દુકાન",
   "{count} shops in Rajkot": "રાજકોટમાં {count} દુકાનો",
   "Local shops, cafés and salons in Rajkot with live offers: search by category and area, then see their offers, timings and directions.": "રાજકોટની સ્થાનિક દુકાનો, કેફે અને સલૂન: કેટેગરી અને વિસ્તાર પ્રમાણે શોધો, પછી તેમની ઓફર્સ, સમય અને દિશા જુઓ.",
+  "Catalog ({count})": "કેટલોગ ({count})",
+  "Featured": "ફીચર્ડ",
+  "From {price}": "{price} થી",
+  "Price on request": "ભાવ પૂછીને",
+  "See all {count} items": "બધી {count} વસ્તુઓ જુઓ",
 } as const;
 
 export type MessageKey = keyof typeof gu;
