@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/components/i18n/link";
 import { track as trackEvent } from "@/lib/analytics/client";
-import type { HeroSlide } from "@/lib/data/banners";
+import type { HeroRatios, HeroSlide } from "@/lib/data/banners";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 interface HeroSliderProps {
   slides: HeroSlide[];
+  /** The aspect ratio the API cropped each screen size's picture to. */
+  ratios: HeroRatios;
   autoplayMs: number;
   loop: boolean;
   className?: string;
@@ -18,7 +20,7 @@ interface HeroSliderProps {
  * The home page's banners: swipe or tap the dots, advancing by itself unless the visitor is
  * pointing at it or prefers less motion. Each slide's picture is cropped for the screen size.
  */
-export function HeroSlider({ slides, autoplayMs, loop, className }: HeroSliderProps) {
+export function HeroSlider({ slides, ratios, autoplayMs, loop, className }: HeroSliderProps) {
   const t = useT();
   const track = useRef<HTMLUListElement>(null);
   const paused = useRef(false);
@@ -61,10 +63,11 @@ export function HeroSlider({ slides, autoplayMs, loop, className }: HeroSliderPr
           const el = event.currentTarget;
           setIndex(Math.round(el.scrollLeft / el.clientWidth));
         }}
+        style={{ "--hero-mobile": ratios.mobile, "--hero-tablet": ratios.tablet, "--hero-desktop": ratios.desktop } as React.CSSProperties}
         className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden bg-surface lg:rounded-2xl"
       >
         {slides.map((slide, i) => (
-          <li key={slide.id} aria-roledescription="slide" className="aspect-[16/9] w-full shrink-0 snap-center sm:aspect-[2/1] lg:aspect-[3/1]">
+          <li key={slide.id} aria-roledescription="slide" className="aspect-(--hero-mobile) w-full shrink-0 snap-center sm:aspect-(--hero-tablet) lg:aspect-(--hero-desktop)">
             <Link href={slide.href} onClick={() => trackEvent("hero_click", { slide: slide.id })} className="block size-full" draggable={false}>
               <picture>
                 <source media="(min-width: 1024px)" srcSet={slide.images.desktop} />

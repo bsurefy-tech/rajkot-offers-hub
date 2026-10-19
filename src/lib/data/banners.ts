@@ -13,10 +13,27 @@ export interface HeroSlide {
   alt: string;
 }
 
+/** CSS `aspect-ratio` per screen size, as the API says the pictures were cropped. */
+export interface HeroRatios {
+  mobile: string;
+  tablet: string;
+  desktop: string;
+}
+
 export interface HeroSlides {
   slides: HeroSlide[];
+  ratios: HeroRatios;
   autoplayMs: number;
   loop: boolean;
+}
+
+/** What the site used before the API sent the ratios. */
+const DEFAULT_RATIOS: HeroRatios = { mobile: "16 / 9", tablet: "2 / 1", desktop: "3 / 1" };
+
+/** "16:9" → "16 / 9"; anything else is ignored so a bad value can't collapse the banner. */
+function ratio(value: string | undefined, fallback: string): string {
+  const match = value?.match(/^(\d+(?:\.\d+)?)\s*[:/x]\s*(\d+(?:\.\d+)?)$/);
+  return match && Number(match[1]) > 0 && Number(match[2]) > 0 ? `${match[1]} / ${match[2]}` : fallback;
 }
 
 /** Root category id → slug, to open a banner's category as an offer list. */
@@ -55,7 +72,7 @@ export async function getHeroSlides(): Promise<HeroSlides> {
   try {
     feed = (await api<{ data: BannerFeed }>("/banners", { query: { placement: "home-hero" } })).data;
   } catch (error) {
-    if (error instanceof ApiError && error.status >= 400 && error.status < 500) return { slides: [], autoplayMs: 5000, loop: true };
+    if (error instanceof ApiError && error.status >= 400 && error.status < 500) return { slides: [], ratios: DEFAULT_RATIOS, autoplayMs: 5000, loop: true };
     throw error;
   }
   const slides = (
@@ -74,5 +91,11 @@ export async function getHeroSlides(): Promise<HeroSlides> {
       }),
     )
   ).filter((slide): slide is HeroSlide => slide !== null);
-  return { slides, autoplayMs: feed.display.autoplay_ms, loop: feed.display.loop };
+  const variants = feed.display.variants ?? {};
+  const ratios: HeroRatios = {
+    mobile: ratio(variants.mobile?.aspect_ratio, DEFAULT_RATIOS.mobile),
+    tablet: ratio(variants.tablet?.aspect_ratio, DEFAULT_RATIOS.tablet),
+    desktop: ratio(variants.desktop?.aspect_ratio, DEFAULT_RATIOS.desktop),
+  };
+  return { slides, ratios, autoplayMs: feed.display.autoplay_ms, loop: feed.display.loop };
 }

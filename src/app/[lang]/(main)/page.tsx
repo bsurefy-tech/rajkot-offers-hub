@@ -72,7 +72,7 @@ async function HomeSections() {
         <section className="lg:py-12">
           <div className="mx-auto w-full max-w-[1240px] lg:px-5">
             {/* Always loops: after the last banner it goes back to the first. */}
-            <HeroSlider slides={hero.slides} autoplayMs={hero.autoplayMs} loop />
+            <HeroSlider slides={hero.slides} ratios={hero.ratios} autoplayMs={hero.autoplayMs} loop />
           </div>
         </section>
       )}
