@@ -149,6 +149,22 @@ export interface BusinessResource {
   live_promotions_count?: number;
 }
 
+/** `GET /businesses`: a shop as a list card. */
+export interface BusinessCard {
+  id: string;
+  name: string;
+  slug: string;
+  tagline: string | null;
+  category: { id: string; slug: string; name: string } | null;
+  city: string | null;
+  logo_url: string | null;
+  cover_url: string | null;
+  cover_thumb_url: string | null;
+  rating_avg: number | null;
+  rating_count: number;
+  is_verified: boolean;
+}
+
 export interface CategoryChip {
   id: string;
   slug: string;

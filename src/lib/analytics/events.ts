@@ -20,6 +20,7 @@ export type EventMap = {
   offer_contact: { offer_id: string; kind: "call" | "whatsapp" | "directions" };
   offer_share: { offer_id: string };
   offer_card_click: { offer_id: string };
+  shop_card_click: { shop: string };
   save_toggle: { kind: "offer" | "shop"; on: boolean };
   follow_toggle: { shop: string; on: boolean };
   search: { q_length: number; results: number };

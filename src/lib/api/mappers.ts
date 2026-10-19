@@ -1,7 +1,7 @@
 import { daysBetween, toIsoDay } from "@/lib/format";
 import { img } from "@/lib/mock/images";
-import type { Area, Business, Category, CategoryIcon, Offer, OfferSummary, OfferType, OpeningHours, Outlet, Rating, Review } from "@/types";
-import type { Address, AreaCount, Branch, BranchResource, BusinessHours, BusinessResource, CategoryChip, PromotionCard, PromotionDetail, PromotionType, ReviewResource } from "./types";
+import type { Area, Business, BusinessSummary, Category, CategoryIcon, Offer, OfferSummary, OfferType, OpeningHours, Outlet, Rating, Review } from "@/types";
+import type { Address, AreaCount, Branch, BranchResource, BusinessCard, BusinessHours, BusinessResource, CategoryChip, PromotionCard, PromotionDetail, PromotionType, ReviewResource } from "./types";
 
 /**
  * API resources → the site's domain types (`@/types`), so pages and components
@@ -263,6 +263,24 @@ export function toBusiness(resource: BusinessResource): Business {
       lat: Number(address?.latitude) || RAJKOT.lat,
       lng: Number(address?.longitude) || RAJKOT.lng,
     },
+  };
+}
+
+export function toBusinessSummary(card: BusinessCard): BusinessSummary {
+  const photo = card.cover_url || card.cover_thumb_url;
+  const image = photo || card.logo_url;
+  const stars = rating(card.rating_avg, card.rating_count);
+  return {
+    id: card.id,
+    slug: card.slug,
+    name: card.name,
+    ...(card.tagline ? { tagline: card.tagline } : {}),
+    ...(card.category ? { categoryName: card.category.name } : {}),
+    ...(card.city ? { city: card.city } : {}),
+    ...(image ? { image } : {}),
+    ...(image && !photo ? { imageIsLogo: true } : {}),
+    verified: card.is_verified,
+    ...(stars ? { rating: stars } : {}),
   };
 }
 

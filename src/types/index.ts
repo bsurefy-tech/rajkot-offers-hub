@@ -214,6 +214,34 @@ export interface Business {
   geo: { lat: number; lng: number };
 }
 
+/** A shop on a list: what its card shows. */
+export interface BusinessSummary {
+  id: string;
+  slug: string;
+  name: string;
+  tagline?: string;
+  categoryName?: string;
+  city?: string;
+  /** Its cover photo, or its logo when it has no photo; none for a shop with neither. */
+  image?: string;
+  imageIsLogo?: boolean;
+  verified: boolean;
+  rating?: Rating;
+}
+
+export type BusinessSortKey = "recommended" | "rating" | "nearest";
+
+export interface BusinessFilters {
+  q?: string;
+  category?: string;
+  /** An area's slug. */
+  area?: string;
+  sort?: BusinessSortKey;
+  page?: number;
+  /** The visitor's location (from the location cookie, never the URL). */
+  near?: { lat: number; lng: number };
+}
+
 export type SortKey = "newest" | "ending" | "discount" | "nearest";
 export type ValidityKey = "today" | "week" | "month";
 
