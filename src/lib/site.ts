@@ -32,6 +32,7 @@ export function absoluteUrl(path: string) {
 export const mainNav = [
   { href: "/", label: "Home" },
   { href: "/offers", label: "Offers" },
+  { href: "/businesses", label: "Shops" },
   { href: "/categories", label: "Categories" },
   { href: "/how-it-works", label: "How it works" },
 ] as const satisfies readonly { href: string; label: MessageKey }[];
