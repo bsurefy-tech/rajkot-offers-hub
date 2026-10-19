@@ -209,7 +209,12 @@ export interface ReviewResource {
 /** `GET /banners?placement=…`: the slides of one placement, with the crop sizes they were made for. */
 export interface BannerFeed {
   placement: string;
-  display: { autoplay_ms: number; loop: boolean };
+  display: {
+    autoplay_ms: number;
+    loop: boolean;
+    /** The ratio each size's picture was cropped to, as "width:height" (e.g. "16:9"). */
+    variants?: Partial<Record<"mobile" | "tablet" | "desktop", { aspect_ratio: string }>>;
+  };
   items: {
     id: string;
     images: Partial<Record<"mobile" | "tablet" | "desktop", Media | null>>;

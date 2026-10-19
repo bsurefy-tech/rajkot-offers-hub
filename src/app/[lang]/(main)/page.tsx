@@ -67,13 +67,11 @@ async function HomeSections() {
         </Section>
       )}
 
-      {/* The banner runs edge to edge on a phone, square and with no space around it. */}
+      {/* The banner runs edge to edge on every screen, square and with no space around it. */}
       {hero.slides.length > 0 && (
-        <section className="lg:py-12">
-          <div className="mx-auto w-full max-w-[1240px] lg:px-5">
-            {/* Always loops: after the last banner it goes back to the first. */}
-            <HeroSlider slides={hero.slides} autoplayMs={hero.autoplayMs} loop />
-          </div>
+        <section>
+          {/* Always loops: after the last banner it goes back to the first. */}
+          <HeroSlider slides={hero.slides} ratios={hero.ratios} autoplayMs={hero.autoplayMs} loop />
         </section>
       )}
 
