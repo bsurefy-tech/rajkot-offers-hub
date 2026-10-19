@@ -7,6 +7,7 @@ export type PageType =
   | "category"
   | "area_or_shop"
   | "shop"
+  | "shops"
   | "zalak"
   | "status"
   | "rewards"
@@ -47,6 +48,7 @@ export function pageTypeOf(pathname: string): PageType {
   if (!first) return "home";
   const known = STATIC[first];
   if (known === "categories") return second ? "category" : "categories";
+  if (known === "shop" && !second) return "shops";
   if (known) return known;
   if (!second) return "area_or_shop";
   if (second === "offers") return "offers";

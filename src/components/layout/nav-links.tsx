@@ -2,7 +2,7 @@
 
 import { Link } from "@/components/i18n/link";
 import { useParams, usePathname } from "next/navigation";
-import { Bookmark, CircleUserRound, Gift, House, Play, Tag } from "lucide-react";
+import { CircleUserRound, House, Play, Store, Tag } from "lucide-react";
 import { usePoints } from "@/hooks/use-points";
 import { stripArea } from "@/lib/areas";
 import { splitLocale } from "@/lib/i18n/config";
@@ -51,12 +51,10 @@ const offers: TabItem = { href: "/offers", label: "Offers", icon: Tag };
 const zalak: TabItem = { href: "/zalak", label: "Zalak", icon: Play, raised: true };
 const profile: TabItem = { href: "/account", label: "Profile", icon: CircleUserRound };
 
-const bottomNav: TabItem[] = [home, offers, zalak, { href: "/saved", label: "Saved", icon: Bookmark }, profile];
+/** Rewards live on the account page, so the shops list takes the tab beside Profile. */
+const bottomNav: TabItem[] = [home, offers, zalak, { href: "/businesses", label: "Shops", icon: Store }, profile];
 
-/** With the rewards programme on, Rewards takes Saved's place (Saved is on the account page). */
-const bottomNavWithRewards: TabItem[] = [home, offers, zalak, { href: "/rewards", label: "Rewards", icon: Gift }, profile];
-
-/** A dot on the Rewards tab while there is a scratch card to scratch. */
+/** A dot on the Profile tab while there is a scratch card to scratch (the Rewards page is reached from there). */
 function ScratchDot() {
   const points = usePoints();
   if (points.status !== "ready" || points.cards === 0) return null;
@@ -75,7 +73,7 @@ export function BottomNav({ rewards, zalak: withZalak = true }: { rewards?: bool
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="grid h-16 auto-cols-fr grid-flow-col">
-        {(rewards ? bottomNavWithRewards : bottomNav).filter((tab) => withZalak || tab !== zalak).map(({ href, label, icon: Icon, raised }) => {
+        {bottomNav.filter((tab) => withZalak || tab !== zalak).map(({ href, label, icon: Icon, raised }) => {
           const active = isActive(pathname, href, area);
           return (
             <li key={href}>
@@ -99,7 +97,7 @@ export function BottomNav({ rewards, zalak: withZalak = true }: { rewards?: bool
                   <Icon size={22} strokeWidth={1.75} aria-hidden />
                 )}
                 {t(label)}
-                {href === "/rewards" && <ScratchDot />}
+                {rewards && href === "/account" && <ScratchDot />}
               </Link>
             </li>
           );
