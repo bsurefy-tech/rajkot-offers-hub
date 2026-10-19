@@ -176,7 +176,7 @@ export function OfferGridSkeleton({ count = 6, columns = 3 }: { count?: number; 
 }
 
 /** Horizontal scroller on mobile; becomes a grid on desktop. */
-export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSummary[]; desktopColumns?: 3 | 4 }) {
+export function OfferCarousel({ offers, desktopColumns = 3 }: { offers: OfferSummary[]; desktopColumns?: 3 | 4 }) {
   return (
     <div
       className={cn(
@@ -191,7 +191,9 @@ export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSum
         <OfferCard
           key={offer.slug}
           offer={offer}
-          sizes="(min-width: 1024px) 285px, 85vw"
+          sizes={
+            desktopColumns === 4 ? "(min-width: 1024px) 285px, 85vw" : "(min-width: 1024px) 384px, 85vw"
+          }
           className="w-[85vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none"
         />
       ))}
@@ -200,7 +202,7 @@ export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSum
 }
 
 /** Placeholder for `OfferCarousel`: a row that scrolls on a phone, a grid on desktop. */
-export function OfferCarouselSkeleton({ desktopColumns = 4 }: { desktopColumns?: 3 | 4 }) {
+export function OfferCarouselSkeleton({ desktopColumns = 3 }: { desktopColumns?: 3 | 4 }) {
   return (
     <div
       className={cn(
