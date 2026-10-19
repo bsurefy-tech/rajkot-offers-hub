@@ -64,7 +64,7 @@ export function HeroSlider({ slides, ratios, autoplayMs, loop, className }: Hero
           setIndex(Math.round(el.scrollLeft / el.clientWidth));
         }}
         style={{ "--hero-mobile": ratios.mobile, "--hero-tablet": ratios.tablet, "--hero-desktop": ratios.desktop } as React.CSSProperties}
-        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden bg-surface lg:rounded-2xl"
+        className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden bg-surface"
       >
         {slides.map((slide, i) => (
           <li key={slide.id} aria-roledescription="slide" className="aspect-(--hero-mobile) w-full shrink-0 snap-center sm:aspect-(--hero-tablet) lg:aspect-(--hero-desktop)">
