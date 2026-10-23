@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["634R9Y4AH6.com.rajkotoffershub.app"],
+        "components": [
+          { "/": "/api/*", "exclude": true },
+          { "/": "/_next/*", "exclude": true },
+          { "/": "/*" }
+        ]
+      }
+    ]
+  }
+}
