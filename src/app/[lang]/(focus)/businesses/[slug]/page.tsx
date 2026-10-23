@@ -11,6 +11,7 @@ import { ContactLink } from "@/components/businesses/contact-link";
 import { OutletSideCards } from "@/components/businesses/outlets";
 import { OutletMap, type MapOutlet } from "@/components/businesses/outlet-map";
 import { Catalog } from "@/components/businesses/catalog";
+import { PhotoGallery } from "@/components/businesses/photo-gallery";
 import { PhotoMosaic } from "@/components/businesses/photo-mosaic";
 import { PageMarker } from "@/components/analytics/page-marker";
 import { Container } from "@/components/layout/container";
@@ -118,13 +119,7 @@ async function PhotosTab({ business, images }: { business: Business; images: str
   return (
     <div>
       <h2 className="mb-3 text-heading font-semibold">{t("Photos")}</h2>
-      <ul className="grid grid-cols-3 gap-2 lg:gap-4">
-        {images.map((src) => (
-          <li key={src} className="relative aspect-square overflow-hidden rounded-xl bg-surface lg:aspect-[4/3]">
-            <Image src={src} alt={t("Photo of {business}", { business: business.name })} fill sizes="(min-width: 1024px) 270px, 33vw" className="object-cover" />
-          </li>
-        ))}
-      </ul>
+      <PhotoGallery images={images} alt={t("Photo of {business}", { business: business.name })} />
     </div>
   );
 }
@@ -202,8 +197,8 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
     label: t("Catalog ({count})", { count: catalog.total }),
     content: <Catalog items={catalog.items} total={catalog.total} />,
   };
-  // Offers come first; a catalog follows them, and leads only when there is no live offer to show.
-  const sections = !catalog.items.length ? [offersSection] : active.length ? [offersSection, catalogSection] : [catalogSection, offersSection];
+  // Offers always come first, and only when the shop has some (live or past); the catalog follows when it has items.
+  const sections = [...(active.length || expired.length ? [offersSection] : []), ...(catalog.items.length ? [catalogSection] : [])];
 
   return (
     <div className="lg:bg-surface lg:pt-6 lg:pb-16">

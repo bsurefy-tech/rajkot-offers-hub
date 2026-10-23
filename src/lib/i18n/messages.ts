@@ -436,7 +436,6 @@ export const gu = {
   "Outlet": "આઉટલેટ",
   "{count} outlets": "{count} આઉટલેટ્સ",
   "Map credits": "મેપ ક્રેડિટ",
-  "See all photos": "બધા ફોટા જુઓ",
   "Main outlet": "મુખ્ય આઉટલેટ",
   "Opening hours": "ખુલવાનો સમય",
   "Featured offers": "ખાસ ઓફર્સ",
