@@ -163,7 +163,7 @@ async function OfferContent({ slug }: { slug: string }) {
           />
         </div>
         <div className="overflow-hidden lg:rounded-2xl lg:border lg:border-line lg:bg-white">
-          <PhotoMosaic images={images} alt={offer.title} linked={false}>
+          <PhotoMosaic images={images} alt={offer.title}>
             <div className={cn("absolute bottom-4 left-4 hidden lg:block", expired && "opacity-80")}>{badge}</div>
             {mobileButtons}
           </PhotoMosaic>

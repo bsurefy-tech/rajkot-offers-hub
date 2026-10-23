@@ -1,29 +1,21 @@
+"use client";
+
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { getT } from "@/lib/i18n/server";
+import { useState, type ReactNode } from "react";
+import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
+import { PhotoViewer } from "./photo-gallery";
 
 /**
  * The shop's photos as one tile grid: a big photo with up to two (phone) or four (desktop) smaller ones,
- * the last tile saying how many more there are. Tiles jump to the Photos tab when the shop has more
- * than one photo (unless `linked` is off). A single photo fills the whole width.
+ * the last tile saying how many more there are. Tapping a tile opens that photo in the full-screen viewer.
+ * A single photo fills the whole width.
  */
-export async function PhotoMosaic({
-  images,
-  alt,
-  linked = true,
-  children,
-}: {
-  images: string[];
-  alt: string;
-  /** Tiles jump to a #photos section; off where the page has none (an offer page). */
-  linked?: boolean;
-  children?: ReactNode;
-}) {
-  const t = await getT();
+export function PhotoMosaic({ images, alt, children }: { images: string[]; alt: string; children?: ReactNode }) {
+  const t = useT();
+  const [open, setOpen] = useState<number | null>(null);
   const n = images.length;
   const many = n > 1;
-  const links = many && linked;
   const wide = n >= 5;
   const phoneShown = Math.min(n, 3);
   const deskShown = wide ? 5 : phoneShown;
@@ -41,13 +33,18 @@ export async function PhotoMosaic({
         const phoneMore = i === phoneShown - 1 ? n - phoneShown : 0;
         const deskMore = i === deskShown - 1 ? n - deskShown : 0;
         const moreCount = phoneMore || deskMore;
-        const className = cn(
-          "group relative block overflow-hidden",
-          i === 0 && n >= 3 && "row-span-2",
-          i >= phoneShown && "hidden lg:block",
-        );
-        const tile = (
-          <>
+        return (
+          <button
+            key={src}
+            type="button"
+            aria-label={t("Photo {number}", { number: i + 1 })}
+            onClick={() => setOpen(i)}
+            className={cn(
+              "group relative block cursor-zoom-in overflow-hidden",
+              i === 0 && n >= 3 && "row-span-2",
+              i >= phoneShown && "hidden lg:block",
+            )}
+          >
             <Image
               src={src}
               alt={i === 0 ? alt : ""}
@@ -66,19 +63,11 @@ export async function PhotoMosaic({
                 +{moreCount}
               </span>
             )}
-          </>
-        );
-        return links ? (
-          <a key={src} href="#photos" className={className} aria-label={t("See all photos")}>
-            {tile}
-          </a>
-        ) : (
-          <div key={src} className={className}>
-            {tile}
-          </div>
+          </button>
         );
       })}
       {children}
+      <PhotoViewer images={images} alt={alt} index={open} onClose={() => setOpen(null)} />
     </div>
   );
 }
