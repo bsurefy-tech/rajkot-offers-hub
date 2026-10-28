@@ -9,6 +9,8 @@ import type {
   LoyaltyScope,
   LoyaltyScratchCard,
   LoyaltyTask,
+  LoyaltyTaskCompletion,
+  LoyaltyTaskSummary,
   LoyaltyTransaction,
   LoyaltyWallet,
   Page,
@@ -16,6 +18,7 @@ import type {
 import { withSession } from "@/lib/auth/session";
 import type { MessageKey } from "@/lib/i18n/translate";
 import { loyaltyEnabled } from "@/lib/rewards/enabled";
+import { summarise } from "@/lib/rewards/tasks";
 
 /**
  * Points, rewards and scratch cards (the API's `/loyalty/*`). They are on the shopper's account, so every call
@@ -63,20 +66,32 @@ async function change<T>(write: (token: string) => Promise<T>, field: string): P
   }
 }
 
-/** Points and scratch cards in a line, for the account page and the Rewards tab. */
+/** Points, scratch cards and tasks left in a line, for the account page and the Rewards tab. */
 export interface PointsSummary {
   balance: number;
   label: string;
   cards: number;
+  /** Tasks not done yet; null when the tasks could not be read. */
+  tasksLeft: number | null;
 }
+
+type TasksPage = Page<LoyaltyTask> & { meta: { summary?: LoyaltyTaskSummary } };
 
 export async function pointsSummaryAction(): Promise<Loaded<PointsSummary>> {
   return load(async (token) => {
-    const [wallets, cards] = await Promise.all([
+    const [wallets, cards, tasks] = await Promise.all([
       api<{ data: { platform: LoyaltyWallet } }>("/loyalty/wallets", { token, client: null }),
       api<Page<LoyaltyScratchCard>>("/loyalty/scratch-cards", { query: { status: "issued", per_page: 1 }, token, client: null }),
+      // A nudge, not the point of the card: without the tasks the rest still shows.
+      api<TasksPage>("/loyalty/tasks", { query: { per_page: 50 }, token, client: null }).catch(() => null),
     ]);
-    return { balance: wallets.data.platform.balance, label: wallets.data.platform.name, cards: cards.meta.total };
+    const summary = tasks && summarise(tasks.data, tasks.meta.summary);
+    return {
+      balance: wallets.data.platform.balance,
+      label: wallets.data.platform.name,
+      cards: cards.meta.total,
+      tasksLeft: summary ? summary.total - summary.done : null,
+    };
   });
 }
 
@@ -88,6 +103,8 @@ export interface RewardsOverview {
   redemptions: LoyaltyRedemption[];
   transactions: LoyaltyTransaction[];
   tasks: LoyaltyTask[];
+  /** Where the shopper stands on the task list; worked out from `tasks` when the API sends no summary. */
+  taskSummary: LoyaltyTaskSummary;
   /** Null when the platform has no referral programme. */
   referral: LoyaltyReferral | null;
 }
@@ -103,7 +120,7 @@ export async function rewardsOverviewAction(): Promise<Loaded<RewardsOverview>> 
       get<Page<LoyaltyReward>>("/loyalty/rewards", { wallet: "platform", per_page: 50 }),
       get<Page<LoyaltyRedemption>>("/loyalty/redemptions", { per_page: 30 }),
       get<Page<LoyaltyTransaction>>("/loyalty/transactions", { wallet: "platform", per_page: 30 }),
-      get<Page<LoyaltyTask>>("/loyalty/tasks", { per_page: 30 }),
+      get<TasksPage>("/loyalty/tasks", { per_page: 50 }),
       get<{ data: LoyaltyReferral }>("/loyalty/referral").then(
         (r) => r.data,
         (error) => {
@@ -121,6 +138,7 @@ export async function rewardsOverviewAction(): Promise<Loaded<RewardsOverview>> 
       redemptions: redemptions.data,
       transactions: transactions.data,
       tasks: tasks.data,
+      taskSummary: summarise(tasks.data, tasks.meta.summary),
       referral,
     };
   });
@@ -130,6 +148,16 @@ export async function rewardsOverviewAction(): Promise<Loaded<RewardsOverview>> 
 export async function transactionsAction(wallet: LoyaltyScope): Promise<Loaded<LoyaltyTransaction[]>> {
   if (wallet !== "platform" && wallet !== "global") return { status: "error" };
   return load(async (token) => (await api<Page<LoyaltyTransaction>>("/loyalty/transactions", { query: { wallet, per_page: 30 }, token, client: null })).data);
+}
+
+/** Every go the shopper has had at one task, newest first: what was sent, and how each was decided. */
+export async function taskTimelineAction(taskId: string): Promise<Loaded<LoyaltyTaskCompletion[]>> {
+  if (!UUID.test(taskId)) return { status: "error" };
+  return load(async (token) => {
+    const page = await api<Page<LoyaltyTaskCompletion>>("/loyalty/task-completions", { query: { task: taskId, per_page: 20 }, token, client: null });
+    // An API from before the filter sends every hand-in; keep this task's.
+    return page.data.filter((completion) => completion.task_id === taskId);
+  });
 }
 
 /** Spends points on a reward. `requestId` (a UUID made when the sheet opened) makes a repeated tap safe. */
