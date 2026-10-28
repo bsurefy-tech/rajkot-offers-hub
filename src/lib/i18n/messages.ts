@@ -703,6 +703,10 @@ export const gu = {
   "Done · +{points} pts": "પૂરું · +{points} પોઈન્ટ",
   "Sent {sent} · checked {checked}": "{sent}એ મોકલ્યું · {checked}એ ચકાસ્યું",
   "Sent {sent}": "{sent}એ મોકલ્યું",
+  "{count} tasks left to earn more": "વધુ કમાવા {count} કામ બાકી",
+  "Bonus unlocked: {reward}": "બોનસ મળ્યું: {reward}",
+  "Task done: {title} · +{points} pts": "કામ પૂરું: {title} · +{points} પોઈન્ટ",
+  "{count} tasks done · +{points} pts": "{count} કામ પૂરાં · +{points} પોઈન્ટ",
 } as const;
 
 export type MessageKey = keyof typeof gu;
