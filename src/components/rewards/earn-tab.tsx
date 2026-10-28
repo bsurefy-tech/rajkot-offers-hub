@@ -22,6 +22,7 @@ const STEPS = [
 
 const STATUS: Record<NonNullable<LoyaltyTask["status"]>, MessageKey> = {
   submitted: "Being checked",
+  waiting: "Being checked",
   approved: "Done",
   rejected: "Not accepted",
 };

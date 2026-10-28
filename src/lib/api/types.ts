@@ -317,9 +317,37 @@ export interface LoyaltyScratchCard {
   prize: { kind: "points" | "reward" | "nothing"; label: string; points: number | null; redemption: LoyaltyRedemption | null } | null;
 }
 
+/** What a task asks for: the first five are handed in with a screenshot, the rest the app ticks off as they happen. */
+export type LoyaltyTaskType =
+  | "follow"
+  | "join_channel"
+  | "post_story"
+  | "tag_us"
+  | "custom"
+  | "save_offer"
+  | "follow_shop"
+  | "claim_offer"
+  | "use_offer"
+  | "write_review"
+  | "complete_profile";
+
 export interface LoyaltyTask {
   id: string;
-  type: "follow" | "join_channel" | "post_story" | "tag_us" | "custom";
+  type: LoyaltyTaskType;
+  /**
+   * The fields from here to `points_awarded` came with the task list; an older API leaves them out, and its
+   * tasks are all `proof`.
+   */
+  kind?: "proof" | "auto";
+  /** The checklist section, e.g. `get_started`. */
+  group?: string | null;
+  /** How many times the thing must happen ("Follow 3 shops"), and how many it has so far (capped at the goal). */
+  goal?: number;
+  progress?: number;
+  /** An in-app path to go and do it. */
+  action_url?: string | null;
+  completed_at?: string | null;
+  points_awarded?: number | null;
   provider: string | null;
   title: string;
   description: string | null;
@@ -330,10 +358,36 @@ export interface LoyaltyTask {
   has_profile: boolean;
   points: number;
   ends_at: string | null;
-  status: "submitted" | "approved" | "rejected" | null;
+  /** `waiting`: the app raised it and holds it a while before paying (e.g. until a bill can no longer be voided). */
+  status: "submitted" | "waiting" | "approved" | "rejected" | null;
   reject_reason: string | null;
   earned_count: number;
   can_submit: boolean;
+}
+
+/** Where the shopper stands on the task list (`meta.summary` of `GET /loyalty/tasks`). */
+export interface LoyaltyTaskSummary {
+  total: number;
+  done: number;
+  in_review: number;
+  points_from_tasks: number;
+  /** Weeks in a row, up to this one, with a task done. Null when the API does not count it. */
+  streak_weeks: number | null;
+  /** The next bonus for finishing tasks, or null when there is none to aim for. */
+  next_milestone: { title: string; needed: number; done: number; reward: string } | null;
+}
+
+/** One go at a task and how it went (`GET /loyalty/task-completions`). */
+export interface LoyaltyTaskCompletion {
+  id: string;
+  task_id: string;
+  task_title: string;
+  status: "submitted" | "waiting" | "approved" | "rejected";
+  profile_url: string | null;
+  points_awarded: number | null;
+  reject_reason: string | null;
+  submitted_at: string;
+  reviewed_at: string | null;
 }
 
 export interface LoyaltyReferral {
