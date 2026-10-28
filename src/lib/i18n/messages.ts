@@ -694,6 +694,15 @@ export const gu = {
   "Done on {date}": "{date}એ પૂરું",
   "Done {count}×": "{count} વાર પૂરું",
   "Go": "જાઓ",
+  "Progress": "પ્રગતિ",
+  "This ticks itself off when you do it in the app. Points are added straight away.": "એપમાં કરશો એટલે આ જાતે પૂરું થશે. પોઈન્ટ તરત ઉમેરાશે.",
+  "Go and do it": "જઈને કરો",
+  "Your history": "તમારો ઇતિહાસ",
+  "Sent, being checked": "મોકલ્યું, ચકાસણી ચાલુ",
+  "On hold, points come soon": "રોકેલું છે, પોઈન્ટ જલ્દી મળશે",
+  "Done · +{points} pts": "પૂરું · +{points} પોઈન્ટ",
+  "Sent {sent} · checked {checked}": "{sent}એ મોકલ્યું · {checked}એ ચકાસ્યું",
+  "Sent {sent}": "{sent}એ મોકલ્યું",
 } as const;
 
 export type MessageKey = keyof typeof gu;
