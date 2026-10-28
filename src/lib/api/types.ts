@@ -351,6 +351,16 @@ export interface LoyaltyReferral {
   invited_by: { id: string; status: string; invited_by: string; applied_at: string; activated_at: string | null } | null;
 }
 
+/** An invite link as the API shows it before login (`GET /loyalty/invites/{code}`). */
+export interface LoyaltyInvite {
+  code: string;
+  /** The referrer's masked name, e.g. "Asha K.". */
+  invited_by: string;
+  /** False while the programme is off, or once the referrer has invited as many friends as it allows. */
+  open: boolean;
+  apply_window_days: number;
+}
+
 /** Where tapping a status or reel goes: always one of the posting business's own things. */
 export interface ContentLink {
   type: "business" | "catalog_item" | "promotion";
