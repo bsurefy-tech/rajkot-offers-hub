@@ -1,9 +1,8 @@
 "use client";
 
 import { track } from "@/lib/analytics/client";
-import { Check, Clock, Copy, Gift, Link2, QrCode, Share2, Store, Users } from "lucide-react";
+import { Copy, Gift, Link2, QrCode, Share2, Store, Users } from "lucide-react";
 import { useState, useTransition } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
@@ -13,6 +12,8 @@ import { applyReferralAction, saveSocialHandleAction, submitTaskAction } from "@
 import type { LoyaltyReferral, LoyaltyTask, LoyaltyTaskSummary } from "@/lib/api/types";
 import { useT } from "@/lib/i18n/client";
 import type { MessageKey } from "@/lib/i18n/translate";
+import { canStart } from "@/lib/rewards/tasks";
+import { TaskList } from "./task-list";
 import { TaskProgress } from "./task-progress";
 
 const STEPS = [
@@ -20,13 +21,6 @@ const STEPS = [
   { icon: QrCode, title: "Show your code", hint: "The cashier scans it along with your bill." },
   { icon: Gift, title: "Points are added", hint: "Bigger bills can also give you a scratch card." },
 ] as const satisfies readonly { icon: unknown; title: MessageKey; hint: MessageKey }[];
-
-const STATUS: Record<NonNullable<LoyaltyTask["status"]>, MessageKey> = {
-  submitted: "Being checked",
-  waiting: "Being checked",
-  approved: "Done",
-  rejected: "Not accepted",
-};
 
 /** How points are earned: at a partner counter, by small tasks, and by inviting friends. */
 export function EarnTab({
@@ -65,43 +59,7 @@ export function EarnTab({
         </ol>
       </section>
 
-      {tasks.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-title font-semibold">{t("Quick tasks")}</h2>
-          <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
-            {tasks.map((item) => {
-              // The API holds a task back until the shopper's profile is saved; the sheet asks for it first.
-              const startable = item.can_submit || (item.needs_profile && !item.has_profile && item.status !== "submitted" && item.earned_count === 0);
-              return (
-                <li key={item.id} className="flex items-center gap-3 p-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-body font-medium">{item.title}</p>
-                    {item.description && <p className="text-body-sm text-muted">{item.description}</p>}
-                    {item.status === "rejected" && item.reject_reason && <p className="mt-1 text-body-sm text-danger">{item.reject_reason}</p>}
-                  </div>
-                  <div className="flex shrink-0 flex-col items-end gap-1.5">
-                    <Badge variant="offer" size="xs">
-                      {t("+{points} pts", { points: item.points })}
-                    </Badge>
-                    {item.status === "submitted" || (item.status === "approved" && !startable) ? (
-                      <span className="flex items-center gap-1 text-caption font-medium text-muted">
-                        {item.status === "approved" ? <Check size={13} aria-hidden /> : <Clock size={13} aria-hidden />}
-                        {t(STATUS[item.status])}
-                      </span>
-                    ) : (
-                      startable && (
-                        <Button size="sm" variant="outline" className="h-8 px-3 text-body-sm" onClick={() => setTask(item)}>
-                          {item.status === "rejected" ? t("Try again") : t("Send proof")}
-                        </Button>
-                      )
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
+      <TaskList tasks={tasks} onOpen={(item) => canStart(item) && setTask(item)} />
 
       {referral?.enabled && <ReferralCard referral={referral} onChanged={onChanged} />}
 
