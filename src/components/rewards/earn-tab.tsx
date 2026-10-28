@@ -10,9 +10,10 @@ import { Input, Textarea } from "@/components/ui/input";
 import { Sheet, SheetFooter } from "@/components/ui/sheet";
 import { useToast } from "@/components/ui/toast";
 import { applyReferralAction, saveSocialHandleAction, submitTaskAction } from "@/lib/actions/rewards";
-import type { LoyaltyReferral, LoyaltyTask } from "@/lib/api/types";
+import type { LoyaltyReferral, LoyaltyTask, LoyaltyTaskSummary } from "@/lib/api/types";
 import { useT } from "@/lib/i18n/client";
 import type { MessageKey } from "@/lib/i18n/translate";
+import { TaskProgress } from "./task-progress";
 
 const STEPS = [
   { icon: Store, title: "Pay at a partner shop", hint: "Look for the Rajkot Offers Hub sign at the counter." },
@@ -28,11 +29,23 @@ const STATUS: Record<NonNullable<LoyaltyTask["status"]>, MessageKey> = {
 };
 
 /** How points are earned: at a partner counter, by small tasks, and by inviting friends. */
-export function EarnTab({ tasks, referral, onChanged }: { tasks: LoyaltyTask[]; referral: LoyaltyReferral | null; onChanged: () => void }) {
+export function EarnTab({
+  tasks,
+  summary,
+  referral,
+  onChanged,
+}: {
+  tasks: LoyaltyTask[];
+  summary: LoyaltyTaskSummary;
+  referral: LoyaltyReferral | null;
+  onChanged: () => void;
+}) {
   const t = useT();
   const [task, setTask] = useState<LoyaltyTask | null>(null);
   return (
     <div className="flex flex-col gap-6">
+      <TaskProgress summary={summary} />
+
       <section className="rounded-2xl border border-line bg-white p-5">
         <h2 className="text-title font-semibold">{t("How you earn points")}</h2>
         <ol className="mt-4 flex flex-col gap-4">
