@@ -676,6 +676,14 @@ export const gu = {
   "From {price}": "{price} થી",
   "Price on request": "ભાવ પૂછીને",
   "See all {count} items": "બધી {count} વસ્તુઓ જુઓ",
+  "Your tasks": "તમારાં કામ",
+  "{done} of {total} done": "{total}માંથી {done} પૂરાં",
+  "Tasks done": "પૂરાં થયેલાં કામ",
+  "{points} pts from tasks": "કામથી {points} પોઈન્ટ",
+  "{count} being checked": "{count} ચકાસણીમાં",
+  "Done a task this week": "આ અઠવાડિયે એક કામ પૂરું",
+  "{weeks}-week streak": "સતત {weeks} અઠવાડિયાં",
+  "{count} more to unlock {reward}": "{reward} મેળવવા હજુ {count}",
 } as const;
 
 export type MessageKey = keyof typeof gu;

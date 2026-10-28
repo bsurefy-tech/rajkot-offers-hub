@@ -163,7 +163,7 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
         panelClassName="pt-5"
         items={[
           { value: "rewards", label: t("Rewards"), content: <RewardsTab data={data} reload={reload} /> },
-          { value: "earn", label: t("Earn"), content: <EarnTab tasks={data.tasks} referral={data.referral} onChanged={() => void reload()} /> },
+          { value: "earn", label: t("Earn"), content: <EarnTab tasks={data.tasks} summary={data.taskSummary} referral={data.referral} onChanged={() => void reload()} /> },
           { value: "history", label: t("History"), content: <HistoryTab data={data} /> },
         ]}
       />
