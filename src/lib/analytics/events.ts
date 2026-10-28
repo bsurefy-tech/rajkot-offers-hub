@@ -12,6 +12,7 @@ export type LoginReason =
   | "zalak_like"
   | "zalak_report"
   | "rewards"
+  | "invite"
   | "notifications"
   | "saved";
 
@@ -54,7 +55,8 @@ export type EventMap = {
   reward_redeem: { result: "ok" | "login" | "error" };
   task_submit: { type: string; provider: string; result: "ok" | "error" };
   referral_share: { method: "share_sheet" | "copy" };
-  referral_apply: { result: "ok" | "error" };
+  /** `form`: typed on the Rewards page; `link`: from a friend's invite link. */
+  referral_apply: { result: "ok" | "error"; source: "form" | "link" };
   notification_open: { type: string };
   notifications_read_all: Record<string, never>;
   push_toggle: { on: boolean };
