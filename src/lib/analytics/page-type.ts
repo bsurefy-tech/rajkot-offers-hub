@@ -11,6 +11,7 @@ export type PageType =
   | "zalak"
   | "status"
   | "rewards"
+  | "invite"
   | "account"
   | "login"
   | "saved"
@@ -28,6 +29,7 @@ const STATIC: Record<string, PageType> = {
   zalak: "zalak",
   status: "status",
   rewards: "rewards",
+  invite: "invite",
   account: "account",
   login: "login",
   saved: "saved",

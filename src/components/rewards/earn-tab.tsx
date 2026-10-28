@@ -191,7 +191,7 @@ function ReferralCard({ referral, onChanged }: { referral: LoyaltyReferral; onCh
     setError(null);
     start(async () => {
       const done = await applyReferralAction(String(form.get("code") ?? ""));
-      track("referral_apply", { result: done.ok ? "ok" : "error" });
+      track("referral_apply", { result: done.ok ? "ok" : "error", source: "form" });
       if (!done.ok) return setError(done.detail ?? t(done.error === "login" ? "Log in again to continue." : done.error));
       toast(t("Invite code added"));
       onChanged();
