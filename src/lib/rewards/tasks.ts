@@ -60,3 +60,32 @@ export function summarise(tasks: LoyaltyTask[], summary: LoyaltyTaskSummary | un
     next_milestone: null,
   };
 }
+
+/**
+ * Whether the shopper can hand a screenshot task in now. The API holds a task back until the shopper's profile
+ * is saved, so a task that needs one is startable too: the sheet asks for the profile first.
+ */
+export function canStart(task: LoyaltyTask) {
+  if (isAuto(task)) return false;
+  return task.can_submit || (task.needs_profile && !task.has_profile && !isInReview(task) && task.earned_count === 0);
+}
+
+/** The checklist sections in the order they show; a group the site does not know goes last. */
+const GROUP_ORDER = ["get_started", "explore", "social"];
+
+export function groupRank(group: string | null | undefined) {
+  const rank = GROUP_ORDER.indexOf(group ?? "");
+  return rank === -1 ? GROUP_ORDER.length : rank;
+}
+
+/** To do, being checked, and finished for good (a repeatable task that can be done again stays to do). */
+export function sortTasks(tasks: LoyaltyTask[]) {
+  const review = tasks.filter(isInReview);
+  const completed = tasks.filter((task) => !isInReview(task) && isDone(task) && !canStart(task));
+  const todo = tasks
+    .filter((task) => !review.includes(task) && !completed.includes(task))
+    .map((task, index) => ({ task, index }))
+    .sort((a, b) => groupRank(a.task.group) - groupRank(b.task.group) || a.index - b.index)
+    .map(({ task }) => task);
+  return { todo, review, completed };
+}

@@ -684,6 +684,16 @@ export const gu = {
   "Done a task this week": "આ અઠવાડિયે એક કામ પૂરું",
   "{weeks}-week streak": "સતત {weeks} અઠવાડિયાં",
   "{count} more to unlock {reward}": "{reward} મેળવવા હજુ {count}",
+  "To do": "કરવાનાં કામ",
+  "Get started": "શરૂઆત કરો",
+  "Explore": "શોધખોળ",
+  "Social": "સોશિયલ",
+  "More tasks": "બીજાં કામ",
+  "Completed ({count})": "પૂરાં થયેલાં ({count})",
+  "{done} of {total}": "{total}માંથી {done}",
+  "Done on {date}": "{date}એ પૂરું",
+  "Done {count}×": "{count} વાર પૂરું",
+  "Go": "જાઓ",
 } as const;
 
 export type MessageKey = keyof typeof gu;
