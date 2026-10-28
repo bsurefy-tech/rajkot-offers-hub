@@ -8,12 +8,14 @@ const variants = {
     "border border-ink bg-white text-ink hover:bg-surface disabled:border-input disabled:text-line-strong disabled:hover:bg-white",
   ghost: "text-muted hover:text-ink",
   soft: "bg-surface text-ink hover:bg-canvas",
+  whatsapp: "border border-whatsapp bg-whatsapp-soft text-whatsapp-ink hover:bg-whatsapp/15",
+  whatsappSolid: "bg-whatsapp text-white hover:bg-whatsapp-hover",
 } as const;
 
 const sizes = {
-  sm: "h-10 px-[18px] text-sm",
-  md: "h-12 px-5 text-[15px]",
-  lg: "h-[52px] px-7 text-base",
+  sm: "h-10 px-[18px] text-body",
+  md: "h-12 px-5 text-body",
+  lg: "h-[52px] px-7 text-body",
 } as const;
 
 export interface ButtonStyleProps {

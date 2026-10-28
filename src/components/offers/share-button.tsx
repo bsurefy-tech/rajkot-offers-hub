@@ -16,7 +16,7 @@ interface ShareButtonProps {
   title: string;
   /** Path of the page to share, e.g. "/offers/kurta-20-off". */
   path: string;
-  variant?: "floating" | "plain" | "text" | "pill";
+  variant?: "floating" | "plain" | "text" | "pill" | "tile" | "bar";
   /** On an offer page: a share counts towards that offer's stats. */
   offerId?: string;
 }
@@ -65,20 +65,26 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
   return (
     <>
       {variant === "floating" || variant === "plain" ? (
-        <IconButton variant={variant} size="lg" aria-label={t("Share")} onClick={onShare}>
+        <IconButton variant={variant} size="lg" aria-label={t("Share")} onClick={onShare} className="text-share">
           <Share2 size={20} aria-hidden />
         </IconButton>
+      ) : variant === "tile" ? (
+        <Button variant="outline" size="sm" block className="border-share px-0 text-share hover:bg-share-soft" onClick={onShare}>
+          <Share2 size={18} aria-hidden />
+          <span className="sr-only">{t("Share")}</span>
+        </Button>
+      ) : variant === "bar" ? (
+        <Button variant="outline" size="sm" onClick={onShare} className="min-w-0 flex-1 border-share px-2 text-share hover:bg-share-soft">
+          <Share2 size={18} aria-hidden />
+          {t("Share")}
+        </Button>
       ) : variant === "pill" ? (
-        <button
-          type="button"
-          onClick={onShare}
-          className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full bg-white px-4 text-sm font-medium shadow-card hover:bg-surface"
-        >
+        <Button variant="outline" size="sm" onClick={onShare} className="border-share text-share hover:bg-share-soft">
           <Share2 size={16} aria-hidden />
           {t("Share")}
-        </button>
+        </Button>
       ) : (
-        <Button variant="ghost" size="sm" onClick={onShare} className="px-2">
+        <Button variant="ghost" size="sm" onClick={onShare} className="px-2 text-share hover:text-share">
           <Share2 size={18} aria-hidden />
           {t("Share")}
         </Button>
@@ -96,7 +102,7 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
                 trackOffer(offerId, "share");
                 setOpen(false);
               }}
-              className="flex flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-xs font-medium hover:bg-canvas"
+              className="flex flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-caption font-medium hover:bg-canvas"
             >
               {option.icon}
               {option.label}
@@ -105,13 +111,13 @@ export function ShareButton({ title, path, variant = "floating", offerId }: Shar
           <button
             type="button"
             onClick={copyLink}
-            className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-xs font-medium hover:bg-canvas"
+            className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl bg-surface py-4 text-caption font-medium hover:bg-canvas"
           >
             <Link2 size={22} aria-hidden />
             {t("Copy link")}
           </button>
         </div>
-        <p className="mt-4 truncate rounded-xl border border-line px-3.5 py-3 text-[13px] text-muted">
+        <p className="mt-4 truncate rounded-xl border border-line px-3.5 py-3 text-body-sm text-muted">
           {url.replace(/^https?:\/\//, "")}
         </p>
       </Sheet>

@@ -10,8 +10,10 @@ import { Skeleton } from "@/components/ui/display";
 import { RatingInline } from "@/components/ui/rating";
 import { formatDistance, formatRupees, formatUntil } from "@/lib/format";
 import { useLocale, useT } from "@/lib/i18n/client";
+import { track } from "@/lib/analytics/client";
 import { cn } from "@/lib/utils";
 import { SaveButton } from "./save-button";
+import { offerPath } from "@/lib/paths";
 
 interface OfferCardProps {
   offer: OfferSummary;
@@ -41,10 +43,11 @@ export function OfferCard({
         className,
       )}
     >
-      <div className={cn("relative aspect-[4/3] overflow-hidden bg-surface", expired && "opacity-65 grayscale")}>
+      <div className={cn("relative aspect-[16/9] overflow-hidden bg-surface sm:aspect-[4/3]", expired && "opacity-65 grayscale")}>
         <Image
           src={offer.images[0]}
-          alt=""
+          // The card's link names the offer; the photo is not inside it, so it describes itself for image search.
+          alt={`${offer.title}, ${offer.businessName}`}
           fill
           sizes={sizes}
           priority={priority}
@@ -53,17 +56,17 @@ export function OfferCard({
             offer.imageIsLogo ? "object-contain p-8" : "object-cover",
           )}
         />
-        <Badge variant={expired ? "expired" : "offer"} className="absolute top-3 left-3">
+        <Badge variant={expired ? "expired" : "offer"} className="absolute top-2.5 left-2.5 lg:top-3 lg:left-3">
           {expired ? t("Expired") : offer.badge}
         </Badge>
       </div>
-      <div className={cn("flex flex-col gap-1.5 px-4 pt-4 pb-[18px]", expired && "opacity-65")}>
-        <h3 className="line-clamp-2 text-base leading-[1.45] font-semibold">
-          <Link href={`/offers/${offer.slug}`} className="after:absolute after:inset-0 after:content-['']">
+      <div className={cn("flex flex-col gap-1 px-3.5 pt-3 pb-3.5 lg:gap-1.5 lg:px-4 lg:pt-4 lg:pb-[18px]", expired && "opacity-65")}>
+        <h3 className="line-clamp-2 text-title leading-[1.4] font-semibold lg:leading-[1.45]">
+          <Link href={offerPath(offer)} onClick={() => track("offer_card_click", { offer_id: offer.id })} className="after:absolute after:inset-0 after:content-['']">
             {offer.title}
           </Link>
         </h3>
-        <p className="text-sm text-muted">
+        <p className="text-body-sm text-muted">
           {offer.businessName}
           {offer.distanceKm !== undefined && (
             <>
@@ -72,7 +75,7 @@ export function OfferCard({
             </>
           )}
         </p>
-        <p className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[13px] text-muted">
+        <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-caption text-muted lg:mt-1.5">
           <span className="inline-flex items-center gap-1">
             <MapPin size={14} aria-hidden />
             {offer.areaName}
@@ -94,7 +97,7 @@ export function OfferCard({
           )}
         </p>
         {offer.minSpend && (
-          <p className="flex items-center gap-1 text-[13px] text-muted">
+          <p className="flex items-center gap-1 text-caption text-muted">
             <Tag size={14} aria-hidden />
             {t("On bills of {amount} or more", { amount: formatRupees(offer.minSpend) })}
           </p>
@@ -106,14 +109,22 @@ export function OfferCard({
   );
 }
 
-export function OfferCardSkeleton() {
+/** Same box as `OfferCard` (photo, two-line title, shop, details), so the list does not move once the offers arrive. */
+export function OfferCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-white">
-      <Skeleton className="aspect-[4/3] rounded-none" />
-      <div className="flex flex-col gap-2.5 p-4">
-        <Skeleton className="h-4 w-4/5" />
-        <Skeleton className="h-3.5 w-2/5" />
-        <Skeleton className="h-3 w-3/5" />
+    <div aria-hidden className={cn("overflow-hidden rounded-2xl border border-line bg-white", className)}>
+      <Skeleton className="aspect-[16/9] rounded-none sm:aspect-[4/3]" />
+      <div className="flex flex-col gap-1 px-3.5 pt-3 pb-3.5 lg:gap-1.5 lg:px-4 lg:pt-4 lg:pb-[18px]">
+        <div className="flex h-[42px] lg:h-[46px] flex-col justify-center gap-2">
+          <Skeleton className="h-3.5 w-full" />
+          <Skeleton className="h-3.5 w-3/5" />
+        </div>
+        <div className="flex h-5 items-center">
+          <Skeleton className="h-3.5 w-2/5" />
+        </div>
+        <div className="mt-1.5 flex h-5 items-center">
+          <Skeleton className="h-3 w-3/4" />
+        </div>
       </div>
     </div>
   );
@@ -154,9 +165,9 @@ export function OfferGrid({
   );
 }
 
-export function OfferGridSkeleton({ count = 6 }: { count?: number }) {
+export function OfferGridSkeleton({ count = 6, columns = 3 }: { count?: number; columns?: 3 | 4 }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+    <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6", columns === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4")}>
       {Array.from({ length: count }, (_, i) => (
         <OfferCardSkeleton key={i} />
       ))}
@@ -165,11 +176,11 @@ export function OfferGridSkeleton({ count = 6 }: { count?: number }) {
 }
 
 /** Horizontal scroller on mobile; becomes a grid on desktop. */
-export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSummary[]; desktopColumns?: 3 | 4 }) {
+export function OfferCarousel({ offers, desktopColumns = 3 }: { offers: OfferSummary[]; desktopColumns?: 3 | 4 }) {
   return (
     <div
       className={cn(
-        "no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1",
+        "no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pb-1",
         "lg:mx-0 lg:grid lg:gap-6 lg:overflow-visible lg:px-0",
         desktopColumns === 4
           ? "lg:grid-cols-4 lg:[&>*:nth-child(n+5)]:hidden"
@@ -180,9 +191,30 @@ export function OfferCarousel({ offers, desktopColumns = 4 }: { offers: OfferSum
         <OfferCard
           key={offer.slug}
           offer={offer}
-          sizes="(min-width: 1024px) 285px, 260px"
-          className="w-[260px] shrink-0 snap-start lg:w-auto"
+          sizes={
+            desktopColumns === 4 ? "(min-width: 1024px) 285px, 85vw" : "(min-width: 1024px) 384px, 85vw"
+          }
+          className="w-[85vw] max-w-[340px] shrink-0 snap-start lg:w-auto lg:max-w-none"
         />
+      ))}
+    </div>
+  );
+}
+
+/** Placeholder for `OfferCarousel`: a row that scrolls on a phone, a grid on desktop. */
+export function OfferCarouselSkeleton({ desktopColumns = 3 }: { desktopColumns?: 3 | 4 }) {
+  return (
+    <div
+      className={cn(
+        "no-scrollbar -mx-4 flex gap-3 overflow-hidden px-4 pb-1",
+        "lg:mx-0 lg:grid lg:gap-6 lg:overflow-visible lg:px-0",
+        desktopColumns === 4
+          ? "lg:grid-cols-4 lg:[&>*:nth-child(n+5)]:hidden"
+          : "lg:grid-cols-3 lg:[&>*:nth-child(n+4)]:hidden",
+      )}
+    >
+      {Array.from({ length: desktopColumns + 1 }, (_, i) => (
+        <OfferCardSkeleton key={i} className="w-[85vw] max-w-[340px] shrink-0 lg:w-auto lg:max-w-none" />
       ))}
     </div>
   );

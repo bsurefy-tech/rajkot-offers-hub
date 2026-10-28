@@ -32,7 +32,7 @@ export function OpenStatusPill({ hours, className }: { hours: OpeningHours[]; cl
   return (
     <span
       className={cn(
-        "inline-flex min-h-8 items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-[13px] font-medium",
+        "inline-flex min-h-8 items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-body-sm font-medium",
         !status && "invisible",
         className,
       )}
@@ -53,7 +53,7 @@ export function HoursTable({ hours, compact }: { hours: OpeningHours[]; compact?
 
   if (compact) {
     return (
-      <ul className="flex flex-col gap-1.5 text-[13px]">
+      <ul className="flex flex-col gap-1.5 text-body-sm">
         {hours.map((h) => (
           <li key={h.day} className={cn("flex justify-between gap-3", h.day === today ? "font-semibold" : "text-muted")}>
             <span>{days[h.day]}</span>
@@ -65,7 +65,7 @@ export function HoursTable({ hours, compact }: { hours: OpeningHours[]; compact?
   }
 
   return (
-    <table className="w-full overflow-hidden rounded-2xl border border-line text-sm [border-collapse:separate] [border-spacing:0]">
+    <table className="w-full overflow-hidden rounded-2xl border border-line text-body [border-collapse:separate] [border-spacing:0]">
       <tbody>
         {hours.map((h) => {
           const isToday = h.day === today;

@@ -20,13 +20,15 @@ interface SearchBarProps {
   defaultValue?: string;
   /** Page the search submits to, e.g. "/offers" or "/offers/food". */
   action?: string;
+  /** Instead of "Search for a shop, offer or category". */
+  placeholder?: string;
   className?: string;
 }
 
 /** GET form to <action>?q=…, so search works without JavaScript. */
-export function SearchBar({ variant = "page", defaultValue, action = "/offers", className }: SearchBarProps) {
+export function SearchBar({ variant = "page", defaultValue, action = "/offers", placeholder: custom, className }: SearchBarProps) {
   const t = useT();
-  const placeholder = t("Search for a shop, offer or category");
+  const placeholder = custom ?? t("Search for a shop, offer or category");
   return (
     <Form
       action={action}
@@ -44,7 +46,7 @@ export function SearchBar({ variant = "page", defaultValue, action = "/offers", 
         defaultValue={defaultValue}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="h-full min-w-0 flex-1 bg-transparent pr-3 text-[15px] text-ellipsis outline-none focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden"
+        className="h-full min-w-0 flex-1 bg-transparent pr-3 text-field text-ellipsis outline-none focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden"
       />
       {variant === "hero" && (
         <button type="submit" className={buttonClass({ size: "sm", className: "hidden h-11 px-6 lg:inline-flex" })}>

@@ -4,15 +4,7 @@ import { api, ApiError } from "@/lib/api/client";
 import type { PromotionClaim } from "@/lib/api/types";
 import { visitorIp } from "@/lib/api/visitor";
 import { accessToken, withSession } from "@/lib/auth/session";
-import { getOffersByHandles } from "@/lib/data";
 import type { MessageKey } from "@/lib/i18n/translate";
-import type { OfferSummary } from "@/types";
-
-/** Cards for the offers saved in this browser (by handle), so the saved page shows them live or expired. */
-export async function savedOfferCards(handles: string[]): Promise<OfferSummary[]> {
-  const clean = handles.filter((h) => typeof h === "string" && h.length <= 200).slice(0, 60);
-  return clean.length ? getOffersByHandles(clean) : [];
-}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

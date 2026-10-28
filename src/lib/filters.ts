@@ -52,11 +52,6 @@ export function parseFilters(params: RawParams): OfferFilters {
   };
 }
 
-/** Number of filters set in the filter panel (type, validity). */
-export function countPanelFilters(filters: OfferFilters) {
-  return (filters.type ? 1 : 0) + (filters.validity ? 1 : 0);
-}
-
 /**
  * Builds "?a=b" for a filter state. Any change other than `page`
  * starts again from page 1.

@@ -3,25 +3,36 @@ import { Suspense } from "react";
 import { DetailSkeleton } from "@/components/layout/page-skeleton";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Globe, MapPin, Phone, Store, Tag } from "lucide-react";
-import { InstagramIcon } from "@/components/icons/brand";
-import { ActionTiles, StickyActionBar } from "@/components/businesses/contact-actions";
+import { Globe, Navigation, Phone, Tag } from "lucide-react";
+import { InstagramIcon, WhatsAppIcon } from "@/components/icons/brand";
+import { ShopStatusAvatar } from "@/components/businesses/status-avatar";
+import { StickyActionBar } from "@/components/businesses/contact-actions";
 import { ContactLink } from "@/components/businesses/contact-link";
-import { OutletList } from "@/components/businesses/outlets";
-import { HoursTable, OpenStatusPill } from "@/components/businesses/opening-hours";
+import { OutletSideCards } from "@/components/businesses/outlets";
+import { OutletMap, type MapOutlet } from "@/components/businesses/outlet-map";
+import { Catalog } from "@/components/businesses/catalog";
+import { PhotoGallery } from "@/components/businesses/photo-gallery";
+import { PhotoMosaic } from "@/components/businesses/photo-mosaic";
+import { PageMarker } from "@/components/analytics/page-marker";
 import { Container } from "@/components/layout/container";
+import { FollowBarButton, FollowButton } from "@/components/offers/follow-button";
 import { OfferCard } from "@/components/offers/offer-card";
-import { MapCard } from "@/components/offers/offer-sections";
 import { ReviewList } from "@/components/offers/reviews";
+import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
 import { ShareButton } from "@/components/offers/share-button";
 import { ButtonLink, buttonClass } from "@/components/ui/button";
-import { DetailRow, Divider, EmptyState } from "@/components/ui/display";
-import { IconLink } from "@/components/ui/icon-button";
+import { DetailRow, EmptyState } from "@/components/ui/display";
+import { BackLink } from "@/components/layout/back-link";
 import { SectionTabs } from "@/components/ui/section-tabs";
-import { getBusiness, getBusinessOffers, getBusinessReviews } from "@/lib/data";
+import { offersPath } from "@/lib/areas";
+import { getBusiness, getBusinessCatalog, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
+import { getShopStatus } from "@/lib/zalak/api";
+import { directionsHref } from "@/lib/utils";
 import { breadcrumbLd, JsonLd, localBusinessLd, pageMetadata } from "@/lib/seo";
-import type { Business, OfferSummary } from "@/types";
+import type { Business, OfferSummary, Rating, Review } from "@/types";
+import { RatingInline } from "@/components/ui/rating";
+import { shopPath } from "@/lib/paths";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/businesses/[slug]">): Promise<Metadata> {
   const [t, business] = await Promise.all([getT(), params.then((p) => getBusiness(p.slug))]);
@@ -30,32 +41,17 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/businesses
   return pageMetadata({
     title: t("{business}, {area}, Rajkot: offers, hours and address", vars),
     description: t("{category} • {area}, Rajkot. {about}", { ...vars, about: business.about }),
-    path: `/businesses/${business.slug}`,
+    path: shopPath(business.slug),
     image: business.cover,
   });
 }
 
-/** The shop's logo, or a store icon until it has one. */
-function Avatar({ logo, className }: { logo?: string; className?: string }) {
-  return (
-    <span className={`relative flex items-center justify-center overflow-hidden rounded-full border-4 border-white bg-surface shadow-card ${className}`}>
-      {logo ? <Image src={logo} alt="" fill sizes="96px" className="object-cover" /> : <Store size={32} strokeWidth={1.6} aria-hidden />}
-    </span>
-  );
-}
-
-async function InfoRows({ business }: { business: Business }) {
+/** The shop's Instagram and website, when it has them; address and phone live with the outlets. */
+async function LinkRows({ business }: { business: Business }) {
   const t = await getT();
+  if (!business.instagram && !business.website) return null;
   return (
     <div className="flex flex-col gap-4">
-      <DetailRow icon={MapPin} label={t("Address")}>
-        {business.address}
-      </DetailRow>
-      <DetailRow icon={Phone} label={t("Phone")}>
-        <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className="cursor-pointer text-left hover:text-primary">
-          {business.contactMasked ? `${business.phone} · ${t("Log in to see the number")}` : business.phone}
-        </ContactLink>
-      </DetailRow>
       {business.instagram && (
         <DetailRow icon={InstagramIcon} label="Instagram">
           {business.instagram}
@@ -70,10 +66,21 @@ async function InfoRows({ business }: { business: Business }) {
   );
 }
 
+/** The shop's overall rating: its outlets' ratings combined, else the average of its few reviews. */
+function overallRating(business: Business, reviews: { items: Review[]; total: number }): Rating | undefined {
+  const rated = business.outlets.flatMap((o) => (o.rating ? [o.rating] : []));
+  const count = rated.reduce((sum, r) => sum + r.count, 0);
+  if (count) return { avg: rated.reduce((sum, r) => sum + r.avg * r.count, 0) / count, count };
+  if (reviews.total && reviews.items.length === reviews.total) {
+    return { avg: reviews.items.reduce((sum, r) => sum + r.rating, 0) / reviews.total, count: reviews.total };
+  }
+  return undefined;
+}
+
 async function OffersTab({ active, expired }: { active: OfferSummary[]; expired: OfferSummary[] }) {
   const t = await getT();
   return (
-    <div className="flex flex-col gap-6 pt-5 lg:pt-8">
+    <div className="flex flex-col gap-4 lg:gap-6">
       {active.length ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
           {active.map((offer) => (
@@ -95,7 +102,7 @@ async function OffersTab({ active, expired }: { active: OfferSummary[]; expired:
       )}
       {expired.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xs font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
+          <h2 className="mb-4 text-caption font-semibold tracking-[0.04em] text-muted">{t("Past offers")}</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6">
             {expired.map((offer) => (
               <OfferCard key={offer.slug} offer={offer} sizes="(min-width: 1024px) 400px, 100vw" />
@@ -107,37 +114,38 @@ async function OffersTab({ active, expired }: { active: OfferSummary[]; expired:
   );
 }
 
-async function InfoTab({ business }: { business: Business }) {
-  const [t, reviews] = await Promise.all([getT(), getBusinessReviews(business.id, business.outlets)]);
+async function PhotosTab({ business, images }: { business: Business; images: string[] }) {
+  const t = await getT();
   return (
-    <div className="flex flex-col gap-7 pt-5 lg:pt-8">
+    <div>
+      <h2 className="mb-3 text-heading font-semibold">{t("Photos")}</h2>
+      <PhotoGallery images={images} alt={t("Photo of {business}", { business: business.name })} />
+    </div>
+  );
+}
+
+/** Phone version of the outlet cards that sit beside the map on desktop. */
+async function OutletsTab({ business, path }: { business: Business; path: string }) {
+  const t = await getT();
+  return (
+    <div className="flex flex-col gap-4">
+      <h2 className="text-heading font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
+      <OutletSideCards outlets={business.outlets} contact={business} path={path} />
+    </div>
+  );
+}
+
+async function AboutTab({ business }: { business: Business }) {
+  const t = await getT();
+  return (
+    <div className="flex flex-col gap-7">
       <section>
-        <h2 className="mb-2 text-lg font-semibold lg:text-[22px]">{t("About us")}</h2>
-        <p className="max-w-[640px] text-[15px] leading-relaxed text-muted lg:text-base">{business.about}</p>
+        <h2 className="mb-2 text-heading font-semibold">{t("About us")}</h2>
+        <p className="max-w-[640px] text-body-sm leading-relaxed text-muted">{business.about}</p>
       </section>
       <div className="lg:hidden">
-        <InfoRows business={business} />
+        <LinkRows business={business} />
       </div>
-      <section className="lg:hidden">
-        <h2 className="mb-3 text-lg font-semibold">{t("Hours")}</h2>
-        <HoursTable hours={business.hours} />
-      </section>
-      {business.outlets.length > 1 ? (
-        <OutletList outlets={business.outlets} />
-      ) : (
-        <MapCard address={business.address} geo={business.geo} layout="split" />
-      )}
-      <ReviewList reviews={reviews.items} total={reviews.total} />
-      <section>
-        <h2 className="mb-3 text-lg font-semibold lg:text-[22px]">{t("Photos")}</h2>
-        <ul className="grid grid-cols-3 gap-2 lg:gap-4">
-          {business.photos.map((src) => (
-            <li key={src} className="relative aspect-square overflow-hidden rounded-xl bg-surface lg:aspect-[4/3]">
-              <Image src={src} alt={t("Photo of {business}", { business: business.name })} fill sizes="(min-width: 1024px) 270px, 33vw" className="object-cover" />
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }
@@ -146,99 +154,176 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   const t = await getT();
   const business = await getBusiness((await params).slug);
   if (!business) notFound();
-  const { active, expired } = await getBusinessOffers(business.slug);
-  const path = `/businesses/${business.slug}`;
+  const [{ active, expired }, catalog, reviews, category, status] = await Promise.all([
+    getBusinessOffers(business.slug),
+    getBusinessCatalog(business.id),
+    getBusinessReviews(business.id, business.outlets),
+    // A shop's own category can sit below the offer categories ("Footwear Stores" under "Footwear"); only those have a list page.
+    getCategory(business.categorySlug),
+    getShopStatus(business.slug),
+  ]);
+  const path = shopPath(business.slug);
   const subtitle = t("{category} • {area}, Rajkot", { category: business.categoryName, area: business.areaName });
 
   const crumbs = await breadcrumbLd([
     { name: t("Home"), path: "/" },
-    { name: business.categoryName, path: `/offers/${business.categorySlug}` },
+    ...(category ? [{ name: category.shortName, path: offersPath(undefined, category.slug) }] : []),
     { name: business.name, path },
   ]);
 
+  const images = [...new Set([business.cover, ...business.photos])];
+  const rating = overallRating(business, reviews);
+  const mobileButtons = (
+    <div className="absolute inset-x-4 top-4 lg:hidden">
+      <BackLink fallbackHref="/offers" variant="floating" />
+    </div>
+  );
+
+  // One pin per outlet that has a location; a shop without outlet locations gets a single pin at its address.
+  const several = business.outlets.length > 1;
+  const pins: MapOutlet[] = business.outlets.flatMap((o, i) =>
+    o.geo ? [{ id: o.id, name: several ? o.name : business.name, address: o.address, lat: o.geo.lat, lng: o.geo.lng, main: o.isMain, ...(several ? { number: i + 1 } : {}) }] : [],
+  );
+  if (!pins.length) pins.push({ id: business.id, name: business.name, address: business.address, lat: business.geo.lat, lng: business.geo.lng, main: true });
+  if (!pins.some((pin) => pin.main)) pins[0] = { ...pins[0], main: true };
+
+  const offersSection = {
+    value: "offers",
+    label: t("Offers ({count})", { count: active.length }),
+    content: <OffersTab active={active} expired={expired} />,
+  };
+  const catalogSection = {
+    value: "catalog",
+    label: t("Catalog ({count})", { count: catalog.total }),
+    content: <Catalog items={catalog.items} total={catalog.total} />,
+  };
+  // Offers always come first, and only when the shop has some (live or past); the catalog follows when it has items.
+  const sections = [...(active.length || expired.length ? [offersSection] : []), ...(catalog.items.length ? [catalogSection] : [])];
+
   return (
-    <>
-      <JsonLd data={await localBusinessLd(business, active)} />
+    <div className="lg:bg-surface lg:pt-6 lg:pb-16">
+      <PageMarker type="shop" shop={business.slug} category={business.categorySlug} area={business.areaSlug} />
+      <JsonLd data={await localBusinessLd(business, active, rating, reviews.items)} />
       <JsonLd data={crumbs} />
-      <Container className="px-0 lg:px-5 lg:pt-6">
-        <div className="relative aspect-video overflow-hidden bg-surface lg:aspect-auto lg:h-80 lg:rounded-2xl">
-          <Image src={business.cover} alt="" fill priority sizes="(min-width: 1240px) 1200px, 100vw" className="object-cover" />
-          <div className="absolute inset-x-4 top-4 flex justify-between lg:inset-x-auto lg:top-auto lg:right-5 lg:bottom-5">
-            <IconLink href="/offers" variant="floating" size="lg" aria-label={t("Go back")} className="lg:hidden">
-              <ArrowLeft size={20} aria-hidden />
-            </IconLink>
-            <div className="lg:hidden">
-              <ShareButton title={business.name} path={path} />
+      <Container className="px-0 lg:px-5">
+        <div className="overflow-hidden lg:rounded-2xl lg:border lg:border-line lg:bg-white">
+          <PhotoMosaic images={images} alt={business.name}>
+            {mobileButtons}
+          </PhotoMosaic>
+          <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <ShopStatusAvatar logo={business.logo} slug={business.slug} status={status} className="size-[60px] lg:size-20" />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                  <h1 className="text-heading leading-tight font-semibold lg:text-page">{business.name}</h1>
+                  {rating && <RatingInline rating={rating} className="text-body-sm text-muted" />}
+                </div>
+                <p className="mt-0.5 text-body-sm text-muted">{subtitle}</p>
+              </div>
             </div>
-            <div className="hidden lg:block">
-              <ShareButton title={business.name} path={path} variant="pill" />
-            </div>
+            {/* Follow: new offers from this shop come first and are announced. On desktop it sits at the right of the header; on a phone it is in the bottom bar. */}
+            <FollowButton slug={business.slug} className="hidden lg:inline-flex lg:self-center" />
           </div>
         </div>
       </Container>
 
-      <Container className="pb-28 lg:grid lg:grid-cols-[340px_1fr] lg:items-start lg:gap-12 lg:pb-20">
-        {/* Mobile identity block. */}
-        <div className="flex flex-col gap-4 lg:hidden">
-          <Avatar logo={business.logo} className="-mt-10 size-20" />
-          <div>
-            <h1 className="text-[26px] leading-tight font-semibold">{business.name}</h1>
-            <p className="mt-1 text-sm text-muted">{subtitle}</p>
-          </div>
-          <OpenStatusPill hours={business.hours} className="self-start" />
-          <ActionTiles contact={business} includeCall className="mt-1" />
+      <Container className="pb-24 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-6 lg:pb-0">
+        <div className="mt-1 min-w-0 lg:mt-6 lg:rounded-2xl lg:border lg:border-line lg:bg-white lg:pb-8">
+          <SectionTabs
+            label={t("Page sections")}
+            topBar={
+              <div className="flex h-full items-center justify-between gap-1 border-b border-line px-2">
+                <BackLink fallbackHref="/offers" />
+                {business.logo && (
+                  <span className="relative size-8 shrink-0 overflow-hidden rounded-full bg-surface">
+                    <Image src={business.logo} alt="" fill sizes="32px" className="object-cover" />
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-title leading-tight font-semibold">{business.name}</p>
+                    {rating && <RatingInline rating={rating} className="shrink-0 text-caption text-muted" />}
+                  </div>
+                  <p className="truncate text-caption leading-tight text-muted">{subtitle}</p>
+                </div>
+              </div>
+            }
+            items={[
+              ...sections,
+              { value: "about", label: t("About us"), content: <AboutTab business={business} /> },
+              ...(images.length > 1
+                ? [{ value: "photos", label: t("Photos ({count})", { count: images.length }), content: <PhotosTab business={business} images={images} /> }]
+                : []),
+              {
+                value: "outlets",
+                label: t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length }),
+                content: <OutletsTab business={business} path={path} />,
+                // On desktop the outlets live in the sidebar beside the map.
+                className: "lg:hidden",
+              },
+              ...(reviews.total
+                ? [
+                    {
+                      value: "reviews",
+                      label: t("Reviews ({count})", { count: reviews.total }),
+                      content: (
+                        <ReviewList reviews={reviews.items} total={reviews.total} />
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+          />
         </div>
 
-        {/* Desktop sidebar. */}
-        <aside className="sticky top-6 -mt-12 hidden flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-card lg:flex">
-          <Avatar logo={business.logo} className="-mt-16 size-[88px]" />
-          <div>
-            <h1 className="text-[28px] leading-tight font-semibold">{business.name}</h1>
-            <p className="mt-1 text-sm text-muted">{subtitle}</p>
-          </div>
-          <OpenStatusPill hours={business.hours} className="self-start" />
-          <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className={buttonClass({ block: true })}>
-            <Phone size={18} aria-hidden />
-            {business.contactMasked ? t("Call") : t("Call · {phone}", { phone: business.phone })}
-          </ContactLink>
-          <ActionTiles contact={business} />
-          <Divider />
-          <InfoRows business={business} />
-          <Divider />
-          <HoursTable hours={business.hours} compact />
+        {/* Desktop side cards; on a phone this information sits under About us. */}
+        <aside className="mt-6 hidden flex-col gap-6 lg:flex">
+          <section className="overflow-hidden rounded-2xl border border-line bg-white">
+            <OutletMap outlets={pins} className="h-[260px]" />
+          </section>
+          <OutletSideCards outlets={business.outlets} contact={business} path={path} />
+          {(business.instagram || business.website) && (
+            <section className="rounded-2xl border border-line bg-white p-6">
+              <LinkRows business={business} />
+            </section>
+          )}
         </aside>
-
-        <SectionTabs
-          className="mt-6 lg:mt-8"
-          label={t("Page sections")}
-          topBar={
-            <div className="flex h-full items-center justify-between gap-1 border-b border-line px-2">
-              <IconLink href="/offers" variant="plain" size="lg" aria-label={t("Go back")}>
-                <ArrowLeft size={22} aria-hidden />
-              </IconLink>
-              <p className="min-w-0 flex-1 truncate text-base font-semibold">{business.name}</p>
-              <ShareButton title={business.name} path={path} variant="plain" />
-            </div>
-          }
-          items={[
-            {
-              value: "offers",
-              label: t("Offers ({count})", { count: active.length }),
-              content: <OffersTab active={active} expired={expired} />,
-            },
-            { value: "info", label: t("Info"), content: <InfoTab business={business} /> },
-          ]}
-        />
       </Container>
 
-      <StickyActionBar contact={business} layout="business" />
-    </>
+      {/* Desktop: the shop's actions float at the bottom centre while the page scrolls. */}
+      <div className="fixed bottom-6 left-1/2 z-40 hidden -translate-x-1/2 items-center gap-3 rounded-2xl border border-line bg-white p-3 shadow-float lg:flex">
+        <ContactLink business={business.slug} kind="call" number={business.phone} masked={business.contactMasked} className={buttonClass({ size: "sm" })}>
+          <Phone size={18} aria-hidden />
+          {t("Call")}
+        </ContactLink>
+        <ContactLink business={business.slug} kind="whatsapp" number={business.whatsapp} masked={business.contactMasked} className={buttonClass({ variant: "whatsapp", size: "sm" })}>
+          <WhatsAppIcon size={18} />
+          WhatsApp
+        </ContactLink>
+        <a href={directionsHref(business.geo.lat, business.geo.lng)} target="_blank" rel="noreferrer" className={buttonClass({ variant: "outline", size: "sm" })}>
+          <Navigation size={18} aria-hidden />
+          {t("Directions")}
+        </a>
+        <ShareButton title={business.name} path={path} variant="pill" />
+        <SaveTextButton slug={business.slug} kind="shop" variant="outline" />
+      </div>
+
+      <StickyActionBar
+        lead={
+          <>
+            <FollowBarButton slug={business.slug} />
+            <SaveBarButton slug={business.slug} kind="shop" variant="outline" />
+            <ShareButton title={business.name} path={path} variant="bar" />
+          </>
+        }
+      />
+    </div>
   );
 }
 
 export default function BusinessPage({ params }: PageProps<"/[lang]/businesses/[slug]">) {
   return (
-    <Suspense fallback={<DetailSkeleton />}>
+    <Suspense fallback={<DetailSkeleton kind="shop" />}>
       <BusinessContent params={params} />
     </Suspense>
   );

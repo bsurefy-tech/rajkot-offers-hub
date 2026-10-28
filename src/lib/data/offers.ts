@@ -1,7 +1,7 @@
 import { api, orUndefined } from "@/lib/api/client";
 import { offerIdFromHandle, toOffer, toOfferSummary, TYPE_TO_API } from "@/lib/api/mappers";
 import type { Page, PromotionCard, PromotionDetail } from "@/lib/api/types";
-import type { Offer, OfferFilters, OfferSummary, Paged, SortKey, ValidityKey } from "@/types";
+import type { Offer, OfferFilters, OfferPin, OfferSummary, Paged, SortKey, ValidityKey } from "@/types";
 import { getBusiness } from "./businesses";
 import { areaName } from "./categories";
 
@@ -52,6 +52,53 @@ export async function getOffers(filters: OfferFilters = {}): Promise<Paged<Offer
   const rest = await Promise.all(Array.from({ length: Math.max(0, last - 1) }, (_, i) => feed({ ...query, per_page: PAGE_SIZE, page: i + 2 })));
   const items = [first, ...rest].flatMap((p) => p.items);
   return { items, total: first.total, page, hasMore: items.length < first.total };
+}
+
+/** Exactly one page of a list, for "load more as you scroll" (`getOffers` returns every page up to one). */
+export async function getOffersPage(filters: OfferFilters, page: number): Promise<{ items: OfferSummary[]; hasMore: boolean }> {
+  const query = await feedQuery(filters);
+  if (!query) return { items: [], hasMore: false };
+  const result = await feed({ ...query, per_page: PAGE_SIZE, page });
+  return { items: result.items, hasMore: page * PAGE_SIZE < result.total };
+}
+
+const PIN_OFFERS = 100;
+/** Shops looked up at once when placing pins. */
+const PIN_BATCH = 10;
+
+/**
+ * The offers of a list placed on the map: one pin per shop, at its main outlet, listing that
+ * shop's offers. Cards carry no coordinates, so each shop's profile is read for its outlets.
+ * Covers the first {@link PIN_OFFERS} offers; `total` is how many match.
+ */
+export async function getOfferPins(filters: OfferFilters): Promise<{ pins: OfferPin[]; total: number }> {
+  const query = await feedQuery(filters);
+  if (!query) return { pins: [], total: 0 };
+  const { items, total } = await feed({ ...query, per_page: PIN_OFFERS, page: 1 });
+
+  const byShop = new Map<string, OfferSummary[]>();
+  for (const offer of items) byShop.set(offer.businessSlug, [...(byShop.get(offer.businessSlug) ?? []), offer]);
+
+  const slugs = [...byShop.keys()];
+  const pins: OfferPin[] = [];
+  for (let i = 0; i < slugs.length; i += PIN_BATCH) {
+    const shops = await Promise.all(slugs.slice(i, i + PIN_BATCH).map((slug) => getBusiness(slug).catch(() => undefined)));
+    shops.forEach((shop, j) => {
+      const offers = byShop.get(slugs[i + j])!;
+      const outlet = shop?.outlets.find((o) => o.isMain && o.geo) ?? shop?.outlets.find((o) => o.geo);
+      if (!shop || !outlet?.geo) return;
+      pins.push({
+        businessSlug: shop.slug,
+        businessName: shop.name,
+        areaName: outlet.areaName || offers[0].areaName,
+        lat: outlet.geo.lat,
+        lng: outlet.geo.lng,
+        ...(offers[0].distanceKm !== undefined ? { distanceKm: offers[0].distanceKm } : {}),
+        offers: offers.map((o) => ({ urlSlug: o.urlSlug, title: o.title, badge: o.badge, image: o.images[0], imageIsLogo: o.imageIsLogo })),
+      });
+    });
+  }
+  return { pins, total };
 }
 
 async function promotion(id: string): Promise<PromotionDetail | undefined> {

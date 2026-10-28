@@ -149,6 +149,22 @@ export interface BusinessResource {
   live_promotions_count?: number;
 }
 
+/** `GET /businesses`: a shop as a list card. */
+export interface BusinessCard {
+  id: string;
+  name: string;
+  slug: string;
+  tagline: string | null;
+  category: { id: string; slug: string; name: string } | null;
+  city: string | null;
+  logo_url: string | null;
+  cover_url: string | null;
+  cover_thumb_url: string | null;
+  rating_avg: number | null;
+  rating_count: number;
+  is_verified: boolean;
+}
+
 export interface CategoryChip {
   id: string;
   slug: string;
@@ -181,17 +197,6 @@ export interface TokenPair {
   expires_in: number;
 }
 
-/** `GET /locations/pincodes/{pincode}` (India Post data). */
-export interface PincodeLookup {
-  pincode: string;
-  state: { code: string; name: string };
-  district: { slug: string; name: string; city: string };
-  city: string;
-  latitude: number | null;
-  longitude: number | null;
-  areas: { name: string; office_type: string; is_delivery: boolean }[];
-}
-
 /** A claimed personal code (`POST /promotions/{id}/claims`, `GET /promotion-claims`). */
 export interface PromotionClaim {
   id: string;
@@ -220,7 +225,12 @@ export interface ReviewResource {
 /** `GET /banners?placement=…`: the slides of one placement, with the crop sizes they were made for. */
 export interface BannerFeed {
   placement: string;
-  display: { autoplay_ms: number; loop: boolean };
+  display: {
+    autoplay_ms: number;
+    loop: boolean;
+    /** The ratio each size's picture was cropped to, as "width:height" (e.g. "16:9"). */
+    variants?: Partial<Record<"mobile" | "tablet" | "desktop", { aspect_ratio: string }>>;
+  };
   items: {
     id: string;
     images: Partial<Record<"mobile" | "tablet" | "desktop", Media | null>>;
@@ -230,4 +240,196 @@ export interface BannerFeed {
       url: string | null;
     };
   }[];
+}
+
+/** The loyalty programme (`/loyalty/*`, only on a platform with the feature on). */
+export type LoyaltyScope = "platform" | "global";
+
+export interface LoyaltyWallet {
+  scope: LoyaltyScope;
+  name: string;
+  point_label: string;
+  balance: number;
+  lifetime_earned: number;
+  lifetime_redeemed: number;
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  wallet: LoyaltyScope;
+  type: "earn" | "redeem" | "adjust" | "expire" | "reverse";
+  /** Signed. */
+  points: number;
+  balance_after: number;
+  expires_at: string | null;
+  business: { id: string; name: string; slug: string } | null;
+  created_at: string;
+}
+
+export interface LoyaltyCode {
+  code: string;
+  qr_payload: string | null;
+  platform: string;
+}
+
+export interface LoyaltyReward {
+  id: string;
+  title: string;
+  description: string | null;
+  value_label: string | null;
+  terms: string | null;
+  kind: "discount" | "free_item" | "voucher";
+  points_cost: number;
+  wallet: LoyaltyScope;
+  stock_left: number | null;
+  per_user_limit: number | null;
+  claim_validity_hours: number;
+  ends_at: string | null;
+  /** Null when every partner outlet honours the reward. */
+  redeem_at: { business_id: string; business_name: string; branch_id: string | null; branch_name: string | null }[] | null;
+  redeemed_by_me: number;
+  can_afford: boolean;
+  can_redeem: boolean;
+}
+
+export interface LoyaltyRedemption {
+  id: string;
+  code: string;
+  qr_payload: string | null;
+  status: "issued" | "fulfilled" | "cancelled" | "expired";
+  points_spent: number;
+  wallet: LoyaltyScope;
+  issued_at: string;
+  expires_at: string | null;
+  fulfilled_at: string | null;
+  cancelled_at: string | null;
+  reward: { id: string; title: string; value_label: string | null; terms: string | null; kind: LoyaltyReward["kind"] };
+}
+
+export interface LoyaltyScratchCard {
+  id: string;
+  status: "issued" | "scratched" | "expired";
+  campaign: { id: string; title: string; description: string | null };
+  issued_at: string;
+  expires_at: string | null;
+  scratched_at: string | null;
+  /** Null until the card is scratched. */
+  prize: { kind: "points" | "reward" | "nothing"; label: string; points: number | null; redemption: LoyaltyRedemption | null } | null;
+}
+
+export interface LoyaltyTask {
+  id: string;
+  type: "follow" | "join_channel" | "post_story" | "tag_us" | "custom";
+  provider: string | null;
+  title: string;
+  description: string | null;
+  target_url: string | null;
+  target_handle: string | null;
+  proof_required: boolean;
+  needs_profile: boolean;
+  has_profile: boolean;
+  points: number;
+  ends_at: string | null;
+  status: "submitted" | "approved" | "rejected" | null;
+  reject_reason: string | null;
+  earned_count: number;
+  can_submit: boolean;
+}
+
+export interface LoyaltyReferral {
+  code: string;
+  invite_url: string | null;
+  deep_link: string | null;
+  enabled: boolean;
+  headline_points: number;
+  steps: { task_id: string; title: string; points: number }[];
+  max_referrals: number | null;
+  referrals_left: number | null;
+  apply_window_days: number;
+  friends: { awaiting_verification: number; active: number; flagged: number; rejected: number; completed: number };
+  earned_points: number;
+  invited_by: { id: string; status: string; invited_by: string; applied_at: string; activated_at: string | null } | null;
+}
+
+/** An invite link as the API shows it before login (`GET /loyalty/invites/{code}`). */
+export interface LoyaltyInvite {
+  code: string;
+  /** The referrer's masked name, e.g. "Asha K.". */
+  invited_by: string;
+  /** False while the programme is off, or once the referrer has invited as many friends as it allows. */
+  open: boolean;
+  apply_window_days: number;
+}
+
+/** Where tapping a status or reel goes: always one of the posting business's own things. */
+export interface ContentLink {
+  type: "business" | "catalog_item" | "promotion";
+  id?: string;
+  slug?: string;
+}
+
+export interface StatusPost {
+  id: string;
+  kind: "image" | "video";
+  caption: string | null;
+  link: ContentLink | null;
+  image: { url: string; thumb_url: string | null } | null;
+  video: { hls_url: string; poster_url: string | null; duration_seconds: number } | null;
+  is_seen: boolean;
+  is_liked: boolean;
+  likes_count: number;
+  expires_at: string;
+  created_at: string;
+}
+
+export interface StatusAuthor {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  logo_thumb_url?: string | null;
+}
+
+/** One ring of the status tray: a business with something live. */
+export interface StatusRing {
+  business: StatusAuthor;
+  live_count: number;
+  unseen_count: number;
+  has_unseen: boolean;
+  latest_at: string;
+  following: boolean;
+}
+
+export interface StatusTray {
+  data: StatusRing[];
+  /** The platform's own ring, ahead of the shops; null when it has nothing live. */
+  platform: { slug: string; name: string; short_name: string; live_count: number; unseen_count: number; has_unseen: boolean; latest_at: string } | null;
+}
+
+export interface StatusPlay {
+  business?: StatusAuthor;
+  platform?: { slug: string; name: string; short_name: string };
+  data: StatusPost[];
+}
+
+export interface ReelCard {
+  id: string;
+  caption: string | null;
+  link: ContentLink | null;
+  video: { duration_seconds: number; width: number | null; height: number | null; hls_url: string; poster_url: string | null };
+  author:
+    | { type: "business"; id: string; name: string; slug: string; logo_url: string | null; logo_thumb_url?: string | null }
+    | { type: "platform"; slug: string; name: string; short_name: string };
+  is_featured: boolean;
+  likes_count: number;
+  is_liked: boolean;
+  is_saved: boolean;
+  is_following: boolean;
+  published_at: string;
+}
+
+export interface ReelPage {
+  data: ReelCard[];
+  /** `feed_token` keeps the order still across the pages of one scroll. */
+  meta: { current_page: number; last_page: number; feed_token?: string; all_seen?: boolean };
 }

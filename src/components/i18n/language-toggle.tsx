@@ -39,12 +39,12 @@ function Toggle({ className }: { className?: string }) {
       onClick={(event) => {
         event.preventDefault();
         document.cookie = `${LOCALE_COOKIE}=${target}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
-        router.push(`${href}${window.location.search}${window.location.hash}`);
+        router.replace(`${href}${window.location.search}${window.location.hash}`);
       }}
       lang={target}
       hrefLang={target}
       className={cn(
-        "inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-[13px] font-medium hover:border-input lg:h-10 lg:text-sm",
+        "inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3 text-body-sm font-medium hover:border-input lg:h-10",
         className,
       )}
     >

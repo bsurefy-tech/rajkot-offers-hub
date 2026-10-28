@@ -4,15 +4,18 @@ export const site = {
   name: "Rajkot Offers Hub",
   city: "Rajkot",
   tagline: "Local offers in Rajkot, all in one place.",
-  domain: "rajkotoffershub.com",
-  /** The canonical address; rajkotoffers.in redirects here at the host. */
+  /** The canonical address. */
   url: "https://rajkotoffershub.com",
   instagram: "@rajkotoffershub",
-  email: "hello@rajkotoffers.in",
-  whatsapp: "+91 98XXX XXXXX",
+  email: "hello@rajkotoffershub.com",
+  /** The one number for calls and WhatsApp (contact page, submit an offer, report an offer). */
+  phone: "+91 94294 74941",
+  whatsapp: "+91 94294 74941",
   location: "Rajkot, Gujarat",
   /** For structured data: the city the site serves. */
   region: "Gujarat",
+  /** Centre of Rajkot, for the geo meta tags. */
+  geo: { lat: 22.3039, lng: 70.8022 },
   country: "IN",
   /** Shop owners list and manage offers in the business app. Store links come from the environment. */
   ownerApp: {
@@ -29,6 +32,7 @@ export function absoluteUrl(path: string) {
 export const mainNav = [
   { href: "/", label: "Home" },
   { href: "/offers", label: "Offers" },
+  { href: "/businesses", label: "Shops" },
   { href: "/categories", label: "Categories" },
   { href: "/how-it-works", label: "How it works" },
 ] as const satisfies readonly { href: string; label: MessageKey }[];

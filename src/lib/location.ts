@@ -15,8 +15,6 @@ export const NEAR_CHANGED_EVENT = "ro:near-changed";
 export interface Near {
   lat: number;
   lng: number;
-  /** Set when the location came from a pincode rather than GPS. */
-  pincode?: string;
 }
 
 export const RAJKOT_CENTRE = { lat: 22.3039, lng: 70.8022 };
@@ -26,15 +24,15 @@ const RAJKOT_RADIUS_KM = 50;
 const round = (value: number) => Math.round(value * 1000) / 1000;
 
 export function serializeNear(near: Near) {
-  return [round(near.lat), round(near.lng), near.pincode].filter((part) => part !== undefined).join(",");
+  return `${round(near.lat)},${round(near.lng)}`;
 }
 
 export function parseNear(value: string | undefined | null): Near | undefined {
   if (!value) return undefined;
-  const [lat, lng, pincode] = decodeURIComponent(value).split(",");
+  const [lat, lng] = decodeURIComponent(value).split(",");
   const near = { lat: Number(lat), lng: Number(lng) };
   if (!Number.isFinite(near.lat) || !Number.isFinite(near.lng) || Math.abs(near.lat) > 90 || Math.abs(near.lng) > 180) return undefined;
-  return /^[1-9]\d{5}$/.test(pincode ?? "") ? { ...near, pincode } : near;
+  return near;
 }
 
 /** Straight-line kilometres between two points. */

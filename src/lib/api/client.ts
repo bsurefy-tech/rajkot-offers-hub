@@ -11,6 +11,8 @@
  * httpOnly cookies and guest reads go through Next's cache.
  */
 
+import { trackServer } from "@/lib/analytics/server";
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -52,6 +54,10 @@ export interface ApiRequest {
    * and count all visitors as one. Never set inside a cached read.
    */
   client?: string | null;
+  /** Extra headers, e.g. the guest's device key. */
+  headers?: Record<string, string>;
+  /** Never cached, even as a guest read: the answer is different for every viewer. */
+  fresh?: boolean;
 }
 
 function search(query: Query = {}) {
@@ -64,9 +70,11 @@ function search(query: Query = {}) {
   return params.size ? `?${params}` : "";
 }
 
-export async function api<T>(path: string, { query, method = "GET", body, token, client }: ApiRequest = {}): Promise<T> {
-  const headers: Record<string, string> = { Accept: "application/json" };
-  if (body !== undefined) headers["Content-Type"] = "application/json";
+export async function api<T>(path: string, { query, method = "GET", body, token, client, headers: extra, fresh }: ApiRequest = {}): Promise<T> {
+  const headers: Record<string, string> = { Accept: "application/json", ...extra };
+  // A FormData body (a file upload) sets its own multipart Content-Type.
+  const upload = typeof FormData !== "undefined" && body instanceof FormData;
+  if (body !== undefined && !upload) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;
   if (process.env.RAJKOT_API_PLATFORM) headers["X-Platform"] = process.env.RAJKOT_API_PLATFORM;
   if (client && process.env.API_FRONTEND_KEY) {
@@ -74,18 +82,23 @@ export async function api<T>(path: string, { query, method = "GET", body, token,
     headers["X-Frontend-Key"] = process.env.API_FRONTEND_KEY;
   }
 
+  const endpoint = `${method} /${path.split("/")[1] ?? ""}`;
   const response = await fetch(`${apiBaseUrl()}${path}${search(query)}`, {
     method,
     headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined ? undefined : upload ? (body as FormData) : JSON.stringify(body),
     // Guest reads are shared by every visitor, so they are cached for a minute (the API caches too).
     // Anything personal, or that changes data, is never cached.
-    ...(method === "GET" && !token && !client ? { next: { revalidate: GUEST_REVALIDATE_SECONDS } } : { cache: "no-store" as const }),
+    ...(method === "GET" && !token && !client && !fresh ? { next: { revalidate: GUEST_REVALIDATE_SECONDS } } : { cache: "no-store" as const }),
+  }).catch((error: unknown) => {
+    trackServer("api_error", { endpoint, status: 0 });
+    throw error;
   });
   if (response.status === 204) return undefined as T;
 
   const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
+    if (response.status >= 500) trackServer("api_error", { endpoint, status: response.status });
     const retry = Number(response.headers.get("retry-after"));
     throw new ApiError(
       response.status,

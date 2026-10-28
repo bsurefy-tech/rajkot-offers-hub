@@ -7,7 +7,17 @@ export type CategoryIcon =
   | "sofa"
   | "wrench"
   | "gift"
-  | "ticket";
+  | "ticket"
+  | "graduation-cap"
+  | "car"
+  | "coffee"
+  | "shopping-bag"
+  | "pizza"
+  | "heart-pulse"
+  | "gem"
+  | "candy"
+  | "plane"
+  | "shopping-basket";
 
 export interface Category {
   slug: string;
@@ -51,8 +61,10 @@ export type RedemptionMode = "walk_in" | "shared_code" | "unique_claim";
 export interface Offer {
   /** The API's id (UUID). */
   id: string;
-  /** URL handle: "<slug>-<id>". */
+  /** The offer's identity: "<slug>-<id>". Saved offers and list keys use it; the address does not. */
   slug: string;
+  /** What the offer's address ends with: "/<shop>/<urlSlug>". Unique within its shop. */
+  urlSlug: string;
   title: string;
   badge: string;
   type: OfferType;
@@ -88,6 +100,8 @@ export interface Offer {
   rating?: Rating;
   /** Branches the offer is valid at ("Main branch, Yagnik Road"), when the shop lists more than its main one. */
   validAt: string[];
+  /** The outlets the offer is valid at, for the map; empty when the API does not say. */
+  branches: { id: string; name: string; areaName: string; isMain: boolean; geo?: { lat: number; lng: number } }[];
   /** Where to send directions: the offer's branch when it is not valid at the main one. */
   geo?: { lat: number; lng: number };
 }
@@ -97,12 +111,15 @@ export type OfferSummary = Pick<
   Offer,
   | "id"
   | "slug"
+  | "urlSlug"
   | "title"
   | "badge"
+  | "businessSlug"
   | "businessName"
   | "areaName"
   | "images"
   | "validTo"
+  | "createdAt"
   | "isExpired"
   | "daysLeft"
   | "distanceKm"
@@ -110,6 +127,18 @@ export type OfferSummary = Pick<
   | "imageIsLogo"
   | "rating"
 >;
+
+/** One shop on the offers map, with its offers from the list being viewed. */
+export interface OfferPin {
+  businessSlug: string;
+  businessName: string;
+  areaName: string;
+  lat: number;
+  lng: number;
+  /** Km from the visitor, when they set a location. */
+  distanceKm?: number;
+  offers: { urlSlug: string; title: string; badge: string; image: string; imageIsLogo?: boolean }[];
+}
 
 export interface OpeningHours {
   /** 0 = Monday … 6 = Sunday. */
@@ -183,6 +212,34 @@ export interface Business {
   outlets: Outlet[];
   photos: string[];
   geo: { lat: number; lng: number };
+}
+
+/** A shop on a list: what its card shows. */
+export interface BusinessSummary {
+  id: string;
+  slug: string;
+  name: string;
+  tagline?: string;
+  categoryName?: string;
+  city?: string;
+  /** Its cover photo, or its logo when it has no photo; none for a shop with neither. */
+  image?: string;
+  imageIsLogo?: boolean;
+  verified: boolean;
+  rating?: Rating;
+}
+
+export type BusinessSortKey = "recommended" | "rating" | "nearest";
+
+export interface BusinessFilters {
+  q?: string;
+  category?: string;
+  /** An area's slug. */
+  area?: string;
+  sort?: BusinessSortKey;
+  page?: number;
+  /** The visitor's location (from the location cookie, never the URL). */
+  near?: { lat: number; lng: number };
 }
 
 export type SortKey = "newest" | "ending" | "discount" | "nearest";

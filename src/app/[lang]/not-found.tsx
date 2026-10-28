@@ -1,3 +1,4 @@
+import { NotFoundEvent } from "@/components/analytics/not-found-event";
 import { Footer } from "@/components/layout/footer";
 import { DesktopHeader, MobileHeader } from "@/components/layout/header";
 import { ButtonLink } from "@/components/ui/button";
@@ -9,12 +10,13 @@ export default async function NotFound() {
     <>
       <DesktopHeader />
       <MobileHeader />
+      <NotFoundEvent />
       <main className="flex flex-1 flex-col items-center justify-center px-8 pt-10 pb-14 text-center lg:min-h-[560px] lg:p-20">
-        <p aria-hidden className="text-[72px] leading-none font-bold tracking-[-0.03em] text-input lg:text-[120px]">
+        <p aria-hidden className="text-[72px] leading-none font-semibold tracking-[-0.03em] text-input lg:text-[120px]">
           404
         </p>
-        <h1 className="mt-4 text-2xl font-semibold lg:text-4xl">{t("Page not found")}</h1>
-        <p className="mt-3 max-w-[520px] text-[15px] leading-relaxed text-muted lg:text-[17px]">
+        <h1 className="mt-4 text-page font-semibold">{t("Page not found")}</h1>
+        <p className="mt-3 max-w-[520px] text-body leading-relaxed text-muted">
           {t("The link may have changed, or the page may no longer be available.")}
         </p>
         <div className="mt-8 flex w-full flex-col gap-3 lg:w-auto lg:flex-row">

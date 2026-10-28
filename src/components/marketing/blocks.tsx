@@ -12,13 +12,13 @@ interface StepCardProps {
 export function StepCard({ n, icon: Icon, title, text }: StepCardProps) {
   return (
     <li className="relative flex gap-4 rounded-2xl border border-line bg-white p-5 lg:flex-col lg:p-7">
-      <span aria-hidden className="w-9 shrink-0 text-[40px] leading-none font-bold text-input lg:absolute lg:top-6 lg:right-7 lg:w-auto lg:text-[56px]">
+      <span aria-hidden className="w-9 shrink-0 text-display leading-none font-semibold text-input lg:absolute lg:top-6 lg:right-7 lg:w-auto">
         {n}
       </span>
       <div className="flex flex-col gap-2 lg:gap-4">
         <Icon size={24} strokeWidth={1.6} aria-hidden />
-        <h3 className="text-[17px] font-semibold lg:text-xl">{title}</h3>
-        <p className="text-sm leading-normal text-muted lg:text-[15px]">{text}</p>
+        <h3 className="text-heading font-semibold">{title}</h3>
+        <p className="text-body-sm leading-normal text-muted">{text}</p>
       </div>
     </li>
   );
@@ -31,8 +31,8 @@ export function PromiseItem({ icon: Icon, title, text }: { icon: LucideIcon; tit
         <Icon size={22} strokeWidth={1.6} aria-hidden />
       </span>
       <div>
-        <h3 className="text-base font-semibold lg:text-lg">{title}</h3>
-        <p className="mt-1 text-sm leading-normal text-muted lg:text-[15px]">{text}</p>
+        <h3 className="text-heading font-semibold">{title}</h3>
+        <p className="mt-1 text-body-sm leading-normal text-muted">{text}</p>
       </div>
     </li>
   );
@@ -55,8 +55,8 @@ export function SuccessPanel({
       <span className="flex size-24 items-center justify-center rounded-full bg-success-soft text-success">
         <Icon size={44} strokeWidth={2} aria-hidden />
       </span>
-      <h2 className="mt-6 text-2xl font-bold">{title}</h2>
-      <p className="mt-2 max-w-sm text-[15px] leading-relaxed text-muted">{text}</p>
+      <h2 className="mt-6 text-page font-semibold">{title}</h2>
+      <p className="mt-2 max-w-sm text-body-sm leading-relaxed text-muted">{text}</p>
       <div className="mt-8 flex w-full max-w-sm flex-col gap-3">{actions}</div>
     </div>
   );

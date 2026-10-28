@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { CategoryIconRow } from "@/components/categories/category-tiles";
-import { Container, Section, SectionHeader } from "@/components/layout/container";
+import { Suspense } from "react";
+import { AreaPills, CategoryIconRow } from "@/components/categories/category-tiles";
+import { Section, SectionHeader } from "@/components/layout/container";
+import { ALTERNATING_SECTIONS, HomeSectionsSkeleton } from "@/components/layout/page-skeleton";
 import { BusinessCta } from "@/components/marketing/promos";
 import { HeroSlider } from "@/components/marketing/hero-slider";
-import { NearMeLink } from "@/components/marketing/near-me-link";
-import { SearchBar } from "@/components/marketing/search-bar";
+import { FollowedOffers } from "@/components/offers/followed-offers";
 import { OfferCarousel, OfferGrid } from "@/components/offers/offer-card";
 import { ButtonLink } from "@/components/ui/button";
-import { Eyebrow } from "@/components/ui/display";
-import { getCategories, getFeaturedOffers, getHeroSlides, getLatestOffers, getTodayOffers } from "@/lib/data";
+import { getAreas, getCategories, getFeaturedOffers, getHeroSlides, getLatestOffers, getTodayOffers } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
 import { img } from "@/lib/mock/images";
 import { JsonLd, pageMetadata, siteLd } from "@/lib/seo";
 import { site } from "@/lib/site";
-
-const heroImages = [
-  img("photo-1441986300917-64674bd600d8", 900),
-  img("photo-1495474472287-4d71bcdd2085", 600),
-  img("photo-1560066984-138dadb4c035", 600),
-];
+import { NearYou } from "@/components/offers/near-you";
+import { StatusRow } from "@/components/zalak/status-row";
+import { ZalakShelf } from "@/components/zalak/zalak-shelf";
+import { getReelFeed, getStatusFeed } from "@/lib/zalak/data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT();
@@ -33,52 +30,77 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   const t = await getT();
-  const [categories, today, latest, featured, hero] = await Promise.all([
+  return (
+    <>
+      <JsonLd data={siteLd(t("Fresh offers from Rajkot's shops, cafés and salons, all in one place."))} />
+      {/* The page opens straight on the offers; the heading stays for screen readers and search engines. */}
+      <h1 className="sr-only">{t("What’s on offer today?")}</h1>
+
+      {/* The offers come from the API, so they stream in. */}
+      <Suspense fallback={<HomeSectionsSkeleton />}>
+        <HomeSections />
+      </Suspense>
+    </>
+  );
+}
+
+async function HomeSections() {
+  const t = await getT();
+  const [categories, today, latest, featured, hero, statuses, reels, areas] = await Promise.all([
     getCategories(),
     getTodayOffers(),
     getLatestOffers(),
     getFeaturedOffers(),
     getHeroSlides(),
+    // Never let the new feeds take the home page down with them.
+    getStatusFeed().catch(() => []),
+    getReelFeed(1, 8).then((feed) => feed.stories).catch(() => []),
+    getAreas().catch(() => []),
   ]);
+  const homeCategories = categories.filter((c) => c.inHomeRow);
 
   return (
-    <>
-      <JsonLd data={siteLd(t("Fresh offers from Rajkot's shops, cafés and salons, all in one place."))} />
-      <section className="bg-white pt-6 pb-8 lg:py-20">
-        <Container className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="lg:max-w-[520px]">
-            <Eyebrow className="lg:text-[15px]">{t("For Rajkot")}</Eyebrow>
-            <h1 className="mt-2 text-[34px] leading-[1.25] font-bold tracking-[-0.01em] lg:mt-3 lg:text-[56px] lg:leading-[1.15] lg:tracking-[-0.015em]">
-              {t("What’s on offer today?")}
-            </h1>
-            <p className="mt-3 text-base leading-[1.55] text-muted lg:mt-4 lg:text-lg lg:leading-relaxed">
-              {t("Fresh offers from Rajkot’s shops, cafés and salons, all in one place.")}
-            </p>
-            <SearchBar variant="hero" className="mt-6 lg:mt-8" />
-            <NearMeLink className="mt-4" />
-          </div>
-          <div aria-hidden className="hidden h-[440px] grid-cols-[1.15fr_1fr] grid-rows-2 gap-4 lg:grid">
-            {heroImages.map((src, i) => (
-              <div key={src} className={i === 0 ? "relative row-span-2 overflow-hidden rounded-2xl" : "relative overflow-hidden rounded-2xl"}>
-                <Image src={src} alt="" fill priority sizes="320px" className="object-cover" />
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {hero.slides.length > 0 && (
-        <Section className="pt-0 lg:pt-0">
-          <HeroSlider slides={hero.slides} autoplayMs={hero.autoplayMs} loop={hero.loop} />
+    <div className={ALTERNATING_SECTIONS}>
+      {statuses.length > 0 && (
+        <Section compact className="py-4 lg:py-6">
+          <StatusRow stories={statuses} />
         </Section>
       )}
 
-      <Section className="pt-0 lg:pt-0">
+      {/* The banner runs edge to edge on every screen, square and with no space around it. */}
+      {hero.slides.length > 0 && (
+        <section>
+          {/* Always loops: after the last banner it goes back to the first. */}
+          <HeroSlider slides={hero.slides} ratios={hero.ratios} autoplayMs={hero.autoplayMs} loop />
+        </section>
+      )}
+
+      {reels.length > 0 && (
+        <Section compact>
+          <SectionHeader title={t("Zalak")} href="/zalak" />
+          <ZalakShelf stories={reels} />
+        </Section>
+      )}
+
+      <FollowedOffers framed />
+
+      <Section compact>
         <SectionHeader title={t("Category")} href="/categories" />
-        <CategoryIconRow categories={categories.filter((c) => c.inHomeRow)} />
+        <CategoryIconRow categories={homeCategories} />
       </Section>
 
-      <Section tone="surface">
+      {areas.length > 0 && (
+        <Section compact>
+          <SectionHeader title={t("Offers by area in Rajkot")} />
+          <AreaPills areas={areas} />
+        </Section>
+      )}
+
+      <Suspense fallback={null}>
+        <NearYou />
+      </Suspense>
+
+      <Section>
         <SectionHeader title={t("Today's offers")} href="/offers?sort=ending" />
         <OfferCarousel offers={today} />
       </Section>
@@ -90,7 +112,7 @@ export default async function HomePage() {
         </Section>
       )}
 
-      <Section tone={featured.length > 0 ? "surface" : "white"}>
+      <Section>
         <SectionHeader title={t("New offers")} />
         <OfferGrid offers={latest} />
         <div className="mt-6 flex justify-center lg:mt-10">
@@ -100,9 +122,9 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section tone={featured.length > 0 ? "white" : "surface"}>
+      <Section>
         <BusinessCta image={img("photo-1567401893414-76b7b1e5a7a5", 1200)} />
       </Section>
-    </>
+    </div>
   );
 }

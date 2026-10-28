@@ -13,7 +13,7 @@ export function PinInput({ secret, invalid, className, ...props }: ComponentProp
       maxLength={6}
       autoComplete={secret ? "off" : "one-time-code"}
       type={secret ? "password" : "text"}
-      className={controlClass(invalid, cn("h-14 px-4 text-center text-2xl tracking-[0.5em]", className))}
+      className={controlClass(invalid, cn("h-14 px-4 text-center text-page tracking-[0.5em]", className))}
       onInput={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ""))}
       {...props}
     />

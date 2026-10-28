@@ -24,7 +24,7 @@ export default async function TermsPage() {
       updated="14 October 2026"
       intro={
         <p>
-          These terms apply when you use {site.name} ({site.domain}). By using the website you agree to them. If you do not agree,
+          These terms apply when you use {site.name}. By using the website you agree to them. If you do not agree,
           please do not use it. Our{" "}
           <Link href="/privacy" className={link}>
             privacy policy

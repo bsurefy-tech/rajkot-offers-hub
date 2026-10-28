@@ -1,7 +1,7 @@
 import { daysBetween, toIsoDay } from "@/lib/format";
 import { img } from "@/lib/mock/images";
-import type { Area, Business, Category, CategoryIcon, Offer, OfferSummary, OfferType, OpeningHours, Outlet, Rating, Review } from "@/types";
-import type { Address, AreaCount, Branch, BranchResource, BusinessHours, BusinessResource, CategoryChip, PromotionCard, PromotionDetail, PromotionType, ReviewResource } from "./types";
+import type { Area, Business, BusinessSummary, Category, CategoryIcon, Offer, OfferSummary, OfferType, OpeningHours, Outlet, Rating, Review } from "@/types";
+import type { Address, AreaCount, Branch, BranchResource, BusinessCard, BusinessHours, BusinessResource, CategoryChip, PromotionCard, PromotionDetail, PromotionType, ReviewResource } from "./types";
 
 /**
  * API resources → the site's domain types (`@/types`), so pages and components
@@ -67,13 +67,16 @@ export function toOfferSummary(card: PromotionCard | PromotionDetail): OfferSumm
   return {
     id: card.id,
     slug: offerHandle(card),
+    urlSlug: card.slug,
     title: card.title,
     badge: card.headline || card.value_label,
+    businessSlug: card.business.slug,
     businessName: card.business.name,
     areaName: card.business.area || card.business.city || "Rajkot",
     images: [cover || logo || FALLBACK_IMAGE],
     ...(logo ? { imageIsLogo: true } : {}),
     validTo,
+    createdAt: day(card.created_at ?? card.starts_at),
     isExpired: isPast(card),
     daysLeft: daysBetween(toIsoDay(new Date()), validTo),
     ...(card.distance_km != null ? { distanceKm: card.distance_km } : {}),
@@ -84,7 +87,7 @@ export function toOfferSummary(card: PromotionCard | PromotionDetail): OfferSumm
 
 const STEPS: Record<PromotionDetail["redemption_mode"], string[]> = {
   walk_in: ["Visit the store", "Show this offer", "Get the discount on your bill"],
-  shared_code: ["Tap “Show code” to see the offer code", "Show the code at the store", "Get the discount on your bill"],
+  shared_code: ["Tap “Claim my code” to see the offer code", "Show the code at the store", "Get the discount on your bill"],
   unique_claim: ["Claim your personal code here", "Show the code at the store", "Get the discount on your bill"],
 };
 
@@ -141,6 +144,7 @@ export function toOffer(detail: PromotionDetail, business?: Business): Offer {
       ? [...new Set(branches.map((b) => b.area || b.name)), city].join(", ")
       : (business?.address ?? [detail.business.area, detail.business.city].filter(Boolean).join(", ")),
     validAt: branches.length > 1 || elsewhere ? branches.map(branchLabel) : [],
+    branches: branches.map((b) => ({ id: b.id, name: b.name, areaName: b.area || b.city || "Rajkot", isMain: b.is_main, ...(branchGeo(b) ? { geo: branchGeo(b) } : {}) })),
     ...(elsewhere && branchGeo(branches[0]) ? { geo: branchGeo(branches[0]) } : {}),
     steps: STEPS[detail.redemption_mode].map((text) => ({ text })),
     terms: (detail.terms ?? "").split("\n").map((t) => t.trim()).filter(Boolean),
@@ -262,6 +266,24 @@ export function toBusiness(resource: BusinessResource): Business {
   };
 }
 
+export function toBusinessSummary(card: BusinessCard): BusinessSummary {
+  const photo = card.cover_url || card.cover_thumb_url;
+  const image = photo || card.logo_url;
+  const stars = rating(card.rating_avg, card.rating_count);
+  return {
+    id: card.id,
+    slug: card.slug,
+    name: card.name,
+    ...(card.tagline ? { tagline: card.tagline } : {}),
+    ...(card.category ? { categoryName: card.category.name } : {}),
+    ...(card.city ? { city: card.city } : {}),
+    ...(image ? { image } : {}),
+    ...(image && !photo ? { imageIsLogo: true } : {}),
+    verified: card.is_verified,
+    ...(stars ? { rating: stars } : {}),
+  };
+}
+
 export function slugify(text: string) {
   return text
     .normalize("NFKD")
@@ -279,20 +301,45 @@ export function toArea(area: AreaCount): Area & { offerCount: number } {
 
 const FALLBACK_IMAGE = img("photo-1441986300917-64674bd600d8", 800);
 
-const ART: { match: RegExp; icon: CategoryIcon; image: string }[] = [
-  { match: /restaurant|cafe|bakery|food|sweets|farsan/, icon: "utensils", image: img("photo-1504674900247-0877df9cc836", 600) },
-  { match: /apparel|wear|footwear|bag|jewel|watch/, icon: "shirt", image: img("photo-1441986300917-64674bd600d8", 600) },
-  { match: /salon|spa|beauty|health|wellness/, icon: "scissors", image: img("photo-1560066984-138dadb4c035", 600) },
-  { match: /electronic|mobile|appliance/, icon: "smartphone", image: img("photo-1505740420928-5e560c06d30e", 600) },
-  { match: /fitness|gym|yoga|sport/, icon: "dumbbell", image: img("photo-1534438327276-14e5300c3a48", 600) },
-  { match: /home|living|grocery|daily/, icon: "sofa", image: img("photo-1555041469-a586c61ea9bc", 600) },
-  { match: /entertainment|cinema|gaming/, icon: "ticket", image: img("photo-1489599849927-2ee91cede3ba", 600) },
-  { match: /service|automobile|education|coaching|travel/, icon: "wrench", image: img("photo-1581578731548-c64695cc6952", 600) },
-  { match: /gift|toy|book/, icon: "gift", image: img("photo-1567401893414-76b7b1e5a7a5", 600) },
+const ART: { match: RegExp; image: string }[] = [
+  { match: /restaurant|cafe|bakery|food|sweets|farsan/, image: img("photo-1504674900247-0877df9cc836", 600) },
+  { match: /apparel|wear|footwear|bag|jewel|watch/, image: img("photo-1441986300917-64674bd600d8", 600) },
+  { match: /salon|spa|beauty|health|wellness/, image: img("photo-1560066984-138dadb4c035", 600) },
+  { match: /electronic|mobile|appliance/, image: img("photo-1505740420928-5e560c06d30e", 600) },
+  { match: /fitness|gym|yoga|sport/, image: img("photo-1534438327276-14e5300c3a48", 600) },
+  { match: /home|living|grocery|daily/, image: img("photo-1555041469-a586c61ea9bc", 600) },
+  { match: /entertainment|cinema|gaming/, image: img("photo-1489599849927-2ee91cede3ba", 600) },
+  { match: /service|automobile|education|coaching|travel/, image: img("photo-1581578731548-c64695cc6952", 600) },
+  { match: /gift|toy|book/, image: img("photo-1513885535751-8b9238bd345a", 600) },
+];
+
+// One icon per kind of shop, most specific first ("fast-food" before "food", "home-services" before "home").
+const ICONS: { match: RegExp; icon: CategoryIcon }[] = [
+  { match: /fast-food|street-food/, icon: "pizza" },
+  { match: /cafe|bakery/, icon: "coffee" },
+  { match: /sweets|farsan/, icon: "candy" },
+  { match: /restaurant|dining|food/, icon: "utensils" },
+  { match: /footwear|bag/, icon: "shopping-bag" },
+  { match: /jewel|watch/, icon: "gem" },
+  { match: /apparel|wear|boutique|fashion/, icon: "shirt" },
+  { match: /salon|spa|beauty/, icon: "scissors" },
+  { match: /health|wellness/, icon: "heart-pulse" },
+  { match: /electronic|mobile|appliance/, icon: "smartphone" },
+  { match: /fitness|gym|yoga|sport/, icon: "dumbbell" },
+  { match: /service/, icon: "wrench" },
+  { match: /grocery|daily/, icon: "shopping-basket" },
+  { match: /home|living/, icon: "sofa" },
+  { match: /entertainment|cinema|gaming/, icon: "ticket" },
+  { match: /automobile|car-|vehicle/, icon: "car" },
+  { match: /education|coaching/, icon: "graduation-cap" },
+  { match: /travel|stay|hotel/, icon: "plane" },
+  { match: /gift|toy|book/, icon: "gift" },
 ];
 
 function art(slug: string) {
-  return ART.find((a) => a.match.test(slug)) ?? { icon: "gift" as const, image: FALLBACK_IMAGE };
+  const image = ART.find((a) => a.match.test(slug))?.image ?? FALLBACK_IMAGE;
+  const icon = ICONS.find((i) => i.match.test(slug))?.icon ?? "gift";
+  return { icon, image };
 }
 
 /** A category chip → the site's `Category` (+ count). The first `homeRow` categories with offers show on the home page. */

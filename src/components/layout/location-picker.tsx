@@ -5,6 +5,7 @@ import NextLink from "next/link";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Sheet } from "@/components/ui/sheet";
+import { track } from "@/lib/analytics/client";
 import { isAreaScoped, stripArea } from "@/lib/areas";
 import { localizePath, splitLocale } from "@/lib/i18n/config";
 import { useLocale, useT } from "@/lib/i18n/client";
@@ -24,10 +25,10 @@ interface LocationPickerProps {
 }
 
 const pillClass =
-  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border bg-white pr-2.5 pl-2.5 text-[13px] font-medium lg:h-10 lg:px-3.5 lg:text-sm";
+  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border bg-white pr-2.5 pl-2.5 text-body-sm font-medium lg:h-10 lg:px-3.5";
 
 /**
- * Header city pill. Opens "near me" (GPS or a pincode, kept in a cookie) and a list
+ * Header city pill. Opens "near me" (GPS, kept in a cookie) and a list
  * of Rajkot's areas; picking an area moves to that area's version of the page
  * ("/kalawad-road/offers"), "All Rajkot" moves back to the plain one ("/offers").
  * The area lives in the URL, so it can be shared and needs no extra storage.
@@ -62,7 +63,7 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
   const near = parseNear(useSyncExternalStore(subscribeNear, readNearCookie, () => null));
 
   const current = areas.find((area) => area.slug === currentSlug);
-  const label = current ? current.name : near ? (near.pincode ? t("Near {pincode}", { pincode: near.pincode }) : t("Near me")) : t(site.city);
+  const label = current ? current.name : near ? t("Near me") : t(site.city);
   const narrowed = Boolean(current || near);
 
   // "Nearest first" (and other buttons) ask for a location through an event. The header is
@@ -125,21 +126,24 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
           onLocated={() => {
             nearChanged();
             setOpen(false);
-            router.push(nearestHref(), { scroll: false });
+            router.replace(nearestHref(), { scroll: false });
           }}
           onCleared={() => {
             nearChanged();
             router.refresh();
           }}
         />
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold tracking-[0.04em] text-muted">{t("Areas")}</p>
+        <p className="px-3 pt-3 pb-1 text-caption font-semibold tracking-[0.04em] text-muted">{t("Areas")}</p>
         <ul className="flex flex-col gap-0.5 pb-1">
           <AreaRow
             href={hrefFor()}
             selected={!narrowed}
             name={t("All Rajkot")}
             count={formatOfferCount(total, t)}
-            onPick={() => setOpen(false)}
+            onPick={() => {
+              track("area_select", { area: "all" });
+              setOpen(false);
+            }}
           />
           <li aria-hidden className="mx-3 my-1 h-px bg-line" />
           {areas.map((area) => (
@@ -149,7 +153,10 @@ function Picker({ areas, total, categorySlugs }: LocationPickerProps) {
               selected={area.slug === currentSlug}
               name={area.name}
               count={formatOfferCount(area.offerCount, t)}
-              onPick={() => setOpen(false)}
+              onPick={() => {
+                track("area_select", { area: area.slug });
+                setOpen(false);
+              }}
             />
           ))}
         </ul>
@@ -178,7 +185,7 @@ function AreaRow({
         aria-current={selected ? "true" : undefined}
         onClick={onPick}
         className={cn(
-          "flex items-center gap-3 rounded-xl px-3 py-3 text-[15px] transition-colors",
+          "flex items-center gap-3 rounded-xl px-3 py-3 text-body transition-colors",
           selected ? "bg-primary-soft font-medium" : "hover:bg-surface",
         )}
       >
@@ -188,7 +195,7 @@ function AreaRow({
           <MapPin size={18} className="shrink-0 text-faint" aria-hidden />
         )}
         <span className="flex-1">{name}</span>
-        <span className={cn("text-[13px]", selected ? "text-primary" : "text-muted")}>{count}</span>
+        <span className={cn("text-body-sm", selected ? "text-primary" : "text-muted")}>{count}</span>
       </NextLink>
     </li>
   );

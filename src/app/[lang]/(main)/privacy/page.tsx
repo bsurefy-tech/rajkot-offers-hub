@@ -23,7 +23,7 @@ export default async function PrivacyPage() {
       updated="14 October 2026"
       intro={
         <p>
-          {site.name} ({site.domain}) lists offers from local businesses in Rajkot. This policy explains what personal data we
+          {site.name} lists offers from local businesses in Rajkot. This policy explains what personal data we
           collect when you use the website, why, who can see it, and how you can see, correct or delete it, in line with India&apos;s
           Digital Personal Data Protection Act, 2023. You can browse offers without an account.
         </p>
@@ -57,7 +57,7 @@ export default async function PrivacyPage() {
           title: "Location",
           body: (
             <p>
-              &quot;Near me&quot; only uses your location when you tap &quot;Use my location&quot; or enter a pincode. We round it to about
+              &quot;Near me&quot; only uses your location when you tap &quot;Offers near me&quot;. We round it to about
               100 metres, keep it in a cookie in your own browser, and send it with offer lists only to sort them by distance. It is
               not saved to your account. You can remove it any time with &quot;Clear&quot; in the location menu.
             </p>
@@ -67,7 +67,7 @@ export default async function PrivacyPage() {
           title: "Cookies and storage on your device",
           body: (
             <ul>
-              <li>login cookies that keep you signed in (removed when you log out);</li>
+              <li>login cookies that keep you signed in (removed when you log out), and, while you are signed in, a cookie with your account&apos;s anonymous ID for our usage statistics;</li>
               <li>a cookie with your rounded location, only if you set one;</li>
               <li>your language choice;</li>
               <li>the offers you save, kept only in your browser.</li>
@@ -81,6 +81,11 @@ export default async function PrivacyPage() {
               <li>to log you in and keep your account secure;</li>
               <li>to show offers, distances, shop contact details and your codes;</li>
               <li>to give shops counts of how their offers are used;</li>
+              <li>
+                to understand how the website is used (pages visited, searches, taps) so we can improve it. This runs on our own
+                server, without advertising or third-party trackers, and does not record your mobile number, name or what you type
+                in search. It is skipped if your browser sends Do Not Track or Global Privacy Control;
+              </li>
               <li>to prevent spam, fraud and misuse, and to meet legal requirements.</li>
             </ul>
           ),

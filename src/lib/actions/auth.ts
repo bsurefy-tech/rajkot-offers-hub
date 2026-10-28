@@ -75,7 +75,7 @@ export async function startLoginAction(mobile: string, forceCode = false): Promi
  * Checks the WhatsApp code or the MPIN (the API tells them apart) and signs in.
  * A first login, or one after "Forgot MPIN", then has to set an MPIN.
  */
-export async function verifyLoginAction(mobile: string, code: string, next: string | null): Promise<AuthResult<{ setMpin: boolean }>> {
+export async function verifyLoginAction(mobile: string, code: string, next: string | null, stay = false): Promise<AuthResult<{ setMpin: boolean }>> {
   const who = identity(mobile);
   if (!who) return { ok: false, error: "Enter a valid mobile number" };
   if (!/^\d{6}$/.test(code.trim())) return { ok: false, error: "Enter the 6-digit code" };
@@ -84,6 +84,8 @@ export async function verifyLoginAction(mobile: string, code: string, next: stri
     const result = await api<TokenPair>("/auth/verify", { method: "POST", body: { ...who, code: code.trim() }, client: await visitorIp() });
     setSessionCookies(await cookies(), result);
     if (result.user.mpin_required) return { ok: true, data: { setMpin: true } };
+    // In a popup the visitor stays on the page: the new cookies make Next re-render it signed in.
+    if (stay) return { ok: true, data: { setMpin: false } };
     destination = safeNext(next);
   } catch (error) {
     return failure(error);
@@ -91,8 +93,8 @@ export async function verifyLoginAction(mobile: string, code: string, next: stri
   redirect(destination);
 }
 
-/** Sets the 6-digit MPIN right after a WhatsApp code, then continues where the visitor was going. */
-export async function setMpinAction(mpin: string, confirm: string, next: string | null): Promise<AuthResult> {
+/** Sets the 6-digit MPIN right after a WhatsApp code, then continues where the visitor was going (`stay`: right here). */
+export async function setMpinAction(mpin: string, confirm: string, next: string | null, stay = false): Promise<AuthResult> {
   if (!/^\d{6}$/.test(mpin)) return { ok: false, error: "Your MPIN must be 6 digits" };
   if (mpin !== confirm) return { ok: false, error: "The two MPINs do not match" };
   try {
@@ -101,6 +103,7 @@ export async function setMpinAction(mpin: string, confirm: string, next: string 
   } catch (error) {
     return failure(error);
   }
+  if (stay) return { ok: true, data: undefined };
   redirect(safeNext(next));
 }
 

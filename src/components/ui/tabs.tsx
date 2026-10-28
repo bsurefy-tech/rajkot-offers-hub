@@ -15,10 +15,12 @@ interface TabsProps {
   className?: string;
   listClassName?: string;
   panelClassName?: string;
+  /** "underline" (default); "segmented": a grey track with a raised white selected tab; "chips": small filter pills. */
+  variant?: "underline" | "segmented" | "chips";
 }
 
-/** Underlined tabs with arrow-key navigation (WAI-ARIA tabs pattern). */
-export function Tabs({ items, defaultValue, className, listClassName, panelClassName }: TabsProps) {
+/** Tabs with arrow-key navigation (WAI-ARIA tabs pattern): underlined, segmented or as chips. */
+export function Tabs({ items, defaultValue, className, listClassName, panelClassName, variant = "underline" }: TabsProps) {
   const [active, setActive] = useState(defaultValue ?? items[0]?.value);
   const id = useId();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -36,7 +38,12 @@ export function Tabs({ items, defaultValue, className, listClassName, panelClass
     <div className={className}>
       <div
         role="tablist"
-        className={cn("flex gap-7 border-b border-line lg:gap-8", listClassName)}
+        className={cn(
+          variant === "underline" && "flex gap-7 border-b border-line lg:gap-8",
+          variant === "segmented" && "flex w-full gap-1 rounded-full bg-canvas p-1 lg:inline-flex lg:w-auto",
+          variant === "chips" && "flex gap-2",
+          listClassName,
+        )}
       >
         {items.map((item, i) => {
           const selected = item.value === active;
@@ -55,10 +62,22 @@ export function Tabs({ items, defaultValue, className, listClassName, panelClass
               onClick={() => setActive(item.value)}
               onKeyDown={(e) => onKeyDown(e, i)}
               className={cn(
-                "-mb-px cursor-pointer border-b-2 pb-3 text-[15px] transition-colors",
-                selected
-                  ? "border-primary font-semibold text-ink"
-                  : "border-transparent font-medium text-muted hover:text-ink",
+                "cursor-pointer transition-colors",
+                variant === "underline" &&
+                  cn(
+                    "-mb-px border-b-2 pb-3 text-body",
+                    selected ? "border-primary font-semibold text-ink" : "border-transparent font-medium text-muted hover:text-ink",
+                  ),
+                variant === "segmented" &&
+                  cn(
+                    "h-11 flex-1 rounded-full px-2 text-body whitespace-nowrap sm:px-6 lg:flex-none",
+                    selected ? "bg-white font-semibold text-ink shadow-card" : "font-medium text-muted hover:text-ink",
+                  ),
+                variant === "chips" &&
+                  cn(
+                    "h-[34px] rounded-full border px-3.5 text-body-sm font-medium",
+                    selected ? "border-ink bg-ink text-white" : "border-input bg-white text-ink hover:border-ink",
+                  ),
               )}
             >
               {item.label}

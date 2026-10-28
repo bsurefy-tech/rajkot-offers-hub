@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useId, useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { SheetFooter } from "@/components/ui/sheet";
 import { changeMpinAction, deleteAccountAction, updateNameAction, type AuthResult } from "@/lib/actions/auth";
 import { useT } from "@/lib/i18n/client";
 import type { MessageKey } from "@/lib/i18n/translate";
@@ -22,7 +23,7 @@ function useSubmit() {
     });
   }
   const shown = message && (
-    <p role={message.ok ? "status" : "alert"} className={message.ok ? "text-sm text-open" : "text-sm text-danger"}>
+    <p role={message.ok ? "status" : "alert"} className={message.ok ? "text-body text-open" : "text-body text-danger"}>
       {message.text}
     </p>
   );
@@ -32,8 +33,10 @@ function useSubmit() {
 export function NameForm({ name }: { name?: string }) {
   const t = useT();
   const { run, pending, shown } = useSubmit();
+  const formId = useId();
   return (
     <form
+      id={formId}
       className="flex flex-col gap-3"
       onSubmit={(e) => {
         e.preventDefault();
@@ -42,14 +45,14 @@ export function NameForm({ name }: { name?: string }) {
       }}
     >
       <Field id="name" label={t("Your name")}>
-        <div className="flex gap-2">
-          <Input id="name" name="name" defaultValue={name} maxLength={80} autoComplete="name" />
-          <Button type="submit" variant="outline" disabled={pending}>
-            {t("Save")}
-          </Button>
-        </div>
+        <Input id="name" name="name" defaultValue={name} maxLength={80} autoComplete="name" />
       </Field>
       {shown}
+      <SheetFooter>
+        <Button type="submit" form={formId} block disabled={pending}>
+          {t("Save")}
+        </Button>
+      </SheetFooter>
     </form>
   );
 }
@@ -58,6 +61,7 @@ export function ChangeMpinForm() {
   const t = useT();
   const { run, pending, shown } = useSubmit();
   const [formKey, setFormKey] = useState(0);
+  const formId = useId();
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -66,32 +70,32 @@ export function ChangeMpinForm() {
   }
   return (
     <div className="flex flex-col gap-3">
-      <form key={formKey} onSubmit={submit} noValidate className="grid gap-4 sm:grid-cols-3 sm:items-end">
+      <form id={formId} key={formKey} onSubmit={submit} noValidate className="flex flex-col gap-4">
         <Field id="current" label={t("Current MPIN")}>
-          <PinInput id="current" name="current" secret required className="h-12 text-lg" />
+          <PinInput id="current" name="current" secret required className="h-12 text-heading" />
         </Field>
         <Field id="mpin" label={t("New MPIN")}>
-          <PinInput id="mpin" name="mpin" secret required autoComplete="new-password" className="h-12 text-lg" />
+          <PinInput id="mpin" name="mpin" secret required autoComplete="new-password" className="h-12 text-heading" />
         </Field>
         <Field id="confirm" label={t("Confirm MPIN")}>
-          <PinInput id="confirm" name="confirm" secret required autoComplete="new-password" className="h-12 text-lg" />
+          <PinInput id="confirm" name="confirm" secret required autoComplete="new-password" className="h-12 text-heading" />
         </Field>
-        <div className="sm:col-span-3">
-          <Button type="submit" disabled={pending}>
-            {t("Change MPIN")}
-          </Button>
-        </div>
       </form>
       {shown}
+      <SheetFooter>
+        <Button type="submit" form={formId} block disabled={pending}>
+          {t("Change MPIN")}
+        </Button>
+      </SheetFooter>
     </div>
   );
 }
 
 /** "Delete my account", behind a second confirmation. */
-export function DeleteAccountForm() {
+export function DeleteAccountForm({ startConfirming, onCancel }: { startConfirming?: boolean; onCancel?: () => void }) {
   const t = useT();
   const { run, pending, shown } = useSubmit();
-  const [confirming, setConfirming] = useState(false);
+  const [confirming, setConfirming] = useState(Boolean(startConfirming));
   if (!confirming) {
     return (
       <Button type="button" variant="ghost" className="self-start px-0 text-danger hover:text-danger" onClick={() => setConfirming(true)}>
@@ -101,18 +105,20 @@ export function DeleteAccountForm() {
   }
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-muted">
+      <p className="text-body-sm text-muted">
         {t("This deletes your account, your name and your claimed codes. You can sign up again later with the same number.")}
       </p>
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" className="bg-danger hover:bg-danger/90" disabled={pending} onClick={() => run(deleteAccountAction, "Saved")}>
-          {t("Yes, delete my account")}
-        </Button>
-        <Button type="button" variant="outline" disabled={pending} onClick={() => setConfirming(false)}>
-          {t("Cancel")}
-        </Button>
-      </div>
       {shown}
+      <SheetFooter>
+        <div className="flex gap-3">
+          <Button type="button" variant="outline" className="flex-1" disabled={pending} onClick={() => (onCancel ? onCancel() : setConfirming(false))}>
+            {t("Cancel")}
+          </Button>
+          <Button type="button" className="flex-1 bg-danger hover:bg-danger/90" disabled={pending} onClick={() => run(deleteAccountAction, "Saved")}>
+            {t("Yes, delete my account")}
+          </Button>
+        </div>
+      </SheetFooter>
     </div>
   );
 }

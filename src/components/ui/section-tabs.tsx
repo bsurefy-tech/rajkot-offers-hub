@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode, Fragment } from "react";
+import { track } from "@/lib/analytics/client";
 import { cn } from "@/lib/utils";
 
 export interface SectionTab {
@@ -8,6 +9,8 @@ export interface SectionTab {
   value: string;
   label: ReactNode;
   content: ReactNode;
+  /** Classes for the tab and its section together, e.g. "lg:hidden" or "lg:order-2" to reorder or drop it on one screen size. */
+  className?: string;
 }
 
 interface SectionTabsProps {
@@ -50,14 +53,17 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
       if (scrolling.current) return;
       // A section counts as the one being read once its top is in the upper third of the screen.
       const line = stuckTop() + (bar.current?.offsetHeight ?? 0) + window.innerHeight * 0.3;
-      let current = values[0];
-      for (const value of values) {
-        const section = document.getElementById(value);
-        if (section && section.getBoundingClientRect().top <= line) current = value;
-      }
+      // Sections can be reordered or hidden per screen size, so go by where each one actually is.
+      const shown = values
+        .map((value) => ({ value, node: document.getElementById(value) }))
+        .filter((entry): entry is { value: string; node: HTMLElement } => !!entry.node && entry.node.offsetParent !== null)
+        .map(({ value, node }) => ({ value, top: node.getBoundingClientRect().top }))
+        .sort((a, b) => a.top - b.top);
+      let current = shown[0]?.value ?? values[0];
+      for (const entry of shown) if (entry.top <= line) current = entry.value;
       // A short last section may never reach the bar, so the end of the page counts as reaching it.
       const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-      setActive(atBottom ? values[values.length - 1] : current);
+      setActive(atBottom ? (shown[shown.length - 1]?.value ?? current) : current);
     }
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -70,21 +76,30 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  /** Keeps the highlighted tab visible when the bar scrolls sideways on a narrow screen. */
+  function keepInView(tab: HTMLAnchorElement | null) {
+    const nav = bar.current;
+    if (!tab || !nav || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollTo({ left: tab.offsetLeft - (nav.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
+  }
+
   function go(event: MouseEvent, value: string) {
     const section = document.getElementById(value);
     if (!section) return;
     event.preventDefault();
+    track("tab_change", { tab: value });
     scrolling.current = true;
     window.setTimeout(() => {
       scrolling.current = false;
     }, 800);
     setActive(value);
-    const top = section.getBoundingClientRect().top + window.scrollY - stuckTop() - (bar.current?.offsetHeight ?? 0);
+    // Stop a little short of the bar so a card's top border is not hidden under it.
+    const top = section.getBoundingClientRect().top + window.scrollY - stuckTop() - (bar.current?.offsetHeight ?? 0) - 16;
     window.scrollTo({ top, behavior: "smooth" });
   }
 
   return (
-    <div className={className}>
+    <div className={cn("relative flex flex-col gap-4 lg:gap-8", className)}>
       {topBar && (
         <div
           inert={!stuck}
@@ -96,12 +111,13 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
           {topBar}
         </div>
       )}
-      <div ref={sentinel} aria-hidden />
+      {/* Out of the flow, so the column's gap does not count it. */}
+      <div ref={sentinel} aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" />
       <nav
         ref={bar}
         aria-label={label}
         className={cn(
-          "sticky z-30 -mx-5 flex gap-7 border-b border-line bg-white px-5 lg:top-0 lg:mx-0 lg:gap-8 lg:px-0",
+          "sticky z-30 -mx-4 flex gap-6 overflow-x-auto border-b [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-line bg-white px-4 lg:top-[73px] lg:mx-0 lg:gap-8 lg:rounded-t-2xl lg:px-8",
           topBar ? "top-14" : "top-0",
         )}
       >
@@ -112,9 +128,11 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
               key={item.value}
               href={`#${item.value}`}
               aria-current={selected ? "true" : undefined}
+              ref={selected ? keepInView : undefined}
               onClick={(event) => go(event, item.value)}
               className={cn(
-                "-mb-px border-b-2 pt-3 pb-3 text-[15px] transition-colors",
+                item.className,
+                "-mb-px shrink-0 border-b-2 py-2.5 text-body whitespace-nowrap transition-colors",
                 selected
                   ? "border-primary font-semibold text-ink"
                   : "border-transparent font-medium text-muted hover:text-ink",
@@ -126,13 +144,13 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
         })}
       </nav>
       {items.map((item, i) => (
-        <section
-          key={item.value}
-          id={item.value}
-          className={cn(topBar ? "scroll-mt-28 lg:scroll-mt-14" : "scroll-mt-14", i > 0 && "mt-10 border-t border-line lg:mt-14")}
-        >
-          {item.content}
-        </section>
+        <Fragment key={item.value}>
+          {/* A divider of its own, not a border, so the column's gap spaces both sides of it alike. */}
+          {i > 0 && <div aria-hidden className={cn("h-px bg-line", item.className)} />}
+          <section id={item.value} className={cn(topBar ? "scroll-mt-28" : "scroll-mt-14", "lg:scroll-mt-32 lg:px-8", item.className)}>
+            {item.content}
+          </section>
+        </Fragment>
       ))}
     </div>
   );

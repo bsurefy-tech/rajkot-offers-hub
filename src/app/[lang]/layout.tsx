@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Anek_Gujarati, Inter } from "next/font/google";
+import { Anek_Gujarati, IBM_Plex_Sans } from "next/font/google";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { Analytics } from "@/components/analytics/analytics";
+import { LoginProvider } from "@/components/auth/login-dialog";
+import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { ToastProvider } from "@/components/ui/toast";
+import { ENABLED_ATTRIBUTE } from "@/lib/analytics/client";
+import { analyticsConfig } from "@/lib/analytics/config";
+import { ANALYTICS_USER_COOKIE, SIGNED_IN_HINT_COOKIE } from "@/lib/auth/cookies";
 import { hasLocale } from "@/lib/i18n/config";
 import { LocaleProvider } from "@/lib/i18n/client";
 import { getLocale, getT } from "@/lib/i18n/server";
@@ -10,7 +17,7 @@ import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import "../globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const plex = IBM_Plex_Sans({ variable: "--font-plex", subsets: ["latin"] });
 
 const anek = Anek_Gujarati({
   variable: "--font-anek",
@@ -40,8 +47,24 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [DEFAULT_SHARE_IMAGE],
     },
     twitter: { card: "summary_large_image", images: [DEFAULT_SHARE_IMAGE] },
-    // Search Console ownership check; set the token in the deployment's environment.
-    verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+    // Allow large image previews and full snippets (Search, Discover) on every indexable page.
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    },
+    // Tells location-aware engines (Bing in particular) which city the site is about.
+    other: {
+      "geo.region": "IN-GJ",
+      "geo.placename": site.city,
+      "geo.position": `${site.geo.lat};${site.geo.lng}`,
+      ICBM: `${site.geo.lat}, ${site.geo.lng}`,
+    },
+    // Search Console / Bing Webmaster ownership checks; set the tokens in the deployment's environment.
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION,
+      other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
+    },
   };
 }
 
@@ -52,12 +75,20 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
+  const analytics = analyticsConfig();
+  const jar = analytics ? await cookies() : undefined;
+  const signedIn = Boolean(jar?.has(SIGNED_IN_HINT_COOKIE));
+  const profileId = signedIn ? jar?.get(ANALYTICS_USER_COOKIE)?.value : undefined;
 
   return (
-    <html lang={lang} className={cn(inter.variable, lang === "gu" && anek.variable)}>
-      <body className="flex min-h-dvh flex-col">
+    <html lang={lang === "gu" ? "gu-IN" : "en-IN"} className={cn(plex.variable, lang === "gu" && anek.variable)}>
+      <body className="flex min-h-dvh flex-col" {...(analytics && { [ENABLED_ATTRIBUTE]: "" })}>
+        {analytics && <Analytics clientId={analytics.clientId} lang={lang} signedIn={signedIn} profileId={profileId} />}
         <LocaleProvider locale={lang}>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <LoginProvider>{children}</LoginProvider>
+            <ScrollToTop />
+          </ToastProvider>
         </LocaleProvider>
       </body>
     </html>

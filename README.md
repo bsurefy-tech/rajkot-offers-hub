@@ -22,6 +22,13 @@ platform; `PLATFORM_HOSTS` must map `rajkot-offers=api.rajkotoffers.test` when s
 `APP_ENV=local` the API returns login codes in its response, and this site shows them on the login
 screen in development builds.
 
+**Rewards (points, scratch cards, reward codes, invites):** the API runs them per platform behind its
+`loyalty` feature (and `referrals` for invites), on `redesign/platforms` until it is released. The
+site shows them only with `LOYALTY_ENABLED=true` (set it in `.env.local`, or in `.env.production`
+once the production platform has the feature on); without it there is no Rewards tab or page and
+Saved keeps its place in the bottom bar. To try it locally run the API's migrations and
+`php artisan db:seed --class=LoyaltyDemoSeeder` and `--class=ReferralDemoSeeder`.
+
 ## Deploy (Cloudflare Workers)
 
 The site runs on Cloudflare Workers through [OpenNext](https://opennext.js.org/cloudflare)
@@ -74,6 +81,19 @@ Builds, which starts clean). `pnpm preview` runs the built worker locally (copy 
 - `proxy.ts` runs as Node.js middleware, which OpenNext marks experimental on Cloudflare; it works
   here (language routing, 404s and session renewal were tested in workerd).
 
+## Analytics (OpenPanel)
+
+Self-hosted OpenPanel at `OPENPANEL_API_URL`, off unless `OPENPANEL_ENABLED=true` (set in `.env.production`; leave it
+unset locally so development sends nothing). The browser never talks to OpenPanel directly: it loads the script and
+sends events through this site's `/api/op` proxy (`src/app/api/op/[...op]/route.ts`), which forwards to the API with the
+visitor's IP. Visitors with Do Not Track or Global Privacy Control, and crawlers, are left out
+(`src/components/analytics/analytics.tsx`).
+
+Send an event with the typed wrapper, never the SDK directly: add it to `src/lib/analytics/events.ts`, then
+`track("event_name", { ... })` from `src/lib/analytics/client.ts`. Every event also carries `lang`, `page_type` and
+`signed_in`. To try it locally, point `OPENPANEL_API_URL` / `OPENPANEL_CLIENT_ID` at a staging project, not production.
+The plan and event catalogue are in `docs/plans/openpanel-analytics.md`.
+
 ## Launch check
 
 A read-only check of the API and the deployed site (it never logs in, claims or reveals anything):
@@ -99,6 +119,8 @@ src/
     [lang]/(focus)/ detail and task pages: desktop header only, each page draws its
                    own mobile top bar or action bar
                    offers/[slug], businesses/[slug], categories/[slug], submit-offer
+                   (shops and offers are served at /<shop> and /<shop>/<offer> by a proxy rewrite;
+                   /businesses/<shop> and /offers/<offer> redirect there, see lib/known-paths.ts)
     not-found.tsx  404
   components/
     ui/            design-system primitives with no domain knowledge
@@ -128,7 +150,7 @@ src/
 | Site | API |
 |---|---|
 | Offer lists, filters, search, sort | `GET /promotions` (`category`, `areas`, `type`, `ends_within_days`, `sort`, `q`) |
-| Offer page | `GET /promotions/{id}` — URLs are `/offers/<slug>-<id>` |
+| Offer page | `GET /promotions/{id}` — URLs are `/<shop>/<slug>-<id>` (the id is what the page looks the offer up by) |
 | Shop page, its live and past offers | `GET /businesses/{slug}`, `GET /promotions?business=` (`&lifecycle=ended`) |
 | Categories and areas with counts | `GET /promotions/categories` (`areas`), `GET /promotions/areas` |
 | Login (WhatsApp code once, then a 6-digit MPIN) | `POST /auth/request`, `/auth/verify`, `/auth/mpin`, `/auth/refresh`, `/auth/logout` |
