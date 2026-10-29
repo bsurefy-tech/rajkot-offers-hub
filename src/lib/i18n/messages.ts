@@ -612,6 +612,8 @@ export const gu = {
   "That invite code doesn't look right.": "આ ઇન્વાઇટ કોડ સાચો લાગતો નથી.",
   "Enter your profile link or username.": "તમારી પ્રોફાઇલ લિંક કે યુઝરનેમ લખો.",
   "Bigger bills can also give you a scratch card.": "મોટા બિલ પર સ્ક્રૅચ કાર્ડ પણ મળી શકે.",
+  "No scratch cards yet": "હજી કોઈ સ્ક્રૅચ કાર્ડ નથી",
+  "Bigger bills at partner shops and task bonuses can win you one.": "પાર્ટનર દુકાનો પર મોટા બિલ અને ટાસ્ક બોનસથી સ્ક્રૅચ કાર્ડ મળી શકે.",
   "No offer codes yet": "હજી કોઈ ઓફર કોડ નથી",
   "Zalak": "ઝલક",
   "Near you": "તમારી નજીક",
