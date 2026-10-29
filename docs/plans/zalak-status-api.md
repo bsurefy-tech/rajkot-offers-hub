@@ -135,7 +135,7 @@ Work on this plan can start before these are done, against the local API for sta
 
 - Prod API not ready: build the layer against the local API and keep the mock flag until it is.
 - Per-viewer calls break caching assumptions: never put a device key or token into a cached read (`api()` rules).
-- Workers: no cross-request shared promises or timers (see `patches/next@16.4.0.patch` notes); the device-key cookie is
+- Workers: no cross-request shared promises or timers (see `patches/next@16.4.1.patch` notes); the device-key cookie is
   read per request.
 - Video cost and size: the API enforces the caps; the site only plays what it is given.
 
