@@ -139,12 +139,23 @@ function Overview({ data, reload, tab }: { data: RewardsOverview; reload: () => 
         <p className="mt-2 text-caption text-muted">{t("Show it at a partner shop when you pay, to earn points.")}</p>
       </section>
 
-      {data.cards.length > 0 && (
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
-            <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
+          {data.cards.length > 0 && <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>}
+        </div>
+        {data.cards.length === 0 ? (
+          // With none to scratch the section still says what they are, so a new shopper knows to look for them.
+          <div className="flex items-center gap-3 rounded-2xl border border-dashed border-line bg-white p-4">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+              <Sparkles size={20} aria-hidden />
+            </span>
+            <div>
+              <p className="text-body font-medium">{t("No scratch cards yet")}</p>
+              <p className="text-body-sm text-muted">{t("Bigger bills at partner shops and task bonuses can win you one.")}</p>
+            </div>
           </div>
+        ) : (
           <ul className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
             {data.cards.map((card) => (
               <li key={card.id} className="shrink-0">
@@ -160,8 +171,8 @@ function Overview({ data, reload, tab }: { data: RewardsOverview; reload: () => 
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
 
       <Tabs
         variant="segmented"
