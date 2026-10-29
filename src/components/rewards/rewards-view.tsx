@@ -26,12 +26,13 @@ import { useLocale, useT } from "@/lib/i18n/client";
 import type { MessageKey } from "@/lib/i18n/translate";
 import { cn } from "@/lib/utils";
 import { EarnTab } from "./earn-tab";
+import { useTaskCelebration } from "./task-celebration";
 import { ScratchSheet } from "./scratch-card";
 
 const day = (iso: string) => iso.slice(0, 10);
 
 /** The Rewards page: balance, the code to show at the counter, scratch cards, then rewards, ways to earn and history. */
-export function RewardsView() {
+export function RewardsView({ tab }: { tab?: string }) {
   const t = useT();
   const login = useLogin();
   const [state, setState] = useState<Loaded<RewardsOverview> | null>(null);
@@ -41,7 +42,8 @@ export function RewardsView() {
     setState(result);
     if (result.status === "ok") {
       const { wallets, cards } = result.data;
-      setPoints({ balance: wallets.platform.balance, label: wallets.platform.point_label, cards: cards.length });
+      const { total, done } = result.data.taskSummary;
+      setPoints({ balance: wallets.platform.balance, label: wallets.platform.point_label, cards: cards.length, tasksLeft: total - done });
     }
   }, []);
 
@@ -66,7 +68,7 @@ export function RewardsView() {
       />
     );
   }
-  return <Overview data={state.data} reload={load} />;
+  return <Overview data={state.data} reload={load} tab={tab} />;
 }
 
 function Intro({ onLogin }: { onLogin: () => void }) {
@@ -102,8 +104,11 @@ function Intro({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promise<void> }) {
+const TABS = ["rewards", "earn", "history"];
+
+function Overview({ data, reload, tab }: { data: RewardsOverview; reload: () => Promise<void>; tab?: string }) {
   const t = useT();
+  useTaskCelebration(data);
   const locale = useLocale();
   const [showCode, setShowCode] = useState(false);
   const [scratching, setScratching] = useState<LoyaltyScratchCard | null>(null);
@@ -134,12 +139,23 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
         <p className="mt-2 text-caption text-muted">{t("Show it at a partner shop when you pay, to earn points.")}</p>
       </section>
 
-      {data.cards.length > 0 && (
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
-            <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>
+      <section>
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-title font-semibold">{t("Scratch cards")}</h2>
+          {data.cards.length > 0 && <span className="text-body-sm text-muted">{t("{count} to scratch", { count: data.cards.length })}</span>}
+        </div>
+        {data.cards.length === 0 ? (
+          // With none to scratch the section still says what they are, so a new shopper knows to look for them.
+          <div className="flex items-center gap-3 rounded-2xl border border-dashed border-line bg-white p-4">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+              <Sparkles size={20} aria-hidden />
+            </span>
+            <div>
+              <p className="text-body font-medium">{t("No scratch cards yet")}</p>
+              <p className="text-body-sm text-muted">{t("Bigger bills at partner shops and task bonuses can win you one.")}</p>
+            </div>
           </div>
+        ) : (
           <ul className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1 lg:mx-0 lg:px-0">
             {data.cards.map((card) => (
               <li key={card.id} className="shrink-0">
@@ -155,15 +171,16 @@ function Overview({ data, reload }: { data: RewardsOverview; reload: () => Promi
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        )}
+      </section>
 
       <Tabs
         variant="segmented"
+        defaultValue={tab && TABS.includes(tab) ? tab : undefined}
         panelClassName="pt-5"
         items={[
           { value: "rewards", label: t("Rewards"), content: <RewardsTab data={data} reload={reload} /> },
-          { value: "earn", label: t("Earn"), content: <EarnTab tasks={data.tasks} referral={data.referral} onChanged={() => void reload()} /> },
+          { value: "earn", label: t("Earn"), content: <EarnTab tasks={data.tasks} summary={data.taskSummary} referral={data.referral} onChanged={() => void reload()} /> },
           { value: "history", label: t("History"), content: <HistoryTab data={data} /> },
         ]}
       />

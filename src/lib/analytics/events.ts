@@ -54,6 +54,12 @@ export type EventMap = {
   scratch_reveal: { prize: "points" | "reward" | "nothing"; points: number };
   reward_redeem: { result: "ok" | "login" | "error" };
   task_submit: { type: string; provider: string; result: "ok" | "error" };
+  task_open: { type: string; status: string };
+  /** Left for the page where an in-app task is done. */
+  task_go: { type: string; from: "list" | "sheet" };
+  task_timeline_view: { type: string };
+  /** A task-list bonus was reached and shown (a scratch card or points). */
+  milestone_seen: { title: string };
   referral_share: { method: "share_sheet" | "copy" };
   /** `form`: typed on the Rewards page; `link`: from a friend's invite link. */
   referral_apply: { result: "ok" | "error"; source: "form" | "link" };
