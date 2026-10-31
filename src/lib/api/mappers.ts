@@ -302,6 +302,12 @@ export function toArea(area: AreaCount): Area & { offerCount: number } {
 const FALLBACK_IMAGE = img("photo-1441986300917-64674bd600d8", 800);
 
 const ART: { match: RegExp; image: string }[] = [
+  // Wedding categories (shared with Lagnya) first: "catering-services" and "bridal-wear" would match the retail rows below.
+  { match: /venue|banquet/, image: img("photo-1587271407850-8d438ca9fdf2", 600) },
+  { match: /catering|caterer/, image: img("photo-1555244162-803834f70033", 600) },
+  { match: /decorat/, image: img("photo-1519225421980-715cb0215aed", 600) },
+  { match: /bridal-wear|groom-wear/, image: img("photo-1594552072238-b8a33785b261", 600) },
+  { match: /wedding|bridal|groom|mehendi/, image: img("photo-1519741497674-611481863552", 600) },
   { match: /restaurant|cafe|bakery|food|sweets|farsan/, image: img("photo-1504674900247-0877df9cc836", 600) },
   { match: /apparel|wear|footwear|bag|jewel|watch/, image: img("photo-1441986300917-64674bd600d8", 600) },
   { match: /salon|spa|beauty|health|wellness/, image: img("photo-1560066984-138dadb4c035", 600) },
@@ -313,8 +319,17 @@ const ART: { match: RegExp; image: string }[] = [
   { match: /gift|toy|book/, image: img("photo-1513885535751-8b9238bd345a", 600) },
 ];
 
-// One icon per kind of shop, most specific first ("fast-food" before "food", "home-services" before "home").
+// One icon per kind of shop, most specific first ("fast-food" before "food", "home-services" before "home",
+// "catering-services" before "service").
 const ICONS: { match: RegExp; icon: CategoryIcon }[] = [
+  { match: /venue|banquet/, icon: "landmark" },
+  { match: /catering|caterer/, icon: "chef-hat" },
+  { match: /photograph/, icon: "camera" },
+  { match: /videograph/, icon: "video" },
+  { match: /decorat/, icon: "party-popper" },
+  { match: /invitation/, icon: "mail" },
+  { match: /makeup/, icon: "sparkles" },
+  { match: /mehendi|mehndi/, icon: "flower" },
   { match: /fast-food|street-food/, icon: "pizza" },
   { match: /cafe|bakery/, icon: "coffee" },
   { match: /sweets|farsan/, icon: "candy" },
