@@ -87,7 +87,17 @@ export function Sheet({ open, onClose, title, subtitle, children, footer, size =
       )}
     >
       <SheetClose onClose={onClose} />
-      <div className={cn("flex min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl", size === "lg" ? "max-h-[92dvh] lg:max-h-[88dvh]" : "max-h-[85dvh]")}>
+      {/*
+        On a phone the round close button sits above the panel, and the browser caps a dialog at the screen
+        less 2em + 6px; taller than that and the dialog scrolls, hiding the close button or the footer. So the
+        panel stays under the screen less 6rem (that cap plus the button), whatever its size.
+      */}
+      <div
+        className={cn(
+          "flex min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl",
+          size === "lg" ? "max-h-[min(92dvh,calc(100dvh-6rem))] lg:max-h-[88dvh]" : "max-h-[min(85dvh,calc(100dvh-6rem))] lg:max-h-[85dvh]",
+        )}
+      >
         <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-4 lg:px-6 lg:pt-5">
           <div className="min-w-0">
             <h2 className="text-heading font-semibold">{title}</h2>

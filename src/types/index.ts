@@ -225,6 +225,8 @@ export interface Business {
   /** Every outlet, main first; one entry for a shop with a single location. */
   outlets: Outlet[];
   photos: string[];
+  /** Small versions of `cover` and `photos`, by their full URL, for thumbnail strips. */
+  thumbs?: Record<string, string>;
   geo: { lat: number; lng: number };
 }
 

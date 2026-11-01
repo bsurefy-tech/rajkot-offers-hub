@@ -249,7 +249,7 @@ export function CatalogItemSheet({ item, shop, onClose }: { item: CatalogItem | 
             {detail === null && <p className="text-body-sm text-muted">{t("Could not load the details.")}</p>}
           </div>
 
-          <PhotoViewer images={images} alt={item.name} index={photo} onClose={() => setPhoto(null)} />
+          <PhotoViewer images={images} thumbs={detail?.thumbs} alt={item.name} index={photo} onClose={() => setPhoto(null)} />
         </div>
       )}
     </Sheet>
