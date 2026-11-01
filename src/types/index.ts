@@ -17,7 +17,15 @@ export type CategoryIcon =
   | "gem"
   | "candy"
   | "plane"
-  | "shopping-basket";
+  | "shopping-basket"
+  | "landmark"
+  | "chef-hat"
+  | "camera"
+  | "video"
+  | "party-popper"
+  | "mail"
+  | "sparkles"
+  | "flower";
 
 export interface Category {
   slug: string;
