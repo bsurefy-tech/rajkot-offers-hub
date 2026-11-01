@@ -13,6 +13,7 @@ import { Breadcrumb, Container, SectionHeader } from "@/components/layout/contai
 import { OfferCarousel } from "@/components/offers/offer-card";
 import { OfferCode } from "@/components/offers/offer-code";
 import { BusinessRow, HowToGetSteps, TermsAccordion } from "@/components/offers/offer-sections";
+import { ReviewForm } from "@/components/offers/review-form";
 import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
 import { ShareButton } from "@/components/offers/share-button";
@@ -24,7 +25,7 @@ import { DetailRow } from "@/components/ui/display";
 import { RatingInline } from "@/components/ui/rating";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionTabs } from "@/components/ui/section-tabs";
-import { getBusiness, getCategory, getOffer, getOfferReviews, getSimilarOffers } from "@/lib/data";
+import { getBusiness, getCategory, getOffer, getOfferReviews, getReviewCriteria, getSimilarOffers } from "@/lib/data";
 import { formatRange, formatRupees } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import { getLocale, getT } from "@/lib/i18n/server";
@@ -62,11 +63,12 @@ async function OfferContent({ slug }: { slug: string }) {
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   const offer = await getOffer(slug);
   if (!offer) notFound();
-  const [business, category, similar, reviews] = await Promise.all([
+  const [business, category, similar, reviews, criteria] = await Promise.all([
     getBusiness(offer.businessSlug),
     getCategory(offer.categorySlug),
     getSimilarOffers(offer),
     getOfferReviews(offer.id),
+    getReviewCriteria("offer", offer.id),
   ]);
   if (!business) notFound();
 
@@ -212,32 +214,36 @@ async function OfferContent({ slug }: { slug: string }) {
             }
             items={[
               { value: "details", label: t("Details"), content: details },
-              { value: "how", label: t("How to get it"), content: <HowToGetSteps steps={offer.steps} /> },
+              // A tab only when its section has something in it.
+              ...(offer.steps.length ? [{ value: "how", label: t("How to get it"), content: <HowToGetSteps steps={offer.steps} /> }] : []),
               ...(offer.terms.length
                 ? [{ value: "terms", label: t("Terms"), content: <TermsAccordion terms={offer.terms} /> }]
                 : []),
-              {
-                value: "outlets",
-                label: t(outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: outlets.length }),
-                content: (
-                  <div className="flex flex-col gap-4">
-                    <OutletSideCards outlets={outlets} contact={business} path={shopPath(business.slug)} storeHref={shopPath(business.slug)} />
-                  </div>
-                ),
-                // On desktop the map and address sit in the side column.
-                className: "lg:hidden",
-              },
-              ...(reviews.total
+              ...(outlets.length
                 ? [
                     {
-                      value: "reviews",
-                      label: t("Reviews ({count})", { count: reviews.total }),
+                      value: "outlets",
+                      label: t(outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: outlets.length }),
                       content: (
-                        <ReviewList reviews={reviews.items} total={reviews.total} />
+                        <div className="flex flex-col gap-4">
+                          <OutletSideCards outlets={outlets} contact={business} path={shopPath(business.slug)} storeHref={shopPath(business.slug)} />
+                        </div>
                       ),
+                      // On desktop the map and address sit in the side column.
+                      className: "lg:hidden",
                     },
                   ]
                 : []),
+              // Always there, even before the first review, so anyone can write one.
+              {
+                value: "reviews",
+                label: reviews.total ? t("Reviews ({count})", { count: reviews.total }) : t("Reviews"),
+                content: (
+                  <ReviewList reviews={reviews.items} total={reviews.total}>
+                    <ReviewForm target="offer" id={offer.id} criteria={criteria} first={!reviews.total} />
+                  </ReviewList>
+                ),
+              },
             ]}
           />
         </div>
