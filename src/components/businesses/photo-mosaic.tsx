@@ -4,23 +4,14 @@ import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useT } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-import { PhotoViewer } from "./photo-gallery";
+import { More, PhotoViewer } from "./photo-gallery";
 
 /** The first photo is the page's main image on both layouts, so it loads straight away (not preloaded: which one shows depends on the screen). */
 const first = { loading: "eager", fetchPriority: "high" } as const;
 
-/** Most photos the phone row tries to fit, and the gap between them (`gap-1`). */
+/** Most photos the phone row tries to fit, and the gap between them (`gap-0.5`). */
 const ROW_CANDIDATES = 4;
-const GAP = 4;
-
-/** Dark cover on the last tile saying how many more photos there are. */
-function More({ count }: { count: number }) {
-  return (
-    <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-heading font-semibold text-white">
-      +{count}
-    </span>
-  );
-}
+const GAP = 2;
 
 /**
  * The shop's photos at the top of the page; the last tile says how many more there are, and tapping any
@@ -71,7 +62,7 @@ export function PhotoMosaic({ images, alt, children }: { images: string[]; alt: 
 
   return (
     <div className="relative">
-      <div ref={row} className="flex h-48 gap-1 overflow-hidden bg-surface sm:h-60 lg:hidden">
+      <div ref={row} className="flex h-48 gap-0.5 overflow-hidden bg-surface sm:h-60 lg:hidden">
         {candidates.map((src, i) => (
           <button
             key={src}
@@ -100,7 +91,7 @@ export function PhotoMosaic({ images, alt, children }: { images: string[]; alt: 
 
       <div
         className={cn(
-          "hidden h-[280px] gap-1 overflow-hidden bg-surface lg:grid",
+          "hidden h-[280px] gap-0.5 overflow-hidden bg-surface lg:grid",
           many && "grid-cols-[2fr_1fr]",
           wide && "grid-cols-[2fr_1fr_1fr]",
           n >= 3 && "grid-rows-2",

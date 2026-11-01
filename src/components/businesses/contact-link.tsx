@@ -23,6 +23,8 @@ export function ContactLink({
   number,
   masked,
   offerId,
+  message,
+  label,
   className,
   children,
 }: {
@@ -32,6 +34,10 @@ export function ContactLink({
   masked: boolean;
   /** On an offer page: the tap counts towards that offer's stats. */
   offerId?: string;
+  /** WhatsApp only: the message the chat opens with. */
+  message?: string;
+  /** Accessible name for a button that shows text of its own; icon-only ones keep "Log in to see the number". */
+  label?: string;
   className?: string;
   children: ReactNode;
 }) {
@@ -43,7 +49,7 @@ export function ContactLink({
   const open = (contact: { phone: string; whatsapp: string }) => {
     trackOffer(offerId, kind);
     if (kind === "call") window.location.href = telHref(contact.phone);
-    else if (!window.open(whatsappHref(contact.whatsapp), "_blank", "noopener")) {
+    else if (!window.open(whatsappHref(contact.whatsapp, message), "_blank", "noopener")) {
       // Right after logging in the browser may block the new tab: the numbers are known now, so one more tap opens it.
       toast(t("You are logged in. Tap WhatsApp again."));
     }
@@ -66,7 +72,7 @@ export function ContactLink({
     });
 
   if (!masked) {
-    const href = kind === "call" ? telHref(number) : whatsappHref(number);
+    const href = kind === "call" ? telHref(number) : whatsappHref(number, message);
     return (
       <a
         href={href}
@@ -84,7 +90,7 @@ export function ContactLink({
       type="button"
       className={className}
       disabled={pending}
-      aria-label={numbers ? undefined : t("Log in to see the number")}
+      aria-label={label ?? (numbers ? undefined : t("Log in to see the number"))}
       onClick={() => {
         if (numbers) return open(numbers);
         if (!login.signedIn()) return login.prompt("shop_contact", reveal);

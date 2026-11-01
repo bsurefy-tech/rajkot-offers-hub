@@ -57,3 +57,91 @@ export async function getBusinessCatalog(businessId: string): Promise<{ items: C
   // A stable sort keeps the API's own order within each group.
   return { items: [...items.filter((i) => i.featured), ...items.filter((i) => !i.featured)], total: page?.meta.total ?? 0 };
 }
+
+/** One way to get an item: buy, rent, book, or ask the shop. No `amount` means "Price on request". */
+export interface CatalogPrice {
+  kind: "sale" | "rent" | "book" | "enquire";
+  amount?: number;
+  /** Top of a range ("₹4,000 – ₹6,000"). */
+  max?: number;
+  /** The price is where it starts ("From ₹4,000"). */
+  from?: boolean;
+  /** The price before a discount, shown struck through. */
+  was?: number;
+  unit: "item" | "hour" | "day" | "night" | "person" | "event";
+}
+
+/** What an item's details popup adds to its card. */
+export interface CatalogItemDetail {
+  /** The full description; the card has only the short one. */
+  about?: string;
+  /** Cover first, then the gallery. */
+  images: string[];
+  prices: CatalogPrice[];
+  /** What it comes in: sizes, colours… */
+  options: { label: string; values: string[] }[];
+  /** Fabric, occasion… */
+  details: { label: string; value: string }[];
+  brochure?: { url: string; name?: string; pages?: number };
+}
+
+type Choice = { label: string };
+
+/** `GET /businesses/{id}/catalog-items/{item}`: the parts the popup shows. */
+interface CatalogItemResource {
+  description: string | null;
+  cover: Media | null;
+  gallery: Media[];
+  offers: {
+    type: CatalogPrice["kind"];
+    price_type: "fixed" | "starting_from" | "range" | "on_request";
+    price: number | string | null;
+    price_max: number | string | null;
+    compare_at_price: number | string | null;
+    billing_unit: CatalogPrice["unit"];
+  }[];
+  variant_options: { name: string; values: Choice[] }[];
+  attributes: { name: string; unit: string | null; value?: Choice | string | number | boolean | null; values?: Choice[] }[];
+  brochure: { url: string; name: string | null; pages: number | null } | null;
+}
+
+/** A positive amount, or none ("4250.00" → 4250). */
+function money(value: number | string | null) {
+  const n = Number(value);
+  return value != null && Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+function attributeValue(attribute: CatalogItemResource["attributes"][number]) {
+  const { value, values, unit } = attribute;
+  if (values?.length) return values.map((v) => v.label).join(", ");
+  if (value && typeof value === "object") return value.label;
+  if (typeof value === "string" || typeof value === "number") return unit ? `${value} ${unit}` : String(value);
+  return "";
+}
+
+/** One catalog item's details (by id), for its popup; none when it is gone. */
+export async function getCatalogItem(businessId: string, itemId: string): Promise<CatalogItemDetail | undefined> {
+  const result = await orUndefined(api<{ data: CatalogItemResource }>(`/businesses/${businessId}/catalog-items/${itemId}`));
+  if (!result) return undefined;
+  const item = result.data;
+  return {
+    ...(item.description ? { about: item.description } : {}),
+    images: [...new Set([item.cover?.url, ...item.gallery.map((m) => m.url)].filter((url): url is string => !!url))],
+    prices: item.offers.map((offer) => {
+      const amount = offer.price_type === "on_request" ? undefined : money(offer.price);
+      const max = offer.price_type === "range" ? money(offer.price_max) : undefined;
+      const was = money(offer.compare_at_price);
+      return {
+        kind: offer.type,
+        unit: offer.billing_unit,
+        ...(amount ? { amount } : {}),
+        ...(amount && max && max > amount ? { max } : {}),
+        ...(amount && offer.price_type === "starting_from" ? { from: true } : {}),
+        ...(amount && was && was > amount ? { was } : {}),
+      };
+    }),
+    options: item.variant_options.map((o) => ({ label: o.name, values: o.values.map((v) => v.label) })).filter((o) => o.values.length),
+    details: item.attributes.map((a) => ({ label: a.name, value: attributeValue(a) })).filter((d) => d.value),
+    ...(item.brochure?.url ? { brochure: { url: item.brochure.url, ...(item.brochure.name ? { name: item.brochure.name } : {}), ...(item.brochure.pages ? { pages: item.brochure.pages } : {}) } } : {}),
+  };
+}

@@ -17,6 +17,7 @@ import { PageMarker } from "@/components/analytics/page-marker";
 import { Container } from "@/components/layout/container";
 import { FollowBarButton, FollowButton } from "@/components/offers/follow-button";
 import { OfferCard } from "@/components/offers/offer-card";
+import { ReviewForm } from "@/components/offers/review-form";
 import { ReviewList } from "@/components/offers/reviews";
 import { SaveBarButton, SaveTextButton } from "@/components/offers/save-button";
 import { ShareButton } from "@/components/offers/share-button";
@@ -25,7 +26,7 @@ import { DetailRow, EmptyState } from "@/components/ui/display";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionTabs } from "@/components/ui/section-tabs";
 import { offersPath } from "@/lib/areas";
-import { getBusiness, getBusinessCatalog, getBusinessOffers, getBusinessReviews, getCategory } from "@/lib/data";
+import { getBusiness, getBusinessCatalog, getBusinessOffers, getBusinessReviews, getCategory, getReviewCriteria } from "@/lib/data";
 import { getT } from "@/lib/i18n/server";
 import { getShopStatus } from "@/lib/zalak/api";
 import { directionsHref } from "@/lib/utils";
@@ -118,7 +119,7 @@ async function PhotosTab({ business, images }: { business: Business; images: str
   const t = await getT();
   return (
     <div>
-      <h2 className="mb-3 text-heading font-semibold">{t("Photos")}</h2>
+      <h2 className="in-data-first:sr-only mb-3 text-heading font-semibold">{t("Photos")}</h2>
       <PhotoGallery images={images} alt={t("Photo of {business}", { business: business.name })} />
     </div>
   );
@@ -129,7 +130,7 @@ async function OutletsTab({ business, path }: { business: Business; path: string
   const t = await getT();
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-heading font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
+      <h2 className="in-data-first:sr-only text-heading font-semibold">{t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length })}</h2>
       <OutletSideCards outlets={business.outlets} contact={business} path={path} />
     </div>
   );
@@ -140,12 +141,14 @@ async function AboutTab({ business }: { business: Business }) {
   return (
     <div className="flex flex-col gap-7">
       <section>
-        <h2 className="mb-2 text-heading font-semibold">{t("About us")}</h2>
-        <p className="max-w-[640px] text-body-sm leading-relaxed text-muted">{business.about}</p>
+        <h2 className="in-data-first:sr-only mb-2 text-heading font-semibold">{t("About us")}</h2>
+        {business.about && <p className="max-w-[640px] text-body-sm leading-relaxed text-muted">{business.about}</p>}
       </section>
-      <div className="lg:hidden">
-        <LinkRows business={business} />
-      </div>
+      {(business.instagram || business.website) && (
+        <div className="lg:hidden">
+          <LinkRows business={business} />
+        </div>
+      )}
     </div>
   );
 }
@@ -154,10 +157,11 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   const t = await getT();
   const business = await getBusiness((await params).slug);
   if (!business) notFound();
-  const [{ active, expired }, catalog, reviews, category, status] = await Promise.all([
+  const [{ active, expired }, catalog, reviews, criteria, category, status] = await Promise.all([
     getBusinessOffers(business.slug),
     getBusinessCatalog(business.id),
     getBusinessReviews(business.id, business.outlets),
+    getReviewCriteria("shop", business.id),
     // A shop's own category can sit below the offer categories ("Footwear Stores" under "Footwear"); only those have a list page.
     getCategory(business.categorySlug),
     getShopStatus(business.slug),
@@ -195,9 +199,16 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
   const catalogSection = {
     value: "catalog",
     label: t("Catalog ({count})", { count: catalog.total }),
-    content: <Catalog items={catalog.items} total={catalog.total} />,
+    content: (
+      <Catalog
+        items={catalog.items}
+        total={catalog.total}
+        shop={{ id: business.id, slug: business.slug, name: business.name, phone: business.phone, whatsapp: business.whatsapp, contactMasked: business.contactMasked }}
+      />
+    ),
   };
   // Offers always come first, and only when the shop has some (live or past); the catalog follows when it has items.
+  // Every tab below likewise shows only when its section has something in it.
   const sections = [...(active.length || expired.length ? [offersSection] : []), ...(catalog.items.length ? [catalogSection] : [])];
 
   return (
@@ -250,28 +261,34 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
             }
             items={[
               ...sections,
-              { value: "about", label: t("About us"), content: <AboutTab business={business} /> },
+              // Only with something to say: its text, or on a phone its links (on desktop they sit in the sidebar).
+              ...(business.about || business.instagram || business.website
+                ? [{ value: "about", label: t("About us"), content: <AboutTab business={business} />, className: business.about ? undefined : "lg:hidden" }]
+                : []),
               ...(images.length > 1
                 ? [{ value: "photos", label: t("Photos ({count})", { count: images.length }), content: <PhotosTab business={business} images={images} /> }]
                 : []),
-              {
-                value: "outlets",
-                label: t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length }),
-                content: <OutletsTab business={business} path={path} />,
-                // On desktop the outlets live in the sidebar beside the map.
-                className: "lg:hidden",
-              },
-              ...(reviews.total
+              ...(business.outlets.length
                 ? [
                     {
-                      value: "reviews",
-                      label: t("Reviews ({count})", { count: reviews.total }),
-                      content: (
-                        <ReviewList reviews={reviews.items} total={reviews.total} />
-                      ),
+                      value: "outlets",
+                      label: t(business.outlets.length > 1 ? "Outlets ({count})" : "Outlet ({count})", { count: business.outlets.length }),
+                      content: <OutletsTab business={business} path={path} />,
+                      // On desktop the outlets live in the sidebar beside the map.
+                      className: "lg:hidden",
                     },
                   ]
                 : []),
+              // Always there, even before the first review, so anyone can write one.
+              {
+                value: "reviews",
+                label: reviews.total ? t("Reviews ({count})", { count: reviews.total }) : t("Reviews"),
+                content: (
+                  <ReviewList reviews={reviews.items} total={reviews.total}>
+                    <ReviewForm target="shop" id={business.id} criteria={criteria} first={!reviews.total} />
+                  </ReviewList>
+                ),
+              },
             ]}
           />
         </div>

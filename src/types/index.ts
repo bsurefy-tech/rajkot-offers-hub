@@ -179,6 +179,12 @@ export interface Review {
   scores: { label: string; score: number }[];
 }
 
+/** One thing a review is rated on, e.g. { key: "quality", label: "Quality" }. */
+export interface ReviewCriterion {
+  key: string;
+  label: string;
+}
+
 /** One of a shop's outlets; the main one comes first. */
 export interface Outlet {
   id: string;

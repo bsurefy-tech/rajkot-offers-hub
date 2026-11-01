@@ -14,7 +14,8 @@ export type LoginReason =
   | "rewards"
   | "invite"
   | "notifications"
-  | "saved";
+  | "saved"
+  | "write_review";
 
 export type EventMap = {
   offer_view: { offer_id: string };
@@ -50,6 +51,7 @@ export type EventMap = {
   reel_link_tap: Record<string, never>;
   zalak_react: { kind: "status" | "reel"; reaction: "like" | "save"; on: boolean };
   zalak_report: { kind: "status" | "reel"; result: "ok" | "login" | "own" | "gone" | "limit" | "error" };
+  review_submit: { kind: "shop" | "offer"; result: "ok" | "login" | "own" | "duplicate" | "error" };
   zalak_tour_done: { kind: "status" | "reel" };
   scratch_reveal: { prize: "points" | "reward" | "nothing"; points: number };
   reward_redeem: { result: "ok" | "login" | "error" };

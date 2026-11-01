@@ -23,8 +23,12 @@ interface SheetProps {
   open: boolean;
   onClose: () => void;
   title: string;
+  /** A line under the title, e.g. an item's category and rating. */
+  subtitle?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
+  /** "lg": a wider dialog on desktop and a taller sheet on mobile, for content to look at (an item's photos and details). */
+  size?: "md" | "lg";
   className?: string;
 }
 
@@ -47,7 +51,7 @@ export function SheetClose({ onClose }: { onClose: () => void }) {
  * Bottom sheet on mobile, centred dialog on desktop. Built on <dialog>
  * so focus trapping, Escape and the backdrop come from the browser.
  */
-export function Sheet({ open, onClose, title, children, footer, className }: SheetProps) {
+export function Sheet({ open, onClose, title, subtitle, children, footer, size = "md", className }: SheetProps) {
   const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const [footerEl, setFooterEl] = useState<HTMLElement | null>(null);
@@ -68,20 +72,27 @@ export function Sheet({ open, onClose, title, children, footer, className }: She
       ref={ref}
       aria-label={title}
       tabIndex={-1}
-      onClose={onClose}
+      onClose={(e) => {
+        // React hands a dialog opened inside this one (a photo viewer) its close event too; only our own closes us.
+        if (e.target === e.currentTarget) onClose();
+      }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
       className={cn(
         "m-0 mt-auto w-full max-w-none bg-transparent p-0 outline-none backdrop:bg-ink/45",
-        "lg:m-auto lg:max-w-[480px]",
+        "lg:m-auto",
+        size === "lg" ? "lg:max-w-[760px]" : "lg:max-w-[480px]",
         className,
       )}
     >
       <SheetClose onClose={onClose} />
-      <div className="flex max-h-[85dvh] min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl">
-        <div className="flex items-center justify-between border-b border-line px-4 py-4 lg:px-6 lg:pt-5">
-          <h2 className="text-heading font-semibold">{title}</h2>
+      <div className={cn("flex min-h-[60dvh] flex-col rounded-t-3xl bg-white lg:min-h-0 lg:rounded-2xl", size === "lg" ? "max-h-[92dvh] lg:max-h-[88dvh]" : "max-h-[85dvh]")}>
+        <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-4 lg:px-6 lg:pt-5">
+          <div className="min-w-0">
+            <h2 className="text-heading font-semibold">{title}</h2>
+            {subtitle && <div className="mt-0.5 text-body-sm text-muted">{subtitle}</div>}
+          </div>
           <IconButton variant="soft" size="sm" aria-label={t("Close")} onClick={onClose} className="hidden lg:inline-flex">
             <X size={18} />
           </IconButton>

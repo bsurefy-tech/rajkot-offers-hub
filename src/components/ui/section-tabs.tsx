@@ -29,6 +29,9 @@ interface SectionTabsProps {
  * All sections on one scrolling page with a tab bar that sticks to the top.
  * Tapping a tab scrolls to its section, and scrolling highlights the tab of the
  * section being read. Without JavaScript the tabs are plain "#section" links.
+ *
+ * The first section sits right under its own tab, so a title that only repeats the tab label
+ * can drop out there with `in-data-first:sr-only` (screen readers still get it).
  */
 export function SectionTabs({ items, label, topBar, className }: SectionTabsProps) {
   const [active, setActive] = useState(items[0]?.value);
@@ -147,7 +150,7 @@ export function SectionTabs({ items, label, topBar, className }: SectionTabsProp
         <Fragment key={item.value}>
           {/* A divider of its own, not a border, so the column's gap spaces both sides of it alike. */}
           {i > 0 && <div aria-hidden className={cn("h-px bg-line", item.className)} />}
-          <section id={item.value} className={cn(topBar ? "scroll-mt-28" : "scroll-mt-14", "lg:scroll-mt-32 lg:px-8", item.className)}>
+          <section id={item.value} data-first={i === 0 || undefined} className={cn(topBar ? "scroll-mt-28" : "scroll-mt-14", "lg:scroll-mt-32 lg:px-8", item.className)}>
             {item.content}
           </section>
         </Fragment>
