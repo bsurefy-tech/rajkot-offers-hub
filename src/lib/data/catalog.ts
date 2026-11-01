@@ -77,6 +77,8 @@ export interface CatalogItemDetail {
   about?: string;
   /** Cover first, then the gallery. */
   images: string[];
+  /** Small versions of `images`, by their full URL, for thumbnail strips. */
+  thumbs: Record<string, string>;
   prices: CatalogPrice[];
   /** What it comes in: sizes, colours… */
   options: { label: string; values: string[] }[];
@@ -127,6 +129,7 @@ export async function getCatalogItem(businessId: string, itemId: string): Promis
   return {
     ...(item.description ? { about: item.description } : {}),
     images: [...new Set([item.cover?.url, ...item.gallery.map((m) => m.url)].filter((url): url is string => !!url))],
+    thumbs: Object.fromEntries([item.cover, ...item.gallery].flatMap((m) => (m?.thumb_url ? [[m.url, m.thumb_url]] : []))),
     prices: item.offers.map((offer) => {
       const amount = offer.price_type === "on_request" ? undefined : money(offer.price);
       const max = offer.price_type === "range" ? money(offer.price_max) : undefined;

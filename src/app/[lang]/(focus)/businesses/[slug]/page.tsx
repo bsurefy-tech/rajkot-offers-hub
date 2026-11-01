@@ -120,7 +120,7 @@ async function PhotosTab({ business, images }: { business: Business; images: str
   return (
     <div>
       <h2 className="in-data-first:sr-only mb-3 text-heading font-semibold">{t("Photos")}</h2>
-      <PhotoGallery images={images} alt={t("Photo of {business}", { business: business.name })} />
+      <PhotoGallery images={images} thumbs={business.thumbs} alt={t("Photo of {business}", { business: business.name })} />
     </div>
   );
 }
@@ -218,7 +218,7 @@ async function BusinessContent({ params }: Pick<PageProps<"/[lang]/businesses/[s
       <JsonLd data={crumbs} />
       <Container className="px-0 lg:px-5">
         <div className="overflow-hidden lg:rounded-2xl lg:border lg:border-line lg:bg-white">
-          <PhotoMosaic images={images} alt={business.name}>
+          <PhotoMosaic images={images} thumbs={business.thumbs} alt={business.name}>
             {mobileButtons}
           </PhotoMosaic>
           <div className="flex flex-col gap-3 px-4 pt-3 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:px-8 lg:py-6">

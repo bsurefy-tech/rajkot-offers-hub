@@ -27,7 +27,7 @@ export function More({ count, className }: { count: number; className?: string }
  * in a viewer you can swipe, arrow-key or click through, across every photo; Escape, the X or the
  * backdrop closes it.
  */
-export function PhotoGallery({ images, alt }: { images: string[]; alt: string }) {
+export function PhotoGallery({ images, thumbs, alt }: { images: string[]; thumbs?: Record<string, string>; alt: string }) {
   const t = useT();
   const [open, setOpen] = useState<number | null>(null);
   const n = images.length;
@@ -58,18 +58,22 @@ export function PhotoGallery({ images, alt }: { images: string[]; alt: string })
           </li>
         ))}
       </ul>
-      <PhotoViewer images={images} alt={alt} index={open} onClose={() => setOpen(null)} />
+      <PhotoViewer images={images} thumbs={thumbs} alt={alt} index={open} onClose={() => setOpen(null)} />
     </>
   );
 }
 
+/** Full-screen photos: swipe, arrow keys or the arrows to move, and a strip of thumbnails to jump to one. */
 export function PhotoViewer({
   images,
+  thumbs,
   alt,
   index,
   onClose,
 }: {
   images: string[];
+  /** Small versions of `images` by full URL; the strip uses them so it doesn't download every full photo. */
+  thumbs?: Record<string, string>;
   alt: string;
   index: number | null;
   onClose: () => void;
@@ -77,6 +81,7 @@ export function PhotoViewer({
   const t = useT();
   const ref = useRef<HTMLDialogElement>(null);
   const track = useRef<HTMLDivElement>(null);
+  const strip = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -94,10 +99,18 @@ export function PhotoViewer({
     if (index === null && dialog.open) dialog.close();
   }, [index]);
 
+  // Keeps the current photo's thumbnail in the middle of the strip.
+  useEffect(() => {
+    const el = strip.current;
+    const thumb = el?.children[active] as HTMLElement | undefined;
+    if (el && thumb) el.scrollTo({ left: thumb.offsetLeft - (el.clientWidth - thumb.offsetWidth) / 2, behavior: "smooth" });
+  }, [active]);
+
   function go(to: number) {
     const el = track.current;
     if (!el || to < 0 || to >= images.length) return;
-    el.scrollTo({ left: to * el.clientWidth, behavior: "smooth" });
+    // A thumbnail can be far away: jump there rather than slide past every photo in between.
+    el.scrollTo({ left: to * el.clientWidth, behavior: Math.abs(to - active) > 1 ? "instant" : "smooth" });
   }
 
   return (
@@ -172,6 +185,26 @@ export function PhotoViewer({
             </button>
           ))}
         </div>
+        {images.length > 1 && (
+          <div ref={strip} className="no-scrollbar relative flex shrink-0 gap-2 overflow-x-auto px-4 pt-3 pb-1 lg:px-6 [&>:first-child]:ml-auto [&>:last-child]:mr-auto">
+            {images.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                aria-label={t("Photo {number}", { number: i + 1 })}
+                aria-current={i === active || undefined}
+                onClick={() => go(i)}
+                className={cn(
+                  "relative size-14 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-white/10 opacity-50 transition-opacity hover:opacity-80 lg:size-16",
+                  i === active && "opacity-100 outline-2 outline-white -outline-offset-2",
+                )}
+              >
+                {/* An API thumbnail is already small; only a photo without one goes through the resizer. */}
+                <Image src={thumbs?.[src] ?? src} alt="" fill sizes="64px" unoptimized={!!thumbs?.[src]} className="object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
         <div className="h-[max(1rem,env(safe-area-inset-bottom))] shrink-0" />
       </div>
     </dialog>

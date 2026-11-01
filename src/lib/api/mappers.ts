@@ -259,6 +259,7 @@ export function toBusiness(resource: BusinessResource): Business {
     hours: toHours(resource.business_hours),
     outlets: [...(resource.branches ?? [])].sort((a, b) => Number(b.is_main) - Number(a.is_main)).map(toOutlet),
     photos: resource.gallery.length ? resource.gallery.map((m) => m.url) : [cover],
+    thumbs: Object.fromEntries([resource.cover, ...resource.gallery].flatMap((m) => (m?.thumb_url ? [[m.url, m.thumb_url]] : []))),
     geo: {
       lat: Number(address?.latitude) || RAJKOT.lat,
       lng: Number(address?.longitude) || RAJKOT.lng,

@@ -20,7 +20,7 @@ const GAP = 2;
  * shows (nearly) whole.
  * Desktop: a big photo with up to four smaller ones in a grid. A single photo fills the whole width.
  */
-export function PhotoMosaic({ images, alt, children }: { images: string[]; alt: string; children?: ReactNode }) {
+export function PhotoMosaic({ images, thumbs, alt, children }: { images: string[]; thumbs?: Record<string, string>; alt: string; children?: ReactNode }) {
   const t = useT();
   const [open, setOpen] = useState<number | null>(null);
   const row = useRef<HTMLDivElement>(null);
@@ -118,7 +118,7 @@ export function PhotoMosaic({ images, alt, children }: { images: string[]; alt: 
         ))}
       </div>
       {children}
-      <PhotoViewer images={images} alt={alt} index={open} onClose={() => setOpen(null)} />
+      <PhotoViewer images={images} thumbs={thumbs} alt={alt} index={open} onClose={() => setOpen(null)} />
     </div>
   );
 }
