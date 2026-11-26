@@ -11,6 +11,7 @@ import { loadCatalogItemAction } from "@/lib/actions/catalog";
 import type { CatalogItem, CatalogItemDetail, CatalogPrice } from "@/lib/data/catalog";
 import { formatRupees } from "@/lib/format";
 import { useT } from "@/lib/i18n/client";
+import { pick, type ImageSizes } from "@/lib/images";
 import type { MessageKey } from "@/lib/i18n/translate";
 import { cn } from "@/lib/utils";
 import { ContactLink } from "./contact-link";
@@ -77,7 +78,7 @@ function PriceRow({ price }: { price: CatalogPrice }) {
  * The item's photos one at a time, each shown whole: swipe, or the arrows, to move; tap for full
  * screen. A counter says which one of how many.
  */
-function Carousel({ images, alt, onOpen }: { images: string[]; alt: string; onOpen: (index: number) => void }) {
+function Carousel({ images, sizes, alt, onOpen }: { images: string[]; sizes?: ImageSizes; alt: string; onOpen: (index: number) => void }) {
   const t = useT();
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -103,7 +104,7 @@ function Carousel({ images, alt, onOpen }: { images: string[]; alt: string; onOp
             onClick={() => onOpen(i)}
             className="relative aspect-[4/3] w-full shrink-0 cursor-zoom-in snap-center"
           >
-            <Image src={src} alt={i === 0 ? alt : ""} fill sizes="(min-width: 1024px) 360px, 100vw" className="object-contain" />
+            <Image src={pick(sizes, src, "large")} alt={i === 0 ? alt : ""} fill sizes="(min-width: 1024px) 360px, 100vw" className="object-contain" />
           </button>
         ))}
       </div>
@@ -193,7 +194,7 @@ export function CatalogItemSheet({ item, shop, onClose }: { item: CatalogItem | 
         // Phone: one column. Desktop: the photos on the left, the rest beside them.
         <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
           {images.length > 0 ? (
-            <Carousel images={images} alt={item.name} onOpen={setPhoto} />
+            <Carousel images={images} sizes={detail?.sizes} alt={item.name} onOpen={setPhoto} />
           ) : (
             <div className="flex aspect-[4/3] items-center justify-center rounded-xl bg-surface text-faint">
               <Package size={40} strokeWidth={1.4} aria-hidden />
@@ -249,7 +250,7 @@ export function CatalogItemSheet({ item, shop, onClose }: { item: CatalogItem | 
             {detail === null && <p className="text-body-sm text-muted">{t("Could not load the details.")}</p>}
           </div>
 
-          <PhotoViewer images={images} thumbs={detail?.thumbs} alt={item.name} index={photo} onClose={() => setPhoto(null)} />
+          <PhotoViewer images={images} thumbs={detail?.thumbs} sizes={detail?.sizes} alt={item.name} index={photo} onClose={() => setPhoto(null)} />
         </div>
       )}
     </Sheet>
