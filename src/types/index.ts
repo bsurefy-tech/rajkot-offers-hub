@@ -17,7 +17,15 @@ export type CategoryIcon =
   | "gem"
   | "candy"
   | "plane"
-  | "shopping-basket";
+  | "shopping-basket"
+  | "landmark"
+  | "chef-hat"
+  | "camera"
+  | "video"
+  | "party-popper"
+  | "mail"
+  | "sparkles"
+  | "flower";
 
 export interface Category {
   slug: string;
@@ -171,6 +179,12 @@ export interface Review {
   scores: { label: string; score: number }[];
 }
 
+/** One thing a review is rated on, e.g. { key: "quality", label: "Quality" }. */
+export interface ReviewCriterion {
+  key: string;
+  label: string;
+}
+
 /** One of a shop's outlets; the main one comes first. */
 export interface Outlet {
   id: string;
@@ -211,6 +225,8 @@ export interface Business {
   /** Every outlet, main first; one entry for a shop with a single location. */
   outlets: Outlet[];
   photos: string[];
+  /** Small versions of `cover` and `photos`, by their full URL, for thumbnail strips. */
+  thumbs?: Record<string, string>;
   geo: { lat: number; lng: number };
 }
 

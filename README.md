@@ -52,7 +52,7 @@ repository → `bsurefy-tech/rajkot-offers-hub`, then in the Worker's **Settings
 
 | Setting | Value |
 |---|---|
-| Production branch | `develop` (switch to `main` once releases go through it) |
+| Production branch | `main`: a release PR (`develop` → `main`) is what goes live; merging into `develop` deploys nothing |
 | Root directory | `/` |
 | Build command | `pnpm exec opennextjs-cloudflare build` |
 | Deploy command | `pnpm exec opennextjs-cloudflare deploy` |
@@ -67,6 +67,11 @@ prerendered pages in R2. No other build variables are needed (the API and media 
 variable.
 
 Then add the custom domain `rajkotoffershub.com` under the Worker's **Settings → Domains & Routes**.
+
+Keep one Git connection, on this Worker. A build trigger tied to another Worker (one deleted or
+recreated since) builds fine, then fails at deploy with "The name in your wrangler.jsonc file
+(rajkot-offers-hub) must match the name of your Worker": Wrangler checks the Worker's internal tag, not
+its name. Remove that trigger and keep the one on this Worker.
 
 **From your machine:** `pnpm run deploy` (build and deploy) or `pnpm run upload` (a new version
 without sending traffic to it). OpenNext bakes the build's env files into the worker, and `.env.local`
