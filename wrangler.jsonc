@@ -21,8 +21,8 @@
     "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }]
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
-  // next/image resizing through Cloudflare Images.
-  "images": { "binding": "IMAGES" },
+  // No Cloudflare Images binding: photos come pre-sized from the API and are shown as they are (next.config.ts), so
+  // nothing here can be billed per resize. OpenNext serves /_next/image unresized without one.
   // Settings live in .env.production (build and runtime). The one secret, API_FRONTEND_KEY:
   //   npx wrangler secret put API_FRONTEND_KEY
   "observability": { "enabled": true }

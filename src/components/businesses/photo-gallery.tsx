@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useT } from "@/lib/i18n/client";
+import { pick, type ImageSizes } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 /** Photos shown: three rows, of two on a phone and of three from tablet up. */
@@ -27,7 +28,7 @@ export function More({ count, className }: { count: number; className?: string }
  * in a viewer you can swipe, arrow-key or click through, across every photo; Escape, the X or the
  * backdrop closes it.
  */
-export function PhotoGallery({ images, thumbs, alt }: { images: string[]; thumbs?: Record<string, string>; alt: string }) {
+export function PhotoGallery({ images, thumbs, sizes, alt }: { images: string[]; thumbs?: Record<string, string>; sizes?: ImageSizes; alt: string }) {
   const t = useT();
   const [open, setOpen] = useState<number | null>(null);
   const n = images.length;
@@ -45,7 +46,7 @@ export function PhotoGallery({ images, thumbs, alt }: { images: string[]; thumbs
               className="group relative block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-surface"
             >
               <Image
-                src={src}
+                src={pick(sizes, src, "medium")}
                 alt={alt}
                 fill
                 sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
@@ -58,7 +59,7 @@ export function PhotoGallery({ images, thumbs, alt }: { images: string[]; thumbs
           </li>
         ))}
       </ul>
-      <PhotoViewer images={images} thumbs={thumbs} alt={alt} index={open} onClose={() => setOpen(null)} />
+      <PhotoViewer images={images} thumbs={thumbs} sizes={sizes} alt={alt} index={open} onClose={() => setOpen(null)} />
     </>
   );
 }
@@ -67,6 +68,7 @@ export function PhotoGallery({ images, thumbs, alt }: { images: string[]; thumbs
 export function PhotoViewer({
   images,
   thumbs,
+  sizes,
   alt,
   index,
   onClose,
@@ -74,6 +76,8 @@ export function PhotoViewer({
   images: string[];
   /** Small versions of `images` by full URL; the strip uses them so it doesn't download every full photo. */
   thumbs?: Record<string, string>;
+  /** The 640px and 1600px versions of `images` (see `@/lib/images`): the viewer shows the large one. */
+  sizes?: ImageSizes;
   alt: string;
   index: number | null;
   onClose: () => void;
@@ -160,7 +164,7 @@ export function PhotoViewer({
               images.map((src, i) => (
                 <div key={src} className="relative h-full w-full shrink-0 snap-center">
                   <Image
-                    src={src}
+                    src={pick(sizes, src, "large")}
                     alt={i === active ? alt : ""}
                     fill
                     sizes="100vw"
@@ -203,8 +207,8 @@ export function PhotoViewer({
                   i === active && "opacity-100 outline-2 outline-white -outline-offset-2",
                 )}
               >
-                {/* An API thumbnail is already small; only a photo without one goes through the resizer. */}
-                <Image src={thumbs?.[src] ?? src} alt="" fill sizes="64px" unoptimized={!!thumbs?.[src]} className="object-cover" />
+                {/* The API's 150px thumbnail; the 640px version for a photo without one. */}
+                <Image src={thumbs?.[src] ?? pick(sizes, src, "medium")} alt="" fill sizes="64px" className="object-cover" />
               </button>
             ))}
           </div>

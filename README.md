@@ -33,7 +33,9 @@ Saved keeps its place in the bottom bar. To try it locally run the API's migrati
 
 The site runs on Cloudflare Workers through [OpenNext](https://opennext.js.org/cloudflare)
 (`wrangler.jsonc`, `open-next.config.ts`). Every page is rendered per request (`dynamic = "force-dynamic"` in the root layout); guest API reads are
-cached for a minute in the R2 bucket `rajkot-offers-hub-cache`; `next/image` resizes through Cloudflare Images.
+cached for a minute in the R2 bucket `rajkot-offers-hub-cache`. Images are never resized per request (`images.unoptimized`):
+the API makes each photo's 150px, 640px and 1600px WebP once, at upload, and `src/lib/images.ts` picks the one that fits.
+There is no Cloudflare Images binding — it billed every photo × width a crawler fetched.
 There are no prerendered pages: Cache Components and ISR refresh pages at request time, which hangs on
 Workers (error 1101) once an entry expires, so do not turn `cacheComponents` or `generateStaticParams` back on.
 

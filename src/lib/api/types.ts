@@ -9,6 +9,10 @@ export interface Media {
   id: string;
   url: string;
   thumb_url: string | null;
+  /** 640px WebP made at upload; the original until it has been made. Absent from an API that predates it. */
+  medium_url?: string;
+  /** 1600px WebP made at upload; the original until it has been made. */
+  large_url?: string;
 }
 
 export type PromotionType = "percent_off" | "amount_off" | "buy_x_get_y" | "free_gift" | "custom";
@@ -46,6 +50,9 @@ export interface PromotionCard {
   is_saved: boolean;
   cover_url: string | null;
   cover_thumb_url: string | null;
+  /** The cover at 640px, made at upload (see `@/lib/images`). */
+  cover_medium_url?: string | null;
+  cover_large_url?: string | null;
   /** Only when the feed was sent lat/lng; null when the shop has no location. */
   distance_km?: number | null;
   /** Average of the offer's approved reviews; null until it has one. */
@@ -160,6 +167,9 @@ export interface BusinessCard {
   logo_url: string | null;
   cover_url: string | null;
   cover_thumb_url: string | null;
+  /** The cover at 640px, made at upload (see `@/lib/images`). */
+  cover_medium_url?: string | null;
+  cover_large_url?: string | null;
   rating_avg: number | null;
   rating_count: number;
   is_verified: boolean;
