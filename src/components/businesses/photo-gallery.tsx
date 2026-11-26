@@ -83,6 +83,9 @@ export function PhotoViewer({
   const track = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  // The photos are only in the page while the viewer is open. Closed, they would still be in the HTML, and
+  // crawlers fetch every image there, hidden or not: a resize Cloudflare bills for each photo of every shop.
+  const shown = index !== null;
 
   useEffect(() => {
     const dialog = ref.current;
@@ -153,18 +156,19 @@ export function PhotoViewer({
             }}
             className="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto"
           >
-            {images.map((src, i) => (
-              <div key={src} className="relative h-full w-full shrink-0 snap-center">
-                <Image
-                  src={src}
-                  alt={i === active ? alt : ""}
-                  fill
-                  sizes="100vw"
-                  loading={Math.abs(i - (index ?? 0)) <= 1 ? "eager" : "lazy"}
-                  className="object-contain p-2 lg:p-6"
-                />
-              </div>
-            ))}
+            {shown &&
+              images.map((src, i) => (
+                <div key={src} className="relative h-full w-full shrink-0 snap-center">
+                  <Image
+                    src={src}
+                    alt={i === active ? alt : ""}
+                    fill
+                    sizes="100vw"
+                    loading={Math.abs(i - (index ?? 0)) <= 1 ? "eager" : "lazy"}
+                    className="object-contain p-2 lg:p-6"
+                  />
+                </div>
+              ))}
           </div>
           {[
             { label: t("Previous"), to: active - 1, Icon: ChevronLeft, side: "left-4" },
@@ -185,7 +189,7 @@ export function PhotoViewer({
             </button>
           ))}
         </div>
-        {images.length > 1 && (
+        {shown && images.length > 1 && (
           <div ref={strip} className="no-scrollbar relative flex shrink-0 gap-2 overflow-x-auto px-4 pt-3 pb-1 lg:px-6 [&>:first-child]:ml-auto [&>:last-child]:mr-auto">
             {images.map((src, i) => (
               <button
