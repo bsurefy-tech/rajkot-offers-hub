@@ -1,3 +1,5 @@
+import type { ImageSizes } from "@/lib/images";
+
 export type CategoryIcon =
   | "utensils"
   | "shirt"
@@ -85,6 +87,8 @@ export interface Offer {
   areaSlug: string;
   areaName: string;
   images: string[];
+  /** The 640px and 1600px versions of `images`, by their original URL (see `@/lib/images`). */
+  sizes?: ImageSizes;
   /** One-line offer summary shown in the details list. */
   offerText: string;
   validFrom: string;
@@ -227,6 +231,8 @@ export interface Business {
   photos: string[];
   /** Small versions of `cover` and `photos`, by their full URL, for thumbnail strips. */
   thumbs?: Record<string, string>;
+  /** The 640px and 1600px versions of `cover` and `photos`, by their full URL (see `@/lib/images`). */
+  sizes?: ImageSizes;
   geo: { lat: number; lng: number };
 }
 

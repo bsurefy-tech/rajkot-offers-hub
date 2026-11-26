@@ -1,5 +1,6 @@
 import { api, orUndefined } from "@/lib/api/client";
 import type { Media, Page } from "@/lib/api/types";
+import { sized, sizesOf, type ImageSizes } from "@/lib/images";
 import type { Rating } from "@/types";
 
 /** A product or service from a shop's catalog, as its card shows it. */
@@ -26,6 +27,7 @@ interface CatalogItemCard {
   is_featured: boolean;
   cover_url: string | null;
   cover_thumb_url: string | null;
+  cover_medium_url?: string | null;
   cover?: Media | null;
   rating_avg: number | null;
   rating_count: number;
@@ -37,7 +39,7 @@ const CATALOG_LIMIT = 24;
 function toCatalogItem(card: CatalogItemCard): CatalogItem {
   const price = Number(card.price_from);
   const avg = Number(card.rating_avg);
-  const image = card.cover_url || card.cover?.url || card.cover_thumb_url;
+  const image = card.cover_medium_url || card.cover_url || (card.cover ? sized(card.cover, "medium") : undefined) || card.cover_thumb_url;
   return {
     id: card.id,
     name: card.name,
@@ -79,6 +81,8 @@ export interface CatalogItemDetail {
   images: string[];
   /** Small versions of `images`, by their full URL, for thumbnail strips. */
   thumbs: Record<string, string>;
+  /** The 640px and 1600px versions of `images`, by their full URL (see `@/lib/images`). */
+  sizes: ImageSizes;
   prices: CatalogPrice[];
   /** What it comes in: sizes, colours… */
   options: { label: string; values: string[] }[];
@@ -130,6 +134,7 @@ export async function getCatalogItem(businessId: string, itemId: string): Promis
     ...(item.description ? { about: item.description } : {}),
     images: [...new Set([item.cover?.url, ...item.gallery.map((m) => m.url)].filter((url): url is string => !!url))],
     thumbs: Object.fromEntries([item.cover, ...item.gallery].flatMap((m) => (m?.thumb_url ? [[m.url, m.thumb_url]] : []))),
+    sizes: sizesOf([item.cover, ...item.gallery]),
     prices: item.offers.map((offer) => {
       const amount = offer.price_type === "on_request" ? undefined : money(offer.price);
       const max = offer.price_type === "range" ? money(offer.price_max) : undefined;

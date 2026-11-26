@@ -1,4 +1,5 @@
 import { daysBetween, toIsoDay } from "@/lib/format";
+import { sized, sizesOf } from "@/lib/images";
 import { img } from "@/lib/mock/images";
 import type { Area, Business, BusinessSummary, Category, CategoryIcon, Offer, OfferSummary, OfferType, OpeningHours, Outlet, Rating, Review } from "@/types";
 import type { Address, AreaCount, Branch, BranchResource, BusinessCard, BusinessHours, BusinessResource, CategoryChip, PromotionCard, PromotionDetail, PromotionType, ReviewResource } from "./types";
@@ -58,8 +59,9 @@ function rating(avg: number | string | null | undefined, count: number | undefin
 
 export function toOfferSummary(card: PromotionCard | PromotionDetail): OfferSummary {
   const validTo = day(card.ends_at);
-  // Cards carry `cover_url`; the detail resource carries a `cover` object instead.
-  const cover = card.cover_url || ("cover" in card ? card.cover?.url : undefined) || card.cover_thumb_url;
+  // Cards carry `cover_url`; the detail resource carries a `cover` object instead. Either way the 640px version
+  // made at upload, which is what an offer card shows (see `@/lib/images`).
+  const cover = card.cover_medium_url || card.cover_url || ("cover" in card && card.cover ? sized(card.cover, "medium") : undefined) || card.cover_thumb_url;
   // Without a photo of its own, the offer shows its shop's logo rather than a stock picture.
   const logo = cover ? undefined : card.business.logo_url;
   const minSpend = amount(card.min_spend);
@@ -121,6 +123,7 @@ export function toOffer(detail: PromotionDetail, business?: Business): Offer {
   const summary = toOfferSummary(detail);
   const own = [detail.cover?.url, ...detail.gallery.map((m) => m.url)].filter((url): url is string => Boolean(url));
   const shop = business?.photos.filter((url) => url !== FALLBACK_IMAGE) ?? [];
+  const sizes = own.length ? sizesOf([detail.cover, ...detail.gallery]) : shop.length ? business?.sizes : undefined;
   // The shop's area and address are its main branch's; an offer only at other branches shows theirs.
   const branches = detail.valid_at;
   const elsewhere = branches.length > 0 && !branches.some((b) => b.is_main);
@@ -129,6 +132,7 @@ export function toOffer(detail: PromotionDetail, business?: Business): Offer {
   return {
     ...summary,
     images: own.length ? own : shop.length ? shop : summary.images,
+    ...(sizes ? { sizes } : {}),
     imageIsLogo: !own.length && !shop.length && summary.imageIsLogo,
     type: TYPE_FROM_API[detail.type],
     discount: amount(detail.discount_percent) ?? 0,
@@ -246,7 +250,8 @@ export function toBusiness(resource: BusinessResource): Business {
     areaSlug: slugify(areaName),
     areaName,
     cover,
-    ...(resource.logo?.url ? { logo: resource.logo.url } : {}),
+    // The 150px thumbnail: a logo never shows wider than 96px. The API sends the original until it is made.
+    ...(resource.logo?.url ? { logo: resource.logo.thumb_url || resource.logo.url } : {}),
     about: resource.description || resource.tagline || "",
     address: full,
     streetAddress: street,
@@ -260,6 +265,7 @@ export function toBusiness(resource: BusinessResource): Business {
     outlets: [...(resource.branches ?? [])].sort((a, b) => Number(b.is_main) - Number(a.is_main)).map(toOutlet),
     photos: resource.gallery.length ? resource.gallery.map((m) => m.url) : [cover],
     thumbs: Object.fromEntries([resource.cover, ...resource.gallery].flatMap((m) => (m?.thumb_url ? [[m.url, m.thumb_url]] : []))),
+    sizes: sizesOf([resource.cover, ...resource.gallery]),
     geo: {
       lat: Number(address?.latitude) || RAJKOT.lat,
       lng: Number(address?.longitude) || RAJKOT.lng,
@@ -268,7 +274,7 @@ export function toBusiness(resource: BusinessResource): Business {
 }
 
 export function toBusinessSummary(card: BusinessCard): BusinessSummary {
-  const photo = card.cover_url || card.cover_thumb_url;
+  const photo = card.cover_medium_url || card.cover_url || card.cover_thumb_url;
   const image = photo || card.logo_url;
   const stars = rating(card.rating_avg, card.rating_count);
   return {

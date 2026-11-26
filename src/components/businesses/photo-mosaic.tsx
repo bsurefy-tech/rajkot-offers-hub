@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useT } from "@/lib/i18n/client";
+import { pick, type ImageSizes } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import { More, PhotoViewer } from "./photo-gallery";
 
@@ -20,7 +21,20 @@ const GAP = 2;
  * shows (nearly) whole.
  * Desktop: a big photo with up to four smaller ones in a grid. A single photo fills the whole width.
  */
-export function PhotoMosaic({ images, thumbs, alt, children }: { images: string[]; thumbs?: Record<string, string>; alt: string; children?: ReactNode }) {
+export function PhotoMosaic({
+  images,
+  thumbs,
+  sizes,
+  alt,
+  children,
+}: {
+  images: string[];
+  thumbs?: Record<string, string>;
+  /** The 640px and 1600px versions of `images` (see `@/lib/images`). */
+  sizes?: ImageSizes;
+  alt: string;
+  children?: ReactNode;
+}) {
   const t = useT();
   const [open, setOpen] = useState<number | null>(null);
   const row = useRef<HTMLDivElement>(null);
@@ -74,7 +88,7 @@ export function PhotoMosaic({ images, thumbs, alt, children }: { images: string[
             className={cn("relative min-w-0 basis-0 overflow-hidden", i >= phoneShown && "hidden")}
           >
             <Image
-              src={src}
+              src={pick(sizes, src, "medium")}
               alt={i === 0 ? alt : ""}
               fill
               // Photos that may not fit still load, so their shape is known.
@@ -106,7 +120,7 @@ export function PhotoMosaic({ images, thumbs, alt, children }: { images: string[
             className={cn("group relative block cursor-zoom-in overflow-hidden", i === 0 && n >= 3 && "row-span-2")}
           >
             <Image
-              src={src}
+              src={pick(sizes, src, i === 0 ? "large" : "medium")}
               alt={i === 0 ? alt : ""}
               fill
               {...(i === 0 && first)}
@@ -118,7 +132,7 @@ export function PhotoMosaic({ images, thumbs, alt, children }: { images: string[
         ))}
       </div>
       {children}
-      <PhotoViewer images={images} thumbs={thumbs} alt={alt} index={open} onClose={() => setOpen(null)} />
+      <PhotoViewer images={images} thumbs={thumbs} sizes={sizes} alt={alt} index={open} onClose={() => setOpen(null)} />
     </div>
   );
 }

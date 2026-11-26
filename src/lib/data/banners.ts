@@ -1,5 +1,6 @@
 import { api, ApiError } from "@/lib/api/client";
 import type { BannerFeed } from "@/lib/api/types";
+import { sized } from "@/lib/images";
 import { getOfferCard } from "./offers";
 import { offerPath } from "@/lib/paths";
 
@@ -79,14 +80,16 @@ export async function getHeroSlides(): Promise<HeroSlides> {
     await Promise.all(
       feed.items.map(async (item): Promise<HeroSlide | null> => {
         const { mobile, tablet, desktop } = item.images;
-        const first = mobile?.url ?? tablet?.url ?? desktop?.url;
+        // Each picture at 1600px, made at upload (see `@/lib/images`); the original until it has been made.
+        const [m, tb, d] = [mobile, tablet, desktop].map((media) => (media ? sized(media, "large") : undefined));
+        const first = m ?? tb ?? d;
         const where = await target(item.link);
         if (!first || !where) return null;
         return {
           id: item.id,
           href: where.href,
           alt: where.alt,
-          images: { mobile: mobile?.url ?? first, tablet: tablet?.url ?? desktop?.url ?? first, desktop: desktop?.url ?? tablet?.url ?? first },
+          images: { mobile: m ?? first, tablet: tb ?? d ?? first, desktop: d ?? tb ?? first },
         };
       }),
     )
